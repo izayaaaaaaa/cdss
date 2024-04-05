@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,156 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  UserID    Int     @id
+  LicenseNo Int
+  Password  String
+  UserType  String
+  Doctor    Doctor?
+  Nurse     Nurse?
+}
+
+model Doctor {
+  ProfileID     Int       @id
+  UserID        Int       @unique
+  Name          String
+  Birthday      DateTime
+  Age           Int
+  Gender        String
+  Religion      String
+  Nationality   String
+  Occupation    String
+  MaritalStatus String
+  PhoneNumber   String
+  EmailAddress  String
+  HomeAddress   String
+  User          User      @relation(fields: [UserID], references: [UserID])
+  Patient       Patient[]
+}
+
+model Nurse {
+  ProfileID     Int       @id
+  UserID        Int       @unique
+  Name          String
+  Birthday      DateTime
+  Age           Int
+  Gender        String
+  Religion      String
+  Nationality   String
+  Occupation    String
+  MaritalStatus String
+  PhoneNumber   String
+  EmailAddress  String
+  HomeAddress   String
+  User          User      @relation(fields: [UserID], references: [UserID])
+  Patient       Patient[]
+}
+
+model Patient {
+  ProfileID                 Int          @id
+  Name                      String
+  Birthday                  DateTime
+  Age                       Int
+  Gender                    String
+  Religion                  String
+  Nationality               String
+  Occupation                String
+  MaritalStatus             String
+  PhoneNumber               String
+  EmailAddress              String
+  HomeAddress               String
+  ChiefComplaint            String
+  MedicalHistory            String
+  OutpatientAdmissionStatus Boolean
+  Date                      DateTime
+  AssignedRoomNumber        Int
+  BedNumber                 Int
+  PhysicianInCharge         Int
+  NurseNotes                String
+  FlowChart                 String
+  NurseProfileID            Int
+  DoctorInCharge            Doctor?      @relation(fields: [PhysicianInCharge], references: [ProfileID])
+  NurseInCharge             Nurse?       @relation(fields: [NurseProfileID], references: [ProfileID])
+  VitalSigns                VitalSigns[]
+  ADPIE                     ADPIE[]
+}
+
+model VitalSigns {
+  VitalSignID      Int      @id
+  PatientID        Int
+  DateTime         DateTime
+  Temperature      Float
+  BloodPressure    String
+  PulseRate        Int
+  OxygenSaturation Int
+  PainScale        Int
+  Patient          Patient  @relation(fields: [PatientID], references: [ProfileID])
+}
+
+model ADPIE {
+  ADPIEID                    Int          @id
+  PatientID                  Int
+  Diagnosis                  String
+  Planning                   String
+  InterventionImplementation String
+  Evaluation                 String
+  Patient                    Patient      @relation(fields: [PatientID], references: [ProfileID])
+  Assessment                 Assessment[]
+}
+
+model Assessment {
+  ADPIEID                 Int                   @id
+  HealthHistory           String
+  ChiefComplaint          String
+  HistoryOfPresentIllness String
+  PastMedicalHistory      String
+  SocialHistory           String
+  NurseNotes              String
+  ADPIE                   ADPIE                 @relation(fields: [ADPIEID], references: [ADPIEID])
+  LaboratoryTests         LaboratoryTest[]
+  PhysicalExaminations    PhysicalExamination[]
+  DiagnosticTests         DiagnosticTest[]
+  ImagingStudies          ImagingStudy[]
+}
+
+model LaboratoryTest {
+  TestID      Int        @id
+  ADPIEID     Int
+  TestName    String
+  TestResult  String
+  MediaURL    String
+  Description String
+  Assessment  Assessment @relation(fields: [ADPIEID], references: [ADPIEID])
+}
+
+model PhysicalExamination {
+  ExaminationID   Int        @id
+  ADPIEID         Int
+  ExaminationName String
+  Findings        String
+  MediaURL        String
+  Description     String
+  Assessment      Assessment @relation(fields: [ADPIEID], references: [ADPIEID])
+}
+
+model DiagnosticTest {
+  DiagnosticTestID Int        @id
+  ADPIEID          Int
+  TestName         String
+  TestResult       String
+  MediaURL         String
+  Description      String
+  Assessment       Assessment @relation(fields: [ADPIEID], references: [ADPIEID])
+}
+
+model ImagingStudy {
+  ImagingStudyID Int        @id
+  ADPIEID        Int
+  StudyName      String
+  Findings       String
+  MediaURL       String
+  Description    String
+  Assessment     Assessment @relation(fields: [ADPIEID], references: [ADPIEID])
 }
