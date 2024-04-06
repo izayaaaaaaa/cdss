@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: 123
       POSTGRES_DB: postgres-db
   test-db:
-    image: postgres:13
+    image: postgres:16.2
     ports:
       - 5437:5432
     environment:

@@ -8,16 +8,18 @@ datasource db {
 }
 
 model User {
-  UserID    Int     @id
-  LicenseNo Int
+  UserID    Int     @id @default(autoincrement())
+  LicenseNo String  @unique
   Password  String
   UserType  String
   Doctor    Doctor?
   Nurse     Nurse?
+
+  @@map(name: "users")
 }
 
 model Doctor {
-  ProfileID     Int       @id
+  ProfileID     Int       @id @default(autoincrement())
   UserID        Int       @unique
   Name          String
   Birthday      DateTime
@@ -32,10 +34,12 @@ model Doctor {
   HomeAddress   String
   User          User      @relation(fields: [UserID], references: [UserID])
   Patient       Patient[]
+
+  @@map(name: "doctors")
 }
 
 model Nurse {
-  ProfileID     Int       @id
+  ProfileID     Int       @id @default(autoincrement())
   UserID        Int       @unique
   Name          String
   Birthday      DateTime
@@ -50,10 +54,12 @@ model Nurse {
   HomeAddress   String
   User          User      @relation(fields: [UserID], references: [UserID])
   Patient       Patient[]
+
+  @@map(name: "nurses")
 }
 
 model Patient {
-  ProfileID                 Int          @id
+  ProfileID                 Int          @id @default(autoincrement())
   Name                      String
   Birthday                  DateTime
   Age                       Int
@@ -79,10 +85,12 @@ model Patient {
   NurseInCharge             Nurse?       @relation(fields: [NurseProfileID], references: [ProfileID])
   VitalSigns                VitalSigns[]
   ADPIE                     ADPIE[]
+
+  @@map(name: "patients")
 }
 
 model VitalSigns {
-  VitalSignID      Int      @id
+  VitalSignID      Int      @id @default(autoincrement())
   PatientID        Int
   DateTime         DateTime
   Temperature      Float
@@ -91,10 +99,12 @@ model VitalSigns {
   OxygenSaturation Int
   PainScale        Int
   Patient          Patient  @relation(fields: [PatientID], references: [ProfileID])
+
+  @@map(name: "vital_signs")
 }
 
 model ADPIE {
-  ADPIEID                    Int          @id
+  ADPIEID                    Int          @id @default(autoincrement())
   PatientID                  Int
   Diagnosis                  String
   Planning                   String
@@ -102,10 +112,12 @@ model ADPIE {
   Evaluation                 String
   Patient                    Patient      @relation(fields: [PatientID], references: [ProfileID])
   Assessment                 Assessment[]
+
+  @@map(name: "adpie")
 }
 
 model Assessment {
-  ADPIEID                 Int                   @id
+  ADPIEID                 Int                   @id @default(autoincrement())
   HealthHistory           String
   ChiefComplaint          String
   HistoryOfPresentIllness String
@@ -117,44 +129,54 @@ model Assessment {
   PhysicalExaminations    PhysicalExamination[]
   DiagnosticTests         DiagnosticTest[]
   ImagingStudies          ImagingStudy[]
+
+  @@map(name: "assessments")
 }
 
 model LaboratoryTest {
-  TestID      Int        @id
+  TestID      Int        @id @default(autoincrement())
   ADPIEID     Int
   TestName    String
   TestResult  String
   MediaURL    String
   Description String
   Assessment  Assessment @relation(fields: [ADPIEID], references: [ADPIEID])
+
+  @@map(name: "laboratory_tests")
 }
 
 model PhysicalExamination {
-  ExaminationID   Int        @id
+  ExaminationID   Int        @id @default(autoincrement())
   ADPIEID         Int
   ExaminationName String
   Findings        String
   MediaURL        String
   Description     String
   Assessment      Assessment @relation(fields: [ADPIEID], references: [ADPIEID])
+
+  @@map(name: "physical_examinations")
 }
 
 model DiagnosticTest {
-  DiagnosticTestID Int        @id
+  DiagnosticTestID Int        @id @default(autoincrement())
   ADPIEID          Int
   TestName         String
   TestResult       String
   MediaURL         String
   Description      String
   Assessment       Assessment @relation(fields: [ADPIEID], references: [ADPIEID])
+
+  @@map(name: "diagnostic_tests")
 }
 
 model ImagingStudy {
-  ImagingStudyID Int        @id
+  ImagingStudyID Int        @id @default(autoincrement())
   ADPIEID        Int
   StudyName      String
   Findings       String
   MediaURL       String
   Description    String
   Assessment     Assessment @relation(fields: [ADPIEID], references: [ADPIEID])
+
+  @@map(name: "imaging_studies")
 }

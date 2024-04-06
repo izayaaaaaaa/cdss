@@ -13,4 +13,9 @@ export class PrismaService extends PrismaClient {
       },
     });
   }
+
+  cleanDb() {
+    // avoid foreign key constraint violation
+    return this.$transaction([this.user.deleteMany()]);
+  }
 }
