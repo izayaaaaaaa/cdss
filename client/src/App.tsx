@@ -1,5 +1,5 @@
 import * as React from "react"
-import {
+import { 
   ChakraProvider,
   Box,
   Text,
@@ -11,6 +11,10 @@ import {
 } from "@chakra-ui/react"
 import { ColorModeSwitcher } from "./ColorModeSwitcher"
 import { Logo } from "./Logo"
+import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
+import SignIn from './pages/SignIn';
+import Employees from './pages/Employees';
+import Patients from './pages/Patients';
 
 export const App = () => (
   <ChakraProvider theme={theme}>
