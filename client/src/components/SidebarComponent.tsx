@@ -15,16 +15,22 @@ import {
 import { FiMenu } from 'react-icons/fi'
 import { IconType } from 'react-icons'
 import { ReactText } from 'react'
-import { DashboardLogo, EmployeesLogo, PatientsLogo } from '../assets/images/sidebar'
+import { Link } from 'react-router-dom'
+import { 
+  DashboardLogo, 
+  EmployeesLogo, 
+  PatientsLogo 
+} from '../assets/images/sidebar'
 
 interface LinkItemProps {
-  name: string
-  icon: IconType
+  name: string;
+  icon: IconType;
+  route: string;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Dashboard', icon: DashboardLogo },
-  { name: 'Employees', icon: EmployeesLogo },
-  { name: 'Patients', icon: PatientsLogo },
+  { name: 'Dashboard', icon: DashboardLogo, route: '/dashboard' },
+  { name: 'Employees', icon: EmployeesLogo, route: '/employees' },
+  { name: 'Patients', icon: PatientsLogo, route: '/patients' },
 ]
 
 const SimpleSidebar = () => {
@@ -84,7 +90,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       </Flex>
       {/* menu items */}
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
+        <NavItem key={link.name} icon={link.icon} route={link.route} >
           {link.name}
         </NavItem>
       ))}
@@ -94,13 +100,14 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 
 interface NavItemProps extends FlexProps {
   icon: IconType
+  route: string
   children: ReactText
 }
-const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+const NavItem = ({ route, icon, children, ...rest }: NavItemProps) => {
   return (
     <Box
-      as="a"
-      href="#"
+      as={Link}
+      to={route}
       style={{ textDecoration: 'none' }}
       _focus={{ boxShadow: 'none' }}
     >
