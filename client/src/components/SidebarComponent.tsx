@@ -12,41 +12,42 @@ import {
   BoxProps,
   FlexProps,
 } from '@chakra-ui/react'
-import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
-  FiMenu,
-} from 'react-icons/fi'
+import { FiMenu } from 'react-icons/fi'
 import { IconType } from 'react-icons'
 import { ReactText } from 'react'
+import { DashboardLogo, EmployeesLogo, PatientsLogo } from '../assets/images/sidebar'
 
 interface LinkItemProps {
   name: string
   icon: IconType
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Home', icon: FiHome },
-  { name: 'Trending', icon: FiTrendingUp },
-  { name: 'Explore', icon: FiCompass },
-  { name: 'Favourites', icon: FiStar },
-  { name: 'Settings', icon: FiSettings },
+  { name: 'Dashboard', icon: DashboardLogo },
+  { name: 'Employees', icon: EmployeesLogo },
+  { name: 'Patients', icon: PatientsLogo },
 ]
 
-export default function SimpleSidebar() {
+const SimpleSidebar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
-      <SidebarContent onClose={() => onClose} display={{ base: 'none', md: 'block' }} />
+    <Box 
+      // minH="100vh" 
+      // bg={useColorModeValue('gray.100', 'gray.900')}
+    >
+      <SidebarContent 
+        onClose={() => onClose} 
+        display={{ base: 'none', md: 'block' }} 
+      />
+      
+      {/* sidebar for hamburger */}
       <Drawer
         isOpen={isOpen}
         placement="left"
         onClose={onClose}
         returnFocusOnClose={false}
         onOverlayClick={onClose}
-        size="full">
+        size="full"
+      >
         <DrawerContent>
           <SidebarContent onClose={onClose} />
         </DrawerContent>
@@ -67,19 +68,21 @@ interface SidebarProps extends BoxProps {
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   return (
     <Box
-      bg={useColorModeValue('white', 'gray.900')}
-      borderRight="1px"
-      borderRightColor={useColorModeValue('gray.200', 'gray.700')}
-      w={{ base: 'full', md: 60 }}
-      pos="fixed"
-      h="full"
-      {...rest}>
+      // bg={useColorModeValue('white', 'gray.900')}
+      // borderRight="1px"
+      // borderRightColor={useColorModeValue('gray.200', 'gray.700')}
+      // w={{ base: 'full', md: 60 }}
+      // pos="fixed"
+      // h="full"
+      // {...rest}
+    >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          Logo
+          Apex Medical Center
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
+      {/* menu items */}
       {LinkItems.map((link) => (
         <NavItem key={link.name} icon={link.icon}>
           {link.name}
@@ -99,7 +102,8 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
       as="a"
       href="#"
       style={{ textDecoration: 'none' }}
-      _focus={{ boxShadow: 'none' }}>
+      _focus={{ boxShadow: 'none' }}
+    >
       <Flex
         align="center"
         p="4"
@@ -156,3 +160,5 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
     </Flex>
   )
 }
+
+export { SimpleSidebar, SidebarContent }
