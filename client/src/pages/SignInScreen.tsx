@@ -21,7 +21,7 @@ import {
 } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/images/signin_bg.png';
-import logo from '../assets/images/logo.png';
+import hospital_logo from '../assets/images/hospital_logo.png';
 import SignInService from '../services/SignInService';
 
 const SignIn = () => {
@@ -75,7 +75,7 @@ const SignIn = () => {
         p={8}
       >
         <Stack spacing={4}>
-          <Image src={logo} alt='logo' />
+          <Image src={hospital_logo} alt='hospital_logo' />
           <Heading fontSize={'4xl'}>Apex Medical Center </Heading>
           <Heading fontSize={'3xl'}>Sign in </Heading>
           <Text fontSize={'lg'} color={'gray.600'}> Please sign in to your account </Text>
