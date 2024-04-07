@@ -19,11 +19,14 @@ import {
   Field, 
   ErrorMessage 
 } from 'formik';
+import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/images/signin_bg.png';
 import logo from '../assets/images/logo.png';
 import SignInService from '../services/SignInService';
 
 const SignIn = () => {
+  const navigate = useNavigate();
+
   const initialValues = {
     licenseNo: '',
     password: '',
@@ -49,6 +52,8 @@ const SignIn = () => {
       
       console.log('handleSubmit User data sent: ');
       console.log(userData);
+
+      navigate('/employees');
     } catch (error) {
       console.error('handleSubmit Sign-in error:', error);
     } finally {

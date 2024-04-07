@@ -1,10 +1,24 @@
 import React from 'react';
+import SimpleSidebar from '../components/SidebarComponent';
 
 const Employees = () => {
  return (
     <div>
-      <h1>Employees Page</h1>
-      <p>This is the Employees page.</p>
+      {/* sidebar component */}
+      <SimpleSidebar />
+      
+      {/* employees content/box section */}
+        {/* gradient bg */}
+
+        {/* title & desc */}
+
+        {/* pill tabs on top */}
+          
+          {/* search bar */}
+          
+          {/* table component */}
+          
+          {/* pagination */}
     </div>
  );
 };
