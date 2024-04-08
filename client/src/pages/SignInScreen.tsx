@@ -48,10 +48,12 @@ const SignIn = () => {
       console.log('handleSubmit Submitting values: ');
       console.log(values);
 
-      const userData = await SignInService.signIn(values.licenseNo, values.password);
+      const response = await SignInService.signIn(values.licenseNo, values.password);
       
-      console.log('handleSubmit User data sent: ');
-      console.log(userData);
+      console.log('handleSubmit signin successful');
+      console.log('data sent back: ', response);
+
+      localStorage.setItem('user_id', response.user_id);
 
       navigate('/employees');
     } catch (error) {

@@ -20,6 +20,8 @@ export class AuthService {
       throw new ForbiddenException('Invalid credentials');
     }
 
-    return user;
+    const user_id = user.UserID;
+
+    return user_id;
   }
 }
