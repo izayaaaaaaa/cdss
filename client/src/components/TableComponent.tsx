@@ -109,7 +109,7 @@ const data: Person[] = [
   },
 ];
 
-const Example = () => {
+const TableComponent = () => {
   //should be memoized or stable
   const columns = useMemo<MRT_ColumnDef<Person>[]>(
     () => [
@@ -145,4 +145,4 @@ const Example = () => {
   return <MantineReactTable table={table} />;
 };
 
-export default Example;
+export default TableComponent;

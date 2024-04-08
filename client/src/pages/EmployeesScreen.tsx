@@ -5,7 +5,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { SimpleSidebar } from '../components/SidebarComponent';
-import Example from '../components/TableComponent';
+import TableComponent from '../components/TableComponent';
 
 const Employees = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -13,23 +13,10 @@ const Employees = () => {
   return (
       <HStack>
         <SimpleSidebar />
-        
         <Box>
           <Heading>Employees</Heading>
-          <Example/>
+          <TableComponent/>
         </Box>
-        {/* employees content/box section */}
-          {/* gradient bg */}
-
-          {/* title & desc */}
-
-          {/* pill tabs on top */}
-            
-            {/* search bar */}
-            
-            {/* table component */}
-            
-            {/* pagination */}
       </HStack>
   );
 };

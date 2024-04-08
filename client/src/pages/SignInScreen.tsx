@@ -22,7 +22,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/images/signin_bg.png';
 import hospital_logo from '../assets/images/hospital_logo.png';
-import SignInService from '../services/SignInService';
+import { SignInService } from '../services';
 
 const SignIn = () => {
   const navigate = useNavigate();
