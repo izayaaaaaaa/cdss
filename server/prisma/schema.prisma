@@ -19,41 +19,29 @@ model User {
 }
 
 model Doctor {
-  ProfileID     Int       @id @default(autoincrement())
-  UserID        Int       @unique
-  Name          String
-  Birthday      DateTime
-  Age           Int
-  Gender        String
-  Religion      String
-  Nationality   String
-  Occupation    String
-  MaritalStatus String
-  PhoneNumber   String
-  EmailAddress  String
-  HomeAddress   String
-  User          User      @relation(fields: [UserID], references: [UserID])
-  Patient       Patient[]
+  ProfileID    Int       @id @default(autoincrement())
+  UserID       Int       @unique
+  Name         String
+  Age          Int
+  Gender       String
+  PhoneNumber  String
+  EmailAddress String
+  User         User      @relation(fields: [UserID], references: [UserID])
+  Patient      Patient[]
 
   @@map(name: "doctors")
 }
 
 model Nurse {
-  ProfileID     Int       @id @default(autoincrement())
-  UserID        Int       @unique
-  Name          String
-  Birthday      DateTime
-  Age           Int
-  Gender        String
-  Religion      String
-  Nationality   String
-  Occupation    String
-  MaritalStatus String
-  PhoneNumber   String
-  EmailAddress  String
-  HomeAddress   String
-  User          User      @relation(fields: [UserID], references: [UserID])
-  Patient       Patient[]
+  ProfileID    Int       @id @default(autoincrement())
+  UserID       Int       @unique
+  Name         String
+  Age          Int
+  Gender       String
+  PhoneNumber  String
+  EmailAddress String
+  User         User      @relation(fields: [UserID], references: [UserID])
+  Patient      Patient[]
 
   @@map(name: "nurses")
 }
@@ -61,20 +49,15 @@ model Nurse {
 model Patient {
   ProfileID                 Int          @id @default(autoincrement())
   Name                      String
-  Birthday                  DateTime
   Age                       Int
   Gender                    String
-  Religion                  String
-  Nationality               String
   Occupation                String
-  MaritalStatus             String
   PhoneNumber               String
   EmailAddress              String
-  HomeAddress               String
   ChiefComplaint            String
   MedicalHistory            String
   OutpatientAdmissionStatus Boolean
-  Date                      DateTime
+  Date_Admitted             DateTime
   AssignedRoomNumber        Int
   BedNumber                 Int
   PhysicianInCharge         Int
