@@ -1,26 +1,37 @@
-import React from 'react';
-import SimpleSidebar from '../components/SidebarComponent';
+import { 
+  Box, 
+  Heading,
+  HStack,
+  useDisclosure,
+} from '@chakra-ui/react';
+import { SimpleSidebar } from '../components/SidebarComponent';
+import Example from '../components/TableComponent';
 
 const Employees = () => {
- return (
-    <div>
-      {/* sidebar component */}
-      <SimpleSidebar />
-      
-      {/* employees content/box section */}
-        {/* gradient bg */}
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
-        {/* title & desc */}
+  return (
+      <HStack>
+        <SimpleSidebar />
+        
+        <Box>
+          <Heading>Employees</Heading>
+          <Example/>
+        </Box>
+        {/* employees content/box section */}
+          {/* gradient bg */}
 
-        {/* pill tabs on top */}
-          
-          {/* search bar */}
-          
-          {/* table component */}
-          
-          {/* pagination */}
-    </div>
- );
+          {/* title & desc */}
+
+          {/* pill tabs on top */}
+            
+            {/* search bar */}
+            
+            {/* table component */}
+            
+            {/* pagination */}
+      </HStack>
+  );
 };
 
 export default Employees;
