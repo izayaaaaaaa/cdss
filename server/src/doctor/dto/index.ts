@@ -1,3 +1,3 @@
-import { UpdateDoctorDto } from './update-doctor.dto';
+// import { UpdateDoctorDto } from './update-doctor.dto';
 
-export { UpdateDoctorDto };
+// export { UpdateDoctorDto };

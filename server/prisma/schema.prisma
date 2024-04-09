@@ -51,7 +51,6 @@ model Patient {
   Name                      String
   Age                       Int
   Gender                    String
-  Occupation                String
   PhoneNumber               String
   EmailAddress              String
   ChiefComplaint            String

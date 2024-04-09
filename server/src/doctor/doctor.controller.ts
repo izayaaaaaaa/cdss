@@ -1,6 +1,6 @@
 import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
-import { UpdateDoctorDto } from './dto/update-doctor.dto';
+// import { UpdateDoctorDto } from './dto/update-doctor.dto';
 
 @Controller('doctor')
 export class DoctorController {
@@ -16,8 +16,8 @@ export class DoctorController {
     return this.doctorService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDoctorDto: UpdateDoctorDto) {
-    return this.doctorService.update(+id, updateDoctorDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateDoctorDto: UpdateDoctorDto) {
+  //   return this.doctorService.update(+id, updateDoctorDto);
+  // }
 }

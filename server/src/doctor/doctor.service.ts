@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateDoctorDto } from './dto/update-doctor.dto';
+// import { UpdateDoctorDto } from './dto/update-doctor.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class DoctorService {
     return `This action returns a #${id} doctor`;
   }
 
-  update(id: number, updateDoctorDto: UpdateDoctorDto) {
-    return `This action updates a #${id} doctor`;
-  }
+  // update(id: number, updateDoctorDto: UpdateDoctorDto) {
+  //   return `This action updates a #${id} doctor`;
+  // }
 }

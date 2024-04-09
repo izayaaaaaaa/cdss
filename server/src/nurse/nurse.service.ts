@@ -1,26 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { CreateNurseDto } from './dto/create-nurse.dto';
-import { UpdateNurseDto } from './dto/update-nurse.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+// import { CreateNurseDto } from './dto/create-nurse.dto';
+// import { UpdateNurseDto } from './dto/update-nurse.dto';
 
 @Injectable()
 export class NurseService {
-  create(createNurseDto: CreateNurseDto) {
-    return 'This action adds a new nurse';
-  }
+  constructor(private prisma: PrismaService) {}
+  // create(createNurseDto: CreateNurseDto) {
+  //   return 'This action adds a new nurse';
+  // }
 
   findAll() {
-    return `This action returns all nurse`;
+    return this.prisma.nurse.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} nurse`;
-  }
+  // findOne(id: number) {
+  //   return `This action returns a #${id} nurse`;
+  // }
 
-  update(id: number, updateNurseDto: UpdateNurseDto) {
-    return `This action updates a #${id} nurse`;
-  }
+  // update(id: number, updateNurseDto: UpdateNurseDto) {
+  //   return `This action updates a #${id} nurse`;
+  // }
 
-  remove(id: number) {
-    return `This action removes a #${id} nurse`;
-  }
+  // remove(id: number) {
+  //   return `This action removes a #${id} nurse`;
+  // }
 }

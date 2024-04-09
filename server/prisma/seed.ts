@@ -58,7 +58,6 @@ async function main() {
         Name: `Patient${i}`,
         Age: 20 + i,
         Gender: 'Male',
-        Occupation: 'Engineer',
         PhoneNumber: `1122334455${i}`,
         EmailAddress: `patient${i}@example.com`,
         ChiefComplaint: 'Headache',
