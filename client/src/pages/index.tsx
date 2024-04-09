@@ -1,5 +1,6 @@
 import SignIn from "./SignInScreen";
 import Employees from "./EmployeesScreen";
 import Patients from "./PatientsScreen";
+import Dashboard from "./DashboardScreen";
 
-export { SignIn, Employees, Patients };
+export { Dashboard, SignIn, Employees, Patients };
