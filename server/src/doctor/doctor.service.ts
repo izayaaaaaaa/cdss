@@ -10,8 +10,13 @@ export class DoctorService {
     return this.prisma.doctor.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} doctor`;
+  findOne(ProfileID: number) {
+    return this.prisma.doctor.findUnique({
+      where: { ProfileID },
+      select: {
+        Name: true,
+      },
+    });
   }
 
   // update(id: number, updateDoctorDto: UpdateDoctorDto) {

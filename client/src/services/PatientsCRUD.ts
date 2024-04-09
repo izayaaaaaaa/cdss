@@ -14,6 +14,20 @@ const getAllPatients = async () => {
   }
 };
 
+const getPhysicianName = async (physicianId: Number) => {
+  try {
+    const response = await fetch(`${BASE_URL}/doctor/${physicianId}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching physician:', error);
+    throw error;
+  }
+}
+
 const getPatient = async () => {};
 
 const createPatient = async () => {};
@@ -23,6 +37,7 @@ const updatePatient = async () => {};
 const deletePatient = async () => {};
 
 const PatientsCRUD = {
+  getPhysicianName,
   getAllPatients,
   getPatient,
   createPatient,
