@@ -85,7 +85,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       h="full"
       // {...rest}
     >
-      <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
+      <Flex h="20" alignItems="center" mx="8" my="8" justifyContent="space-between">
         <HStack>
           <Image src={HospitalLogo} alt="hospital logo" boxSize='60px' />
           <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold" color="#345673">
