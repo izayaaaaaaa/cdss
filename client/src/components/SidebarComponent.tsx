@@ -11,6 +11,8 @@ import {
   useDisclosure,
   BoxProps,
   FlexProps,
+  HStack,
+  Image,
 } from '@chakra-ui/react'
 import { FiMenu } from 'react-icons/fi'
 import { IconType } from 'react-icons'
@@ -21,6 +23,7 @@ import {
   EmployeesLogo, 
   PatientsLogo 
 } from '../assets/images/sidebar'
+import HospitalLogo from '../assets/images/hospital_logo.png'
 
 interface LinkItemProps {
   name: string;
@@ -28,17 +31,17 @@ interface LinkItemProps {
   route: string;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Dashboard', icon: DashboardLogo, route: '/dashboard' },
-  { name: 'Employees', icon: EmployeesLogo, route: '/employees' },
-  { name: 'Patients', icon: PatientsLogo, route: '/patients' },
+  { name: 'ㅤDashboard', icon: DashboardLogo, route: '/dashboard' },
+  { name: 'ㅤEmployees', icon: EmployeesLogo, route: '/employees' },
+  { name: 'ㅤPatients', icon: PatientsLogo, route: '/patients' },
 ]
 
 const SimpleSidebar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <Box 
-      // minH="100vh" 
-      // bg={useColorModeValue('gray.100', 'gray.900')}
+      minH="100vh" 
+      bg={useColorModeValue('white', 'gray.900')}
     >
       <SidebarContent 
         onClose={() => onClose} 
@@ -59,10 +62,10 @@ const SimpleSidebar = () => {
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
-      <MobileNav display={{ base: 'flex', md: 'none' }} onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4">
+      {/* <MobileNav display={{ base: 'flex', md: 'none' }} onOpen={onOpen} /> */}
+      {/* <Box ml={{ base: 0, md: 60 }} p="4"> */}
         {/* Content */}
-      </Box>
+      {/* </Box> */}
     </Box>
   )
 }
@@ -79,13 +82,16 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       // borderRightColor={useColorModeValue('gray.200', 'gray.700')}
       // w={{ base: 'full', md: 60 }}
       // pos="fixed"
-      // h="full"
+      h="full"
       // {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          Apex Medical Center
-        </Text>
+        <HStack>
+          <Image src={HospitalLogo} alt="hospital logo" boxSize='60px' />
+          <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold" color="#345673">
+            Apex Medical Center
+          </Text>
+        </HStack>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {/* menu items */}
@@ -108,18 +114,19 @@ const NavItem = ({ route, icon, children, ...rest }: NavItemProps) => {
     <Box
       as={Link}
       to={route}
-      style={{ textDecoration: 'none' }}
+      style={{ textDecoration: 'none', color: '#345673', fontSize: '1.3rem' }}
       _focus={{ boxShadow: 'none' }}
     >
       <Flex
         align="center"
-        p="4"
-        mx="4"
+        py="2"
+        px="5"
+        mx="10"
         borderRadius="lg"
         role="group"
         cursor="pointer"
         _hover={{
-          bg: 'cyan.400',
+          bg: '#345673',
           color: 'white',
         }}
         {...rest}>
@@ -128,6 +135,7 @@ const NavItem = ({ route, icon, children, ...rest }: NavItemProps) => {
             mr="4"
             fontSize="16"
             _groupHover={{
+              bg: '#345673',
               color: 'white',
             }}
             as={icon}
@@ -139,33 +147,33 @@ const NavItem = ({ route, icon, children, ...rest }: NavItemProps) => {
   )
 }
 
-interface MobileProps extends FlexProps {
-  onOpen: () => void
-}
-const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
-  return (
-    <Flex
-      ml={{ base: 0, md: 60 }}
-      px={{ base: 4, md: 24 }}
-      height="20"
-      alignItems="center"
-      bg={useColorModeValue('white', 'gray.900')}
-      borderBottomWidth="1px"
-      borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
-      justifyContent="flex-start"
-      {...rest}>
-      <IconButton
-        variant="outline"
-        onClick={onOpen}
-        aria-label="open menu"
-        icon={<FiMenu />}
-      />
+// interface MobileProps extends FlexProps {
+//   onOpen: () => void
+// }
+// const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+//   return (
+//     <Flex
+//       ml={{ base: 0, md: 60 }}
+//       px={{ base: 4, md: 24 }}
+//       height="20"
+//       alignItems="center"
+//       bg={useColorModeValue('white', 'gray.900')}
+//       borderBottomWidth="1px"
+//       borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
+//       justifyContent="flex-start"
+//       {...rest}>
+//       <IconButton
+//         variant="outline"
+//         onClick={onOpen}
+//         aria-label="open menu"
+//         icon={<FiMenu />}
+//       />
 
-      <Text fontSize="2xl" ml="8" fontFamily="monospace" fontWeight="bold">
-        Logo
-      </Text>
-    </Flex>
-  )
-}
+//       <Text fontSize="2xl" ml="8" fontFamily="monospace" fontWeight="bold">
+//         Logo
+//       </Text>
+//     </Flex>
+//   )
+// }
 
 export { SimpleSidebar, SidebarContent }

@@ -46,7 +46,7 @@ const Employees = () => {
   }
 
   return (
-    <HStack>
+    <HStack background="#E0EAF3">
       <SimpleSidebar />
       <Box>
         <Heading>Employees</Heading>

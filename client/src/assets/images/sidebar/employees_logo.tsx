@@ -4,7 +4,7 @@ const EmployeesLogo = (props: any) => (
   preserveAspectRatio="xMidYMid meet">
 
   <g transform="translate(0.000000,100.000000) scale(0.100000,-0.100000)"
-  fill="#000000" stroke="none">
+  fill="#345673" stroke="none">
   <path d="M457 906 c-27 -7 -61 -22 -75 -33 -62 -46 -93 -132 -72 -202 6 -20 6
   -40 0 -51 -10 -19 -3 -58 15 -80 25 -30 55 -113 55 -151 0 -49 -18 -66 -111
   -103 -88 -36 -143 -86 -158 -144 -7 -23 -9 -47 -6 -52 4 -6 153 -10 395 -10

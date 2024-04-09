@@ -4,7 +4,7 @@ const PatientsLogo = (props: any) => (
   preserveAspectRatio="xMidYMid meet">
 
   <g transform="translate(0.000000,100.000000) scale(0.100000,-0.100000)"
-  fill="#000000" stroke="none">
+  fill="#345673" stroke="none">
   <path d="M436 985 c-96 -34 -152 -138 -126 -235 14 -53 73 -116 125 -135 l40
   -14 -67 -1 c-117 0 -142 -19 -249 -182 -84 -129 -109 -183 -116 -251 -7 -67
   14 -120 59 -147 31 -19 50 -20 376 -20 l344 0 29 29 c28 28 29 33 29 118 0 96
