@@ -81,7 +81,11 @@ const TableFactory: React.FC<TableFactoryProps> = ({ fetchData, defineColumns })
           <IconTrash />
         </ActionIcon>
       </Box>
-    )
+    ),
+    initialState: { pagination: { pageIndex: 0, pageSize: 5 }},
+    mantinePaginationProps: {
+      showRowsPerPage: false,
+    },
   });
 
   return <MantineReactTable table={table} />;

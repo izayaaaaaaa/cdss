@@ -48,9 +48,10 @@ const Employees = () => {
   return (
     <HStack background="#E0EAF3">
       <SimpleSidebar />
-      <Box>
-        <Heading>Employees</Heading>
-        <Text>Members of Apex Medical Center</Text>
+      
+      <Box ml={50}>
+        <Heading mb={2}>Employees</Heading>
+        <Text mb={7}>Members of Apex Medical Center</Text>
         
         <Tabs>
           <TabList>

@@ -29,12 +29,12 @@ const fetchPatientsData = async () => {
 
 const Patients = () => {
   return (
-    <HStack>
+    <HStack background="#E0EAF3">
       <SimpleSidebar />
       
-      <Box>
-        <Heading>Patients</Heading>
-        <Text>Patients of Apex Medical Center</Text>
+      <Box ml={50}>
+        <Heading mb={2}>Patients</Heading>
+        <Text mb={7}>Patients of Apex Medical Center</Text>
         <TableFactory fetchData={fetchPatientsData} defineColumns={defineColumns} />
       </Box>
     </HStack>
