@@ -84,7 +84,7 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns 
         </ActionIcon>
       </Box>
     ),
-    initialState: { pagination: { pageIndex: 0, pageSize: 5 }},
+    initialState: { pagination: { pageIndex: 0, pageSize: 7 }},
     mantinePaginationProps: {
       showRowsPerPage: false,
     },

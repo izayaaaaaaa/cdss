@@ -106,7 +106,7 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }
       </Box>
     ),
     initialState: { 
-      pagination: { pageIndex: 0, pageSize: 5 },
+      pagination: { pageIndex: 0, pageSize: 8 },
       // grouping: 
     },
     mantinePaginationProps: {
