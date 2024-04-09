@@ -69,6 +69,9 @@ const SignIn = () => {
       align={'center'}
       justify={'center'}
       backgroundImage={`url(${backgroundImage})`}
+      backgroundSize={'cover'}
+      backgroundRepeat={'no-repeat'}
+      backgroundPosition={'center'}
     >
       <Box
         rounded={'lg'}
@@ -77,10 +80,10 @@ const SignIn = () => {
         p={8}
       >
         <Stack spacing={4}>
-          <Image src={hospital_logo} alt='hospital_logo' />
-          <Heading fontSize={'4xl'}>Apex Medical Center </Heading>
-          <Heading fontSize={'3xl'}>Sign in </Heading>
-          <Text fontSize={'lg'} color={'gray.600'}> Please sign in to your account </Text>
+          <Image src={hospital_logo} alt='hospital_logo' boxSize={'175px'} alignSelf={'center'} />
+          <Heading fontSize={'3xl'} color="#345673" mb={10}>Apex Medical Center </Heading>
+          <Heading fontSize={'xl'} color="#345673" mb={-3}>Sign in </Heading>
+          <Text fontSize={'m'} color={'gray.600'}> Please sign in to your account </Text>
           <Formik
             initialValues={initialValues}
             validate={validate}
@@ -99,13 +102,15 @@ const SignIn = () => {
                   <ErrorMessage name='password' component={Box} />
                 </FormControl>
                 <Button
-                  bg={'blue.400'}
+                  bg={'#345673'}
                   color={'white'}
                   _hover={{
                     bg: 'blue.500',
                   }}
                   type='submit'
                   isLoading={isSubmitting}
+                  w="full"
+                  mt={7}
                 >
                   Sign in
                 </Button>
