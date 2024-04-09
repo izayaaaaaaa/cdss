@@ -14,9 +14,14 @@ export class NurseService {
     return this.prisma.nurse.findMany();
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} nurse`;
-  // }
+  getNurseName(id: number) {
+    return this.prisma.nurse.findUnique({
+      where: { ProfileID: id },
+      select: {
+        Name: true,
+      },
+    });
+  }
 
   // update(id: number, updateNurseDto: UpdateNurseDto) {
   //   return `This action updates a #${id} nurse`;

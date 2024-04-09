@@ -29,15 +29,20 @@ interface Patient {
 
 const defineColumns = () => [
   { accessorKey: 'name', header: 'Name' },
-  { accessorKey: 'age', header: 'Age' },
-  { accessorKey: 'gender', header: 'Gender' },
+  { accessorKey: 'age', header: 'Age', size: 100 },
+  { accessorKey: 'gender', header: 'Gender', size: 100 },
   { accessorKey: 'phoneNumber', header: 'Phone Number' },
   { accessorKey: 'emailAddress', header: 'Email Address' },
   { accessorKey: 'physicianName', header: 'Physician' },
+  { accessorKey: 'nurseName', header: 'Nurse' },
 ];
 
 const getPhysicianName = async (physicianId: Number) => {
   return await PatientsCRUD.getPhysicianName(physicianId);
+}
+
+const getNurseName = async (nurseId: Number) => {
+  return await PatientsCRUD.getNurseName(nurseId);
 }
   
 
@@ -49,12 +54,12 @@ const fetchPatientsData = async () => {
     // Fetch physician and nurse names for each patient
     const patientsDetailed = await Promise.all(patients.map(async (patient: Patient) => {
       const physicianName = await getPhysicianName(patient.PhysicianInCharge);
-      // const nurseName = await getNurseName(patient.nurseId);
+      const nurseName = await getNurseName(patient.NurseProfileID);
 
       return {
         ...patient,
         physicianName,
-        // nurseName,
+        nurseName,
       };
     }));
 

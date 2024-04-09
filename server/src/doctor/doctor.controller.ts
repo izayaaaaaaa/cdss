@@ -12,8 +12,8 @@ export class DoctorController {
   }
 
   @Get(':id')
-  findOne(@Param('id') ProfileID: string) {
-    return this.doctorService.findOne(+ProfileID);
+  getDoctorName(@Param('id') ProfileID: string) {
+    return this.doctorService.getDoctorName(+ProfileID);
   }
 
   // @Patch(':id')
