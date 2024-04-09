@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { SimpleSidebar } from '../components/SidebarComponent';
 import { DoctorsCRUD, NursesCRUD } from '../services';
-import { TableFactory } from '../components';
+import { EmployeesTable } from '../components';
 
 const Employees = () => {
   const defineColumns = () => [
@@ -26,7 +26,7 @@ const Employees = () => {
   const fetchDoctorsData = async () => {
     try {
       const doctors = await DoctorsCRUD.getAllDoctors();
-      // console.log('fetchDoctorsData response: ', doctors);
+      console.log('fetchDoctorsData response: ', doctors);
 
       return doctors;
     } catch (error) {
@@ -60,10 +60,10 @@ const Employees = () => {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <TableFactory fetchData={fetchDoctorsData} defineColumns={defineColumns} />
+              <EmployeesTable fetchData={fetchDoctorsData} defineColumns={defineColumns} />
             </TabPanel>
             <TabPanel>
-              <TableFactory fetchData={fetchNursesData} defineColumns={defineColumns} />
+              <EmployeesTable fetchData={fetchNursesData} defineColumns={defineColumns} />
             </TabPanel>
           </TabPanels>
         </Tabs>

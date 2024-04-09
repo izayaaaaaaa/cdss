@@ -22,7 +22,7 @@ type Person = {
   emailAddress: string;
 };
 
-const TableFactory: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }) => {
+const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }) => {
   const [data, setData] = useState<any[]>([]);
   
   useEffect(() => {
@@ -48,14 +48,14 @@ const TableFactory: React.FC<TableFactoryProps> = ({ fetchData, defineColumns })
     table,
     row,
     values,
- }) => {
+  }) => {
     const updatedData = [...data];
     updatedData[row.index] = values;
     setData(updatedData);
     table.setEditingRow(null);
     // api call to update the row in the database
   }
-
+  
   const table = useMantineReactTable({
     columns,
     data,
@@ -63,23 +63,23 @@ const TableFactory: React.FC<TableFactoryProps> = ({ fetchData, defineColumns })
     positionActionsColumn: 'last',
     renderRowActions: ({ row }) => (
       <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-        <ActionIcon
-          color="orange"
-          onClick={() => {
-            table.setEditingRow(row);
-          }}
-        >
-          <IconEdit />
-        </ActionIcon>
-        <ActionIcon
-          color="red"
-          onClick={() => {
-            data.splice(row.index, 1); //assuming simple data table
-            setData([...data]);
-          }}
-        >
-          <IconTrash />
-        </ActionIcon>
+      <ActionIcon
+      color="orange"
+      onClick={() => {
+        table.setEditingRow(row);
+      }}
+      >
+      <IconEdit />
+      </ActionIcon>
+      <ActionIcon
+      color="red"
+      onClick={() => {
+        data.splice(row.index, 1); //assuming simple data table
+        setData([...data]);
+      }}
+      >
+      <IconTrash />
+      </ActionIcon>
       </Box>
     ),
     initialState: { pagination: { pageIndex: 0, pageSize: 5 }},
@@ -87,8 +87,8 @@ const TableFactory: React.FC<TableFactoryProps> = ({ fetchData, defineColumns })
       showRowsPerPage: false,
     },
   });
-
+  
   return <MantineReactTable table={table} />;
 };
 
-export default TableFactory;
+export default EmployeesTable;

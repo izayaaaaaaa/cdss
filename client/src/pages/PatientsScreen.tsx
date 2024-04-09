@@ -5,7 +5,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { SimpleSidebar } from '../components/SidebarComponent';
-import { TableFactory } from '../components';
+import { PatientsTable } from '../components';
 import { PatientsCRUD } from '../services';
 
 const defineColumns = () => [
@@ -35,7 +35,7 @@ const Patients = () => {
       <Box ml={50}>
         <Heading mb={2}>Patients</Heading>
         <Text mb={7}>Patients of Apex Medical Center</Text>
-        <TableFactory fetchData={fetchPatientsData} defineColumns={defineColumns} />
+        <PatientsTable fetchData={fetchPatientsData} defineColumns={defineColumns} />
       </Box>
     </HStack>
     );
