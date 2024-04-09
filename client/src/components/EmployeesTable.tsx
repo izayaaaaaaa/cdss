@@ -20,6 +20,7 @@ type Person = {
   gender: string;
   phoneNumber: string;
   emailAddress: string;
+  available: string;
 };
 
 const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }) => {
@@ -27,7 +28,7 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns 
   
   useEffect(() => {
     fetchData().then((fetchedData) => {
-      // console.log('useEffect fetchedData: ', fetchedData);
+      console.log('useEffect fetchedData: ', fetchedData);
       
       const formattedData: Person[] = fetchedData.map((person: any) => ({
         name: person.Name,
@@ -35,8 +36,9 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns 
         gender: person.Gender,
         phoneNumber: person.PhoneNumber,
         emailAddress: person.EmailAddress,
+        available: person.Availability.toString(),
       }));
-      // console.log('useEffect formattedData: ', formattedData);
+      console.log('useEffect formattedData: ', formattedData);
       
       setData(formattedData);
     });
@@ -63,23 +65,23 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns 
     positionActionsColumn: 'last',
     renderRowActions: ({ row }) => (
       <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-      <ActionIcon
-      color="orange"
-      onClick={() => {
-        table.setEditingRow(row);
-      }}
-      >
-      <IconEdit />
-      </ActionIcon>
-      <ActionIcon
-      color="red"
-      onClick={() => {
-        data.splice(row.index, 1); //assuming simple data table
-        setData([...data]);
-      }}
-      >
-      <IconTrash />
-      </ActionIcon>
+        <ActionIcon
+          color="orange"
+          onClick={() => {
+            table.setEditingRow(row);
+          }}
+        >
+          <IconEdit />
+        </ActionIcon>
+        <ActionIcon
+          color="red"
+          onClick={() => {
+            data.splice(row.index, 1); //assuming simple data table
+            setData([...data]);
+          }}
+        >
+          <IconTrash />
+        </ActionIcon>
       </Box>
     ),
     initialState: { pagination: { pageIndex: 0, pageSize: 5 }},

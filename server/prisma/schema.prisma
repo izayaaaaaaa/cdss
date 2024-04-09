@@ -28,6 +28,7 @@ model Doctor {
   EmailAddress String
   User         User      @relation(fields: [UserID], references: [UserID])
   Patient      Patient[]
+  Availability Boolean   @default(true)
 
   @@map(name: "doctors")
 }
@@ -42,6 +43,7 @@ model Nurse {
   EmailAddress String
   User         User      @relation(fields: [UserID], references: [UserID])
   Patient      Patient[]
+  Availability Boolean   @default(true)
 
   @@map(name: "nurses")
 }

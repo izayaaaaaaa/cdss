@@ -17,10 +17,11 @@ import { EmployeesTable } from '../components';
 const Employees = () => {
   const defineColumns = () => [
     { accessorKey: 'name', header: 'Name' },
-    { accessorKey: 'age', header: 'Age' },
-    { accessorKey: 'gender', header: 'Gender' },
+    { accessorKey: 'age', header: 'Age', size: 100 },
+    { accessorKey: 'gender', header: 'Gender', size: 100 },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'emailAddress', header: 'Email Address' },
+    { accessorKey: 'available', header: 'Available' },
   ];
 
   const fetchDoctorsData = async () => {
