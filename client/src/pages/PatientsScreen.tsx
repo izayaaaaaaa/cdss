@@ -1,5 +1,6 @@
 import { 
   Box, 
+  Button, 
   Heading,
   HStack,
   Text,
@@ -71,14 +72,42 @@ const fetchPatientsData = async () => {
   }
 }
 
+// const updatePatient = async (id: number, payload: any) => {
+//   try {
+//     const updatedPatient = await PatientsCRUD.updatePatient(id, payload);
+//     console.log('updatePatient response: ', updatedPatient);
+
+//     return updatedPatient;
+//   } catch (error) {
+//     console.error('Failed to update patient:', error);
+//   }
+// }
+
+// const createPatient = async (patientData: any) => {
+//   try {
+//     const createdPatient = await PatientsCRUD.createPatient(patientData);
+//     console.log('createPatient response: ', createdPatient);
+
+//     return createdPatient;
+//   } catch (error) {
+//     console.error('Failed to create patient:', error);
+//   }
+// }
+
 const Patients = () => {
   return (
     <HStack background="#E0EAF3">
       <SimpleSidebar />
       
       <Box ml={50}>
-        <Heading mb={2} color={"#345673"}>Patients</Heading>
-        <Text mb={7} color={"#345673"}>Patients of Apex Medical Center</Text>
+        <HStack justifyContent={"space-between"}>
+          <Box>
+            <Heading mb={2} color={"#345673"}>Patients</Heading>
+            <Text mb={7} color={"#345673"}>Patients of Apex Medical Center</Text>
+          </Box>
+          <Button colorScheme="facebook" size="lg" onClick={() => console.log('Create Patient')}>Create Patient</Button>
+        </HStack>
+        
         <PatientsTable fetchData={fetchPatientsData} defineColumns={defineColumns} />
       </Box>
     </HStack>
