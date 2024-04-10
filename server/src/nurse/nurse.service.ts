@@ -5,9 +5,6 @@ import { UpdateNurseDto } from './dto';
 @Injectable()
 export class NurseService {
   constructor(private prisma: PrismaService) {}
-  // create(createNurseDto: CreateNurseDto) {
-  //   return 'This action adds a new nurse';
-  // }
 
   findAll() {
     return this.prisma.nurse.findMany();
@@ -38,8 +35,4 @@ export class NurseService {
       },
     });
   }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} nurse`;
-  // }
 }
