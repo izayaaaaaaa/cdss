@@ -7,6 +7,7 @@ import {
 } from 'mantine-react-table';
 import { ActionIcon, Box } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
+import { DoctorsCRUD } from '../services';
 
 interface TableFactoryProps {
   fetchData: () => Promise<any>;
@@ -96,13 +97,24 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
       <IconEdit />
       </ActionIcon>
       <ActionIcon
-      color="red"
-      onClick={() => {
-        data.splice(row.index, 1); //assuming simple data table
-        setData([...data]);
-      }}
+        color="red"
+        onClick={async () => {
+          // data.splice(row.index, 1); //assuming simple data table
+          // setData([...data]);
+          const rowProfileID = data[row.index].id;
+          console.log('rowProfileID: ', rowProfileID);
+          try {
+            await DoctorsCRUD.deleteDoctor(rowProfileID);
+            // Remove the deleted doctor from the local state
+            const updatedData = data.filter(item => item.id !== rowProfileID);
+            setData(updatedData);
+          } catch (error) {
+            console.error('Failed to delete doctor:', error);
+            // Optionally, show an error message to the user
+          }
+        }}
       >
-      <IconTrash />
+        <IconTrash />
       </ActionIcon>
       </Box>
     ),

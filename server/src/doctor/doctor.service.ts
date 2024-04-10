@@ -35,4 +35,10 @@ export class DoctorService {
       },
     });
   }
+
+  async remove(id: number) {
+    return await this.prisma.doctor.delete({
+      where: { ProfileID: id },
+    });
+  }
 }

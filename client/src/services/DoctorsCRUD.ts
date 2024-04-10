@@ -14,8 +14,6 @@ const getAllDoctors = async () => {
   }
 };
 
-const getDoctor = async () => {};
-
 const updateDoctor = async (id: number, payload: any) => {
   console.log('updateDoctor service id: ', id);
   console.log('updateDoctor service payload: ', payload);
@@ -53,10 +51,28 @@ const updateDoctor = async (id: number, payload: any) => {
   }
  };
 
+ const deleteDoctor = async (id: number) => {
+  try {
+    const response = await fetch(`${BASE_URL}/doctor/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error deleting doctor:', error);
+    throw error;
+  }
+ };
+
 const DoctorsCRUD = {
   getAllDoctors,
-  getDoctor,
   updateDoctor,
+  deleteDoctor,
 };
 
 export default DoctorsCRUD;
