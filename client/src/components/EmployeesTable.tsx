@@ -6,13 +6,14 @@ import {
   type MRT_ColumnDef,
 } from 'mantine-react-table';
 import { ActionIcon, Box } from '@mantine/core';
-import { IconEdit, IconTrash } from '@tabler/icons-react';
-import { DoctorsCRUD } from '../services';
+import { IconEdit } from '@tabler/icons-react';
+// import { DoctorsCRUD } from '../services';
 
 interface TableFactoryProps {
   fetchData: () => Promise<any>;
   defineColumns: () => MRT_ColumnDef<any>[];
   updateEmployee: (id: number, payload: any) => Promise<any>;
+  deleteEmployee: (id: number) => Promise<any>;
 }
 
 type Person = {
@@ -25,7 +26,7 @@ type Person = {
   availability: string;
 };
 
-const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns, updateEmployee }) => {
+const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns, updateEmployee, deleteEmployee }) => {
   const [data, setData] = useState<any[]>([]);
   const [refreshTable, setRefreshTable] = useState<boolean>(false);
   
@@ -96,26 +97,24 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
       >
       <IconEdit />
       </ActionIcon>
-      <ActionIcon
+      {/* <ActionIcon
         color="red"
         onClick={async () => {
-          // data.splice(row.index, 1); //assuming simple data table
-          // setData([...data]);
           const rowProfileID = data[row.index].id;
-          console.log('rowProfileID: ', rowProfileID);
+          console.log('Delete rowProfileID:', rowProfileID);
           try {
-            await DoctorsCRUD.deleteDoctor(rowProfileID);
-            // Remove the deleted doctor from the local state
+            await deleteEmployee(rowProfileID);
+            // Remove the deleted employee from the local state
             const updatedData = data.filter(item => item.id !== rowProfileID);
             setData(updatedData);
           } catch (error) {
-            console.error('Failed to delete doctor:', error);
+            console.error('Failed to delete employee:', error);
             // Optionally, show an error message to the user
           }
-        }}
+       }}
       >
         <IconTrash />
-      </ActionIcon>
+      </ActionIcon> */}
       </Box>
     ),
     initialState: { pagination: { pageIndex: 0, pageSize: 7 }},

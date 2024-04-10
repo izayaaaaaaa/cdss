@@ -9,21 +9,27 @@ export class PatientService {
   create(dto: CreatePatientDto) {
     console.log('service dto: ', dto);
 
+    // convert age string to number
+    const convertedAge = parseInt(dto.Age);
+
+    // convert date to needed format
+    const convertedDate = new Date(dto.Date_Admitted);
+
     return this.prisma.patient.create({
       data: {
         Name: dto.Name,
-        Age: dto.Age,
+        Age: convertedAge,
         Gender: dto.Gender,
         PhoneNumber: dto.PhoneNumber,
         EmailAddress: dto.EmailAddress,
         ChiefComplaint: dto.ChiefComplaint,
         MedicalHistory: dto.MedicalHistory,
-        OutpatientAdmissionStatus: dto.OutpatientAdmissionStatus,
-        Date_Admitted: dto.Date_Admitted,
-        AssignedRoomNumber: dto.AssignedRoomNumber,
-        BedNumber: dto.BedNumber,
-        PhysicianInCharge: 1,
-        NurseProfileID: 1,
+        // OutpatientAdmissionStatus: dto.OutpatientAdmissionStatus,
+        Date_Admitted: convertedDate,
+        // AssignedRoomNumber: dto.AssignedRoomNumber,
+        // BedNumber: dto.BedNumber,
+        // PhysicianInCharge: 1,
+        // NurseProfileID: 1,
       },
     });
   }
@@ -40,10 +46,14 @@ export class PatientService {
     console.log('id: ', id);
     console.log('service dto: ', dto);
 
+    // convert age string to number
+    const convertedAge = parseInt(dto.Age);
+
     return await this.prisma.patient.update({
       where: { ProfileID: id },
       data: {
         ...dto,
+        Age: convertedAge,
       },
     });
   }

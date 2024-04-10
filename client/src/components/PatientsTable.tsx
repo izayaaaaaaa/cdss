@@ -23,8 +23,8 @@ type Person = {
   gender: string;
   phoneNumber: string;
   emailAddress: string;
-  physicianName: string;
-  nurseName: string;
+  physicianName: string | null;
+  nurseName: string | null;
 };
 
 const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }) => {
@@ -42,8 +42,8 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }
         gender: person.Gender,
         phoneNumber: person.PhoneNumber,
         emailAddress: person.EmailAddress,
-        physicianName: person.physicianName.Name,
-        nurseName: person.nurseName.Name,
+        physicianName: person.physicianName ? person.physicianName.Name : null,
+        nurseName: person.nurseName ? person.nurseName.Name : null,
       }));
       console.log('useEffect formattedData: ', formattedData);
       
