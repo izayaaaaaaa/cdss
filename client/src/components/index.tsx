@@ -1,4 +1,5 @@
-import TableFactory from './TableFactory';
+import EmployeesTable from './EmployeesTable';
+import PatientsTable from './PatientsTable';
 import { SidebarContent } from "./SidebarComponent";
 
-export { TableFactory, SidebarContent };
+export { EmployeesTable, PatientsTable, SidebarContent };

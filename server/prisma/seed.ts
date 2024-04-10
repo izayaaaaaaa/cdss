@@ -21,6 +21,7 @@ async function main() {
         Gender: 'Male',
         PhoneNumber: `123456789${i}`,
         EmailAddress: `doctor${i}@example.com`,
+        Availability: true,
       },
     });
 
@@ -45,6 +46,7 @@ async function main() {
         Gender: 'Female',
         PhoneNumber: `987654321${i}`,
         EmailAddress: `nurse${i}@example.com`,
+        Availability: true,
       },
     });
 

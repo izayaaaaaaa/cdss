@@ -12,21 +12,23 @@ import {
 } from '@chakra-ui/react';
 import { SimpleSidebar } from '../components/SidebarComponent';
 import { DoctorsCRUD, NursesCRUD } from '../services';
-import { TableFactory } from '../components';
+import { EmployeesTable } from '../components';
 
 const Employees = () => {
   const defineColumns = () => [
+    // { accessorKey: 'id', header: 'ID', size: 50}
     { accessorKey: 'name', header: 'Name' },
-    { accessorKey: 'age', header: 'Age' },
-    { accessorKey: 'gender', header: 'Gender' },
+    { accessorKey: 'age', header: 'Age', size: 100 },
+    { accessorKey: 'gender', header: 'Gender', size: 100 },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'emailAddress', header: 'Email Address' },
+    { accessorKey: 'available', header: 'Available', size: 100 },
   ];
 
   const fetchDoctorsData = async () => {
     try {
       const doctors = await DoctorsCRUD.getAllDoctors();
-      // console.log('fetchDoctorsData response: ', doctors);
+      console.log('fetchDoctorsData response: ', doctors);
 
       return doctors;
     } catch (error) {
@@ -45,13 +47,36 @@ const Employees = () => {
     }
   }
 
+  const updateDoctor = async (id: number, payload: any) => {
+    try {
+      const updatedDoctor = await DoctorsCRUD.updateDoctor(id, payload);
+      console.log('updateDoctor response: ', updatedDoctor);
+
+      return updatedDoctor;
+    } catch (error) {
+      console.error('Failed to update doctor:', error);
+    }
+  }
+
+  const updateNurse = async (id: number, payload: any) => {
+    try {
+      const updatedNurse = await NursesCRUD.updateNurse(id, payload);
+      console.log('updateNurse response: ', updatedNurse);
+
+      return updatedNurse;
+    } catch (error) {
+      console.error('Failed to update doctor:', error);
+    }
+   };
+   
+
   return (
     <HStack background="#E0EAF3">
       <SimpleSidebar />
       
       <Box ml={50}>
-        <Heading mb={2}>Employees</Heading>
-        <Text mb={7}>Members of Apex Medical Center</Text>
+        <Heading mb={2} color={"#345673"}>Employees</Heading>
+        <Text mb={7} color={"#345673"}>Members of Apex Medical Center</Text>
         
         <Tabs>
           <TabList>
@@ -60,10 +85,10 @@ const Employees = () => {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <TableFactory fetchData={fetchDoctorsData} defineColumns={defineColumns} />
+              <EmployeesTable updateEmployee={updateDoctor} fetchData={fetchDoctorsData} defineColumns={defineColumns} />
             </TabPanel>
             <TabPanel>
-              <TableFactory fetchData={fetchNursesData} defineColumns={defineColumns} />
+              <EmployeesTable updateEmployee={updateNurse} fetchData={fetchNursesData} defineColumns={defineColumns} />
             </TabPanel>
           </TabPanels>
         </Tabs>

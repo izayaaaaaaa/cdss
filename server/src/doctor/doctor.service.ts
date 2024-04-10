@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-// import { UpdateDoctorDto } from './dto/update-doctor.dto';
+import { UpdateDoctorDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -10,11 +10,29 @@ export class DoctorService {
     return this.prisma.doctor.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} doctor`;
+  getDoctorName(ProfileID: number) {
+    return this.prisma.doctor.findUnique({
+      where: { ProfileID },
+      select: {
+        Name: true,
+      },
+    });
   }
 
-  // update(id: number, updateDoctorDto: UpdateDoctorDto) {
-  //   return `This action updates a #${id} doctor`;
-  // }
+  async update(id: number, dto: UpdateDoctorDto) {
+    console.log('id: ', id);
+    console.log('service dto: ', dto);
+
+    return await this.prisma.doctor.update({
+      where: { ProfileID: id },
+      data: {
+        Name: dto.name,
+        Age: dto.age,
+        Gender: dto.gender,
+        PhoneNumber: dto.phoneNumber,
+        EmailAddress: dto.emailAddress,
+        Availability: dto.availability,
+      },
+    });
+  }
 }

@@ -20,14 +20,16 @@ type Person = {
   gender: string;
   phoneNumber: string;
   emailAddress: string;
+  physicianName: string;
+  nurseName: string;
 };
 
-const TableFactory: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }) => {
+const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }) => {
   const [data, setData] = useState<any[]>([]);
   
   useEffect(() => {
     fetchData().then((fetchedData) => {
-      // console.log('useEffect fetchedData: ', fetchedData);
+      console.log('useEffect fetchedData: ', fetchedData);
       
       const formattedData: Person[] = fetchedData.map((person: any) => ({
         name: person.Name,
@@ -35,8 +37,10 @@ const TableFactory: React.FC<TableFactoryProps> = ({ fetchData, defineColumns })
         gender: person.Gender,
         phoneNumber: person.PhoneNumber,
         emailAddress: person.EmailAddress,
+        physicianName: person.physicianName.Name,
+        nurseName: person.nurseName.Name,
       }));
-      // console.log('useEffect formattedData: ', formattedData);
+      console.log('useEffect formattedData: ', formattedData);
       
       setData(formattedData);
     });
@@ -48,17 +52,18 @@ const TableFactory: React.FC<TableFactoryProps> = ({ fetchData, defineColumns })
     table,
     row,
     values,
- }) => {
+  }) => {
     const updatedData = [...data];
     updatedData[row.index] = values;
     setData(updatedData);
     table.setEditingRow(null);
     // api call to update the row in the database
   }
-
+  
   const table = useMantineReactTable({
     columns,
     data,
+    enableGrouping: true,
     enableRowActions: true,
     positionActionsColumn: 'last',
     renderRowActions: ({ row }) => (
@@ -80,15 +85,36 @@ const TableFactory: React.FC<TableFactoryProps> = ({ fetchData, defineColumns })
         >
           <IconTrash />
         </ActionIcon>
+        <ActionIcon
+          color="red"
+          onClick={() => {
+            data.splice(row.index, 1); //assuming simple data table
+            setData([...data]);
+          }}
+        >
+          <IconTrash />
+        </ActionIcon>
+        <ActionIcon
+          color="red"
+          onClick={() => {
+            data.splice(row.index, 1); //assuming simple data table
+            setData([...data]);
+          }}
+        >
+          <IconTrash />
+        </ActionIcon>
       </Box>
     ),
-    initialState: { pagination: { pageIndex: 0, pageSize: 5 }},
+    initialState: { 
+      pagination: { pageIndex: 0, pageSize: 8 },
+      // grouping: 
+    },
     mantinePaginationProps: {
       showRowsPerPage: false,
     },
   });
-
+  
   return <MantineReactTable table={table} />;
 };
 
-export default TableFactory;
+export default PatientsTable;
