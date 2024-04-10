@@ -1,7 +1,6 @@
 import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
-// import { UpdateDoctorDto } from './dto/update-doctor.dto';
-
+import { UpdateDoctorDto } from './dto';
 @Controller('doctor')
 export class DoctorController {
   constructor(private readonly doctorService: DoctorService) {}
@@ -16,8 +15,9 @@ export class DoctorController {
     return this.doctorService.getDoctorName(+ProfileID);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateDoctorDto: UpdateDoctorDto) {
-  //   return this.doctorService.update(+id, updateDoctorDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() dto: UpdateDoctorDto) {
+    console.log('controller dto: ', dto);
+    return this.doctorService.update(+id, dto);
+  }
 }

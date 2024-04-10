@@ -3,7 +3,6 @@ import {
   MRT_TableOptions,
   MantineReactTable,
   useMantineReactTable,
-  // useMantineReactTable,
   type MRT_ColumnDef,
 } from 'mantine-react-table';
 import { ActionIcon, Box } from '@mantine/core';
@@ -12,25 +11,29 @@ import { IconEdit, IconTrash } from '@tabler/icons-react';
 interface TableFactoryProps {
   fetchData: () => Promise<any>;
   defineColumns: () => MRT_ColumnDef<any>[];
+  updateEmployee: (id: number, payload: any) => Promise<any>;
 }
 
 type Person = {
+  id: number;
   name: string;
   age: number;
   gender: string;
   phoneNumber: string;
   emailAddress: string;
-  available: string;
+  availability: string;
 };
 
-const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }) => {
+const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns, updateEmployee }) => {
   const [data, setData] = useState<any[]>([]);
+  const [refreshTable, setRefreshTable] = useState<boolean>(false);
   
   useEffect(() => {
     fetchData().then((fetchedData) => {
       console.log('useEffect fetchedData: ', fetchedData);
       
       const formattedData: Person[] = fetchedData.map((person: any) => ({
+        id: person.ProfileID,
         name: person.Name,
         age: person.Age,
         gender: person.Gender,
@@ -42,21 +45,40 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns 
       
       setData(formattedData);
     });
-  }, [fetchData]);
+  }, [fetchData, refreshTable]);
   
   const columns = useMemo(() => defineColumns(), [defineColumns]);
   
-  const handleSaveRow: MRT_TableOptions<any>['onEditingRowSave'] = async ({
-    table,
-    row,
-    values,
-  }) => {
-    const updatedData = [...data];
-    updatedData[row.index] = values;
-    setData(updatedData);
-    table.setEditingRow(null);
-    // api call to update the row in the database
-  }
+  const handleSaveRow: MRT_TableOptions<any>['onEditingRowSave'] = async ({ values, row, table, exitEditingMode }) => {
+    // validation function to be implemented
+
+    console.log('handleSaveRow values: ', values);
+    // console.log('handleSaveRow row: ', row);
+    // console.log('handleSaveRow table: ', table);
+
+    const rowProfileID = data[row.index].id;
+    
+    const updatedEmployeeDto = {
+      name: values.name,
+      age: values.age,
+      gender: values.gender,
+      phoneNumber: values.phoneNumber,
+      emailAddress: values.emailAddress,
+      availability: values.available,
+    };
+
+    console.log('handleSaveRow updatedEmployeeDto: ', updatedEmployeeDto);
+    console.log('handleSaveRow updatedEmployeeID: ', rowProfileID);
+    
+    try {
+      const updatedEmployee = await updateEmployee(rowProfileID, updatedEmployeeDto);
+      console.log('Employee updated successfully:', updatedEmployee);
+      exitEditingMode();
+      setRefreshTable(!refreshTable);
+    } catch (error) {
+      console.error('Failed to update doctor:', error);
+    }
+  };
   
   const table = useMantineReactTable({
     columns,
@@ -65,29 +87,30 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns 
     positionActionsColumn: 'last',
     renderRowActions: ({ row }) => (
       <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-        <ActionIcon
-          color="orange"
-          onClick={() => {
-            table.setEditingRow(row);
-          }}
-        >
-          <IconEdit />
-        </ActionIcon>
-        <ActionIcon
-          color="red"
-          onClick={() => {
-            data.splice(row.index, 1); //assuming simple data table
-            setData([...data]);
-          }}
-        >
-          <IconTrash />
-        </ActionIcon>
+      <ActionIcon
+      color="orange"
+        onClick={() => {
+          table.setEditingRow(row);
+        }}
+      >
+      <IconEdit />
+      </ActionIcon>
+      <ActionIcon
+      color="red"
+      onClick={() => {
+        data.splice(row.index, 1); //assuming simple data table
+        setData([...data]);
+      }}
+      >
+      <IconTrash />
+      </ActionIcon>
       </Box>
     ),
     initialState: { pagination: { pageIndex: 0, pageSize: 7 }},
     mantinePaginationProps: {
       showRowsPerPage: false,
     },
+    onEditingRowSave: handleSaveRow,
   });
   
   return <MantineReactTable table={table} />;

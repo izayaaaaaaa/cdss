@@ -16,6 +16,7 @@ import { EmployeesTable } from '../components';
 
 const Employees = () => {
   const defineColumns = () => [
+    // { accessorKey: 'id', header: 'ID', size: 50}
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'age', header: 'Age', size: 100 },
     { accessorKey: 'gender', header: 'Gender', size: 100 },
@@ -46,6 +47,40 @@ const Employees = () => {
     }
   }
 
+  const updateDoctor = async (id: number, payload: any) => {
+    try {
+      const updatedDoctor = await DoctorsCRUD.updateDoctor(id, payload);
+      console.log('updateDoctor response: ', updatedDoctor);
+
+      return updatedDoctor;
+    } catch (error) {
+      console.error('Failed to update doctor:', error);
+    }
+  }
+
+  // const updateNurse = async (id: number, dto: UpdateNurseDto) => {
+  //   try {
+  //      const response = await fetch(`${BASE_URL}/nurse/${id}`, {
+  //        method: 'PATCH',
+  //        headers: {
+  //          'Content-Type': 'application/json',
+  //        },
+  //        body: JSON.stringify(dto),
+  //      });
+   
+  //      if (!response.ok) {
+  //        throw new Error('Network response was not ok');
+  //      }
+   
+  //      const data = await response.json();
+  //      return data;
+  //   } catch (error) {
+  //      console.error('Error updating nurse:', error);
+  //      throw error;
+  //   }
+  //  };
+   
+
   return (
     <HStack background="#E0EAF3">
       <SimpleSidebar />
@@ -61,10 +96,10 @@ const Employees = () => {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <EmployeesTable fetchData={fetchDoctorsData} defineColumns={defineColumns} />
+              <EmployeesTable updateEmployee={updateDoctor} fetchData={fetchDoctorsData} defineColumns={defineColumns} />
             </TabPanel>
             <TabPanel>
-              <EmployeesTable fetchData={fetchNursesData} defineColumns={defineColumns} />
+              {/* <EmployeesTable fetchData={fetchNursesData} defineColumns={defineColumns} /> */}
             </TabPanel>
           </TabPanels>
         </Tabs>
