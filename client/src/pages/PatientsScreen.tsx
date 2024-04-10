@@ -77,8 +77,8 @@ const Patients = () => {
       <SimpleSidebar />
       
       <Box ml={50}>
-        <Heading mb={2}>Patients</Heading>
-        <Text mb={7}>Patients of Apex Medical Center</Text>
+        <Heading mb={2} color={"#345673"}>Patients</Heading>
+        <Text mb={7} color={"#345673"}>Patients of Apex Medical Center</Text>
         <PatientsTable fetchData={fetchPatientsData} defineColumns={defineColumns} />
       </Box>
     </HStack>

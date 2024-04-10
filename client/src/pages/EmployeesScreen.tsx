@@ -51,8 +51,8 @@ const Employees = () => {
       <SimpleSidebar />
       
       <Box ml={50}>
-        <Heading mb={2}>Employees</Heading>
-        <Text mb={7}>Members of Apex Medical Center</Text>
+        <Heading mb={2} color={"#345673"}>Employees</Heading>
+        <Text mb={7} color={"#345673"}>Members of Apex Medical Center</Text>
         
         <Tabs>
           <TabList>
