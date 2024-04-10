@@ -5,12 +5,6 @@ import { UpdateNurseDto } from './dto';
 @Controller('nurse')
 export class NurseController {
   constructor(private readonly nurseService: NurseService) {}
-
-  // @Post()
-  // create(@Body() createNurseDto: CreateNurseDto) {
-  //   return this.nurseService.create(createNurseDto);
-  // }
-
   @Get()
   findAll() {
     return this.nurseService.findAll();
@@ -25,9 +19,4 @@ export class NurseController {
   update(@Param('id') id: string, @Body() dto: UpdateNurseDto) {
     return this.nurseService.update(+id, dto);
   }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.nurseService.remove(+id);
-  // }
 }

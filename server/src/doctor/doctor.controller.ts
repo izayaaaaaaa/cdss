@@ -1,4 +1,4 @@
-import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
 import { UpdateDoctorDto } from './dto';
 @Controller('doctor')
@@ -19,5 +19,10 @@ export class DoctorController {
   update(@Param('id') id: string, @Body() dto: UpdateDoctorDto) {
     console.log('controller dto: ', dto);
     return this.doctorService.update(+id, dto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.doctorService.remove(+id);
   }
 }

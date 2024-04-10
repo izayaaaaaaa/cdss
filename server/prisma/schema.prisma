@@ -57,14 +57,14 @@ model Patient {
   EmailAddress              String
   ChiefComplaint            String
   MedicalHistory            String
-  OutpatientAdmissionStatus Boolean
-  Date_Admitted             DateTime
-  AssignedRoomNumber        Int
-  BedNumber                 Int
-  PhysicianInCharge         Int
-  NurseNotes                String
-  FlowChart                 String
-  NurseProfileID            Int
+  OutpatientAdmissionStatus Boolean?
+  Date_Admitted             DateTime?
+  AssignedRoomNumber        Int?
+  BedNumber                 Int?
+  PhysicianInCharge         Int?
+  NurseNotes                String?
+  FlowChart                 String?
+  NurseProfileID            Int?
   DoctorInCharge            Doctor?      @relation(fields: [PhysicianInCharge], references: [ProfileID])
   NurseInCharge             Nurse?       @relation(fields: [NurseProfileID], references: [ProfileID])
   VitalSigns                VitalSigns[]
