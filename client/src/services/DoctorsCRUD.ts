@@ -21,8 +21,7 @@ const updateDoctor = async (id: number, payload: any) => {
   console.log('updateDoctor service payload: ', payload);
 
   // convert availability to boolean
-  payload.availability = payload.availability.tolowerCase();
-  if (payload.availability === 'true') {
+  if (payload.availability.tolowerCase === 'true') {
     payload.availability = true;
   } else {
     payload.availability = false;

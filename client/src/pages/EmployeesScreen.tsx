@@ -58,27 +58,16 @@ const Employees = () => {
     }
   }
 
-  // const updateNurse = async (id: number, dto: UpdateNurseDto) => {
-  //   try {
-  //      const response = await fetch(`${BASE_URL}/nurse/${id}`, {
-  //        method: 'PATCH',
-  //        headers: {
-  //          'Content-Type': 'application/json',
-  //        },
-  //        body: JSON.stringify(dto),
-  //      });
-   
-  //      if (!response.ok) {
-  //        throw new Error('Network response was not ok');
-  //      }
-   
-  //      const data = await response.json();
-  //      return data;
-  //   } catch (error) {
-  //      console.error('Error updating nurse:', error);
-  //      throw error;
-  //   }
-  //  };
+  const updateNurse = async (id: number, payload: any) => {
+    try {
+      const updatedNurse = await NursesCRUD.updateNurse(id, payload);
+      console.log('updateNurse response: ', updatedNurse);
+
+      return updatedNurse;
+    } catch (error) {
+      console.error('Failed to update doctor:', error);
+    }
+   };
    
 
   return (
@@ -99,7 +88,7 @@ const Employees = () => {
               <EmployeesTable updateEmployee={updateDoctor} fetchData={fetchDoctorsData} defineColumns={defineColumns} />
             </TabPanel>
             <TabPanel>
-              {/* <EmployeesTable fetchData={fetchNursesData} defineColumns={defineColumns} /> */}
+              <EmployeesTable updateEmployee={updateNurse} fetchData={fetchNursesData} defineColumns={defineColumns} />
             </TabPanel>
           </TabPanels>
         </Tabs>
