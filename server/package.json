@@ -7,8 +7,8 @@
   "license": "UNLICENSED",
   "scripts": {
     "prisma:prod:deploy": "prisma migrate deploy",
-    "db:prod:rm": "docker-compose rm dev-db -f",
-    "db:prod:up": "docker-compose up dev-db -d",
+    "db:prod:rm": "docker-compose rm -f dev-db ",
+    "db:prod:up": "docker-compose up -d dev-db ",
     "db:prod:restart": "npm run db:prod:rm && npm run db:prod:up && npm run prisma:prod:deploy",
     "prisma:dev:deploy": "prisma migrate deploy",
     "db:dev:rm": "docker compose rm dev-db -s -f -v",
