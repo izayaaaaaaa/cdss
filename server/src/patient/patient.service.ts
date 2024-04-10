@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreatePatientDto } from './dto';
+import { CreatePatientDto, UpdatePatientDto } from './dto';
 
 @Injectable()
 export class PatientService {
@@ -36,9 +36,17 @@ export class PatientService {
   //   return `This action returns a #${id} patient`;
   // }
 
-  // update(id: number, updatePatientDto: UpdatePatientDto) {
-  //   return `This action updates a #${id} patient`;
-  // }
+  async update(id: number, dto: UpdatePatientDto) {
+    console.log('id: ', id);
+    console.log('service dto: ', dto);
+
+    return await this.prisma.patient.update({
+      where: { ProfileID: id },
+      data: {
+        ...dto,
+      },
+    });
+  }
 
   // remove(id: number) {
   //   return `This action removes a #${id} patient`;
