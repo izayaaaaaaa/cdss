@@ -68,7 +68,24 @@ const Employees = () => {
       console.error('Failed to update doctor:', error);
     }
    };
-   
+
+   const deleteDoctor = async (id: number) => {
+    try {
+      await DoctorsCRUD.deleteDoctor(id);
+      console.log('Doctor deleted successfully:', id);
+    } catch (error) {
+      console.error('Failed to delete doctor:', error);
+    }
+  }
+
+  const deleteNurse = async (id: number) => {
+    try {
+      await NursesCRUD.deleteNurse(id);
+      console.log('Nurse deleted successfully:', id);
+    } catch (error) {
+      console.error('Failed to delete nurse:', error);
+    }
+  }
 
   return (
     <HStack background="#E0EAF3">
@@ -85,10 +102,10 @@ const Employees = () => {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <EmployeesTable updateEmployee={updateDoctor} fetchData={fetchDoctorsData} defineColumns={defineColumns} />
+              <EmployeesTable deleteEmployee={deleteDoctor} updateEmployee={updateDoctor} fetchData={fetchDoctorsData} defineColumns={defineColumns} />
             </TabPanel>
             <TabPanel>
-              <EmployeesTable updateEmployee={updateNurse} fetchData={fetchNursesData} defineColumns={defineColumns} />
+              <EmployeesTable deleteEmployee={deleteNurse} updateEmployee={updateNurse} fetchData={fetchNursesData} defineColumns={defineColumns} />
             </TabPanel>
           </TabPanels>
         </Tabs>

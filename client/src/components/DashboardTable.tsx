@@ -6,14 +6,11 @@ import {
   type MRT_ColumnDef,
 } from 'mantine-react-table';
 import { ActionIcon, Box } from '@mantine/core';
-import { IconEdit } from '@tabler/icons-react';
-// import { DoctorsCRUD } from '../services';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
 
 interface TableFactoryProps {
   fetchData: () => Promise<any>;
   defineColumns: () => MRT_ColumnDef<any>[];
-  updateEmployee: (id: number, payload: any) => Promise<any>;
-  deleteEmployee: (id: number) => Promise<any>;
 }
 
 type Person = {
@@ -26,7 +23,7 @@ type Person = {
   availability: string;
 };
 
-const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns, updateEmployee, deleteEmployee }) => {
+const Dashboard: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }) => {
   const [data, setData] = useState<any[]>([]);
   const [refreshTable, setRefreshTable] = useState<boolean>(false);
   
@@ -41,7 +38,7 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
         gender: person.Gender,
         phoneNumber: person.PhoneNumber,
         emailAddress: person.EmailAddress,
-        available: person.Availability.toString(),
+        // available: person.Availability.toString(),
       }));
       // console.log('useEffect formattedData: ', formattedData);
       
@@ -66,15 +63,15 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
       gender: values.gender,
       phoneNumber: values.phoneNumber,
       emailAddress: values.emailAddress,
-      availability: values.available,
+      // availability: values.available,
     };
 
     // console.log('handleSaveRow updatedEmployeeDto: ', updatedEmployeeDto);
     // console.log('handleSaveRow updatedEmployeeID: ', rowProfileID);
     
     try {
-      const updatedEmployee = await updateEmployee(rowProfileID, updatedEmployeeDto);
-      console.log('Employee updated successfully:', updatedEmployee);
+      // const updatedEmployee = await updateEmployee(rowProfileID, updatedEmployeeDto);
+      // console.log('Employee updated successfully:', updatedEmployee);
       exitEditingMode();
       setRefreshTable(!refreshTable);
     } catch (error) {
@@ -85,38 +82,29 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
   const table = useMantineReactTable({
     columns,
     data,
-    enableRowActions: true,
-    positionActionsColumn: 'last',
-    renderRowActions: ({ row }) => (
-      <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-      <ActionIcon
-      color="orange"
-        onClick={() => {
-          table.setEditingRow(row);
-        }}
-      >
-      <IconEdit />
-      </ActionIcon>
-      {/* <ActionIcon
-        color="red"
-        onClick={async () => {
-          const rowProfileID = data[row.index].id;
-          console.log('Delete rowProfileID:', rowProfileID);
-          try {
-            await deleteEmployee(rowProfileID);
-            // Remove the deleted employee from the local state
-            const updatedData = data.filter(item => item.id !== rowProfileID);
-            setData(updatedData);
-          } catch (error) {
-            console.error('Failed to delete employee:', error);
-            // Optionally, show an error message to the user
-          }
-       }}
-      >
-        <IconTrash />
-      </ActionIcon> */}
-      </Box>
-    ),
+    // enableRowActions: true,
+    // positionActionsColumn: 'last',
+    // renderRowActions: ({ row }) => (
+    //   <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
+    //   <ActionIcon
+    //   color="orange"
+    //     onClick={() => {
+    //       table.setEditingRow(row);
+    //     }}
+    //   >
+    //   <IconEdit />
+    //   </ActionIcon>
+    //   <ActionIcon
+    //   color="red"
+    //   onClick={() => {
+    //     data.splice(row.index, 1); //assuming simple data table
+    //     setData([...data]);
+    //   }}
+    //   >
+    //   <IconTrash />
+    //   </ActionIcon>
+    //   </Box>
+    // ),
     initialState: { pagination: { pageIndex: 0, pageSize: 7 }},
     mantinePaginationProps: {
       showRowsPerPage: false,
@@ -127,4 +115,4 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
   return <MantineReactTable table={table} />;
 };
 
-export default EmployeesTable;
+export default Dashboard;

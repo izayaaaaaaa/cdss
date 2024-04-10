@@ -14,10 +14,6 @@ const getAllNurses = async () => {
   }
 };
 
-const getNurse = async () => {};
-
-const createNurse = async () => {};
-
 const updateNurse = async (id: number, payload: any) => {
   console.log('updateNurse service id: ', id);
   console.log('updateNurse service payload: ', payload);
@@ -55,12 +51,24 @@ const updateNurse = async (id: number, payload: any) => {
   }
 };
 
-const deleteNurse = async () => {};
+const deleteNurse = async (id: number) => {
+  try {
+    const response = await fetch(`${BASE_URL}/nurse/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error deleting nurse:', error);
+    throw error;
+  }
+};
 
 const NursesCRUD = {
   getAllNurses,
-  getNurse,
-  createNurse,
   updateNurse,
   deleteNurse,
 };
