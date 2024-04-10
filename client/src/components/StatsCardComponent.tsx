@@ -18,20 +18,18 @@ const StatsCard = (props: StatsCardProps) => {
   const { title, stat, icon } = props
   return (
     <Stat
-      px={{ base: 2, md: 4 }}
-      py={'5'}
-      shadow={'xl'}
+      p={'5'}
       border={'1px solid'}
       borderColor={useColorModeValue('gray.800', 'gray.500')}
       rounded={'lg'}
       bg={useColorModeValue('white', 'gray.700')}
     >
-      <Flex justifyContent={'space-between'}>
+      <Flex justifyContent={'space-between'} columnGap={10}>
         <Box pl={{ base: 2, md: 4 }}>
-          <StatLabel fontWeight={'medium'} isTruncated>
+          <StatLabel color={'gray.600'} fontSize={'large'} fontWeight={'medium'} isTruncated>
             {title}
           </StatLabel>
-          <StatNumber fontSize={'2xl'} fontWeight={'medium'}>
+          <StatNumber color={'#345673'} fontSize={'3xl'} fontWeight={'medium'}>
             {stat}
           </StatNumber>
         </Box>

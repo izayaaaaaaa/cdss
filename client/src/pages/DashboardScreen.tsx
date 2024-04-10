@@ -8,15 +8,36 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Image,
 } from '@chakra-ui/react';
 import { SimpleSidebar } from '../components/SidebarComponent';
-import { EmployeesTable, StatsCard } from '../components';
-import { DoctorsCRUD, NursesCRUD } from '../services';
-import { BsPerson } from 'react-icons/bs'
-import { FiServer } from 'react-icons/fi'
-import { GoLocation } from 'react-icons/go'
+import { StatsCard } from '../components';
+import { DoctorsCRUD, NursesCRUD, PatientsCRUD } from '../services';
+import doctorLogo from '../assets/images/icons8-doctors-64.png';
+import nurseLogo from '../assets/images/icons8-doctors-100.png';
+import patientLogo from '../assets/images/icons8-patients-64.png';
+import DashboardTable from '../components/DashboardTable';
 
 const Dashboard = () => {
+  interface Patient {
+    ProfileID: number;
+    Name: string;
+    Age: number;
+    Gender: string;
+    PhoneNumber: string;
+    EmailAddress: string;
+    ChiefComplaint: string;
+    MedicalHistory: string;
+    OutpatientAdmissionStatus: boolean;
+    Date_Admitted: string;
+    AssignedRoomNumber: number;
+    BedNumber: number;
+    PhysicianInCharge: number;
+    NurseNotes: string;
+    FlowChart: string;
+    NurseProfileID: number;
+   }
+
   const defineColumns = () => [
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'age', header: 'Age', size: 100 },
@@ -25,6 +46,14 @@ const Dashboard = () => {
     { accessorKey: 'emailAddress', header: 'Email Address' },
     // { accessorKey: 'available', header: 'Available', size: 100 },
   ];
+
+  const getPhysicianName = async (physicianId: Number) => {
+    return await PatientsCRUD.getPhysicianName(physicianId);
+  }
+  
+  const getNurseName = async (nurseId: Number) => {
+    return await PatientsCRUD.getNurseName(nurseId);
+  }
 
   const fetchDoctorsData = async () => {
     try {
@@ -48,27 +77,31 @@ const Dashboard = () => {
     }
   }
 
-  const updateDoctor = async (id: number, payload: any) => {
+  const fetchPatientsData = async () => {
     try {
-      const updatedDoctor = await DoctorsCRUD.updateDoctor(id, payload);
-      console.log('updateDoctor response: ', updatedDoctor);
-
-      return updatedDoctor;
+      const patients = await PatientsCRUD.getAllPatients();
+      console.log('fetchPatientsData response: ', patients);
+  
+      // Fetch physician and nurse names for each patient
+      const patientsDetailed = await Promise.all(patients.map(async (patient: Patient) => {
+        const physicianName = await getPhysicianName(patient.PhysicianInCharge);
+        const nurseName = await getNurseName(patient.NurseProfileID);
+  
+        return {
+          ...patient,
+          physicianName,
+          nurseName,
+        };
+      }));
+  
+      console.log('fetchPatientsData patientsDetailed: ', patientsDetailed);
+  
+      return patientsDetailed;
     } catch (error) {
-      console.error('Failed to update doctor:', error);
+      console.error('Failed to fetch patients:', error);
     }
   }
 
-  const updateNurse = async (id: number, payload: any) => {
-    try {
-      const updatedNurse = await NursesCRUD.updateNurse(id, payload);
-      console.log('updateNurse response: ', updatedNurse);
-
-      return updatedNurse;
-    } catch (error) {
-      console.error('Failed to update doctor:', error);
-    }
-   };
   return (
     <HStack background="#E0EAF3">
       <SimpleSidebar />
@@ -85,22 +118,22 @@ const Dashboard = () => {
             </TabList>
             <TabPanels>
               <TabPanel>
-                <EmployeesTable updateEmployee={updateDoctor} fetchData={fetchDoctorsData} defineColumns={defineColumns} />
+                <DashboardTable fetchData={fetchDoctorsData} defineColumns={defineColumns} />
               </TabPanel>
               <TabPanel>
-                <EmployeesTable updateEmployee={updateNurse} fetchData={fetchNursesData} defineColumns={defineColumns} />
+                <DashboardTable fetchData={fetchNursesData} defineColumns={defineColumns} />
               </TabPanel>
               <TabPanel>
-                <EmployeesTable updateEmployee={updateNurse} fetchData={fetchNursesData} defineColumns={defineColumns} />
+                <DashboardTable fetchData={fetchPatientsData} defineColumns={defineColumns} />
               </TabPanel>
             </TabPanels>
           </Tabs>
 
-          <SimpleGrid columns={1}>
-            <StatsCard title={'Available Doctors'} stat={'5,000'} icon={<BsPerson size={'3em'} />} />
-            <StatsCard title={'Available Nurses'} stat={'1,000'} icon={<FiServer size={'3em'} />} />
-            <StatsCard title={'Total Patients'} stat={'7'} icon={<GoLocation size={'3em'} />} />
-        </SimpleGrid>
+          <SimpleGrid columns={1} spacingY={"40px"} justifyItems={"space-between"}>
+            <StatsCard title={'Available Doctors'} stat={'5,000'} icon={<Image src={doctorLogo} boxSize="3em" />} />
+            <StatsCard title={'Available Nurses'} stat={'1,000'} icon={<Image src={nurseLogo} boxSize="3em" />} />
+            <StatsCard title={'Total Patients'} stat={'7'} icon={<Image src={patientLogo} boxSize="3em" />} />
+          </SimpleGrid>
         </HStack>
       </Box>
     </HStack>
