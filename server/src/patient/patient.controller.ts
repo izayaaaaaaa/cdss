@@ -5,9 +5,7 @@ import {
   Body,
   Patch,
   Param,
-  // Patch,
-  // Param,
-  // Delete,
+  Delete,
 } from '@nestjs/common';
 import { PatientService } from './patient.service';
 import { CreatePatientDto, UpdatePatientDto } from './dto';
@@ -37,8 +35,8 @@ export class PatientController {
     return this.patientService.update(+id, dto);
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.patientService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.patientService.remove(+id);
+  }
 }

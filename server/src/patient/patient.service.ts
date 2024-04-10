@@ -48,7 +48,9 @@ export class PatientService {
     });
   }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} patient`;
-  // }
+  async remove(id: number) {
+    return this.prisma.patient.delete({
+      where: { ProfileID: id },
+    });
+  }
 }
