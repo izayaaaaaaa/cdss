@@ -1,5 +1,4 @@
 import {
-  IconButton,
   Box,
   CloseButton,
   Flex,
@@ -14,7 +13,7 @@ import {
   HStack,
   Image,
 } from '@chakra-ui/react'
-import { FiMenu } from 'react-icons/fi'
+// import { FiMenu } from 'react-icons/fi'
 import { IconType } from 'react-icons'
 import { ReactText } from 'react'
 import { Link } from 'react-router-dom'
@@ -31,13 +30,14 @@ interface LinkItemProps {
   route: string;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'ㅤDashboard', icon: DashboardLogo, route: '/dashboard' },
-  { name: 'ㅤEmployees', icon: EmployeesLogo, route: '/employees' },
-  { name: 'ㅤPatients', icon: PatientsLogo, route: '/patients' },
+  { name: 'Dashboard', icon: DashboardLogo, route: '/dashboard' },
+  { name: 'Employees', icon: EmployeesLogo, route: '/employees' },
+  { name: 'Patients', icon: PatientsLogo, route: '/patients' },
 ]
 
 const SimpleSidebar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+
   return (
     <Box 
       minH="100vh" 
@@ -77,18 +77,12 @@ interface SidebarProps extends BoxProps {
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   return (
     <Box
-      // bg={useColorModeValue('white', 'gray.900')}
-      // borderRight="1px"
-      // borderRightColor={useColorModeValue('gray.200', 'gray.700')}
-      // w={{ base: 'full', md: 60 }}
-      // pos="fixed"
       h="full"
-      // {...rest}
     >
-      <Flex h="20" alignItems="center" mx="8" my="8" justifyContent="space-between">
+      <Flex h="20" alignItems="center" mx="7" my="7" justifyContent="space-between">
         <HStack>
           <Image src={HospitalLogo} alt="hospital logo" boxSize='60px' />
-          <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold" color="#345673">
+          <Text fontSize={{ base: 'lg', md: '2xl' }} fontFamily={{ base: 'sans-serif', md: 'monospace' }} fontWeight="bold" color="#345673">
             Apex Medical Center
           </Text>
         </HStack>
@@ -114,7 +108,7 @@ const NavItem = ({ route, icon, children, ...rest }: NavItemProps) => {
     <Box
       as={Link}
       to={route}
-      style={{ textDecoration: 'none', color: '#345673', fontSize: '1.3rem' }}
+      style={{ textDecoration: 'none', color: '#345673', fontSize: '1.2rem' }}
       _focus={{ boxShadow: 'none' }}
     >
       <Flex
@@ -133,7 +127,7 @@ const NavItem = ({ route, icon, children, ...rest }: NavItemProps) => {
         {icon && (
           <Icon
             mr="4"
-            fontSize="16"
+            fontSize="1.2rem"
             _groupHover={{
               bg: '#345673',
               color: 'white',

@@ -97,9 +97,9 @@ const Dashboard = () => {
           </Tabs>
 
           <SimpleGrid columns={1}>
-            <StatsCard title={'Users'} stat={'5,000'} icon={<BsPerson size={'3em'} />} />
-            <StatsCard title={'Servers'} stat={'1,000'} icon={<FiServer size={'3em'} />} />
-            <StatsCard title={'Datacenters'} stat={'7'} icon={<GoLocation size={'3em'} />} />
+            <StatsCard title={'Available Doctors'} stat={'5,000'} icon={<BsPerson size={'3em'} />} />
+            <StatsCard title={'Available Nurses'} stat={'1,000'} icon={<FiServer size={'3em'} />} />
+            <StatsCard title={'Total Patients'} stat={'7'} icon={<GoLocation size={'3em'} />} />
         </SimpleGrid>
         </HStack>
       </Box>

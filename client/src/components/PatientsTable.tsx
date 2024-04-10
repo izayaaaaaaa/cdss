@@ -3,11 +3,14 @@ import {
   MRT_TableOptions,
   MantineReactTable,
   useMantineReactTable,
-  // useMantineReactTable,
   type MRT_ColumnDef,
 } from 'mantine-react-table';
 import { ActionIcon, Box } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
+import { PatientsCRUD } from '../services';
+import heartMonitorIcon from '../assets/images/icons8-heart-monitor-80.png';
+import flipChartIcon from '../assets/images/icons8-flip-chart-100.png';
+import { Image } from '@chakra-ui/react';
 
 interface TableFactoryProps {
   fetchData: () => Promise<any>;
@@ -26,12 +29,14 @@ type Person = {
 
 const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }) => {
   const [data, setData] = useState<any[]>([]);
+  const [refreshTable, setRefreshTable] = useState<boolean>(false);
   
   useEffect(() => {
     fetchData().then((fetchedData) => {
       console.log('useEffect fetchedData: ', fetchedData);
       
       const formattedData: Person[] = fetchedData.map((person: any) => ({
+        id: person.ProfileID,
         name: person.Name,
         age: person.Age,
         gender: person.Gender,
@@ -44,20 +49,35 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }
       
       setData(formattedData);
     });
-  }, [fetchData]);
+  }, [fetchData, refreshTable]);
   
   const columns = useMemo(() => defineColumns(), [defineColumns]);
   
-  const handleSaveRow: MRT_TableOptions<any>['onEditingRowSave'] = async ({
-    table,
-    row,
-    values,
-  }) => {
-    const updatedData = [...data];
-    updatedData[row.index] = values;
-    setData(updatedData);
-    table.setEditingRow(null);
-    // api call to update the row in the database
+  const handleSaveRow: MRT_TableOptions<any>['onEditingRowSave'] = async ({ values, row, table, exitEditingMode }) => {
+    try {
+      const rowProfileID = data[row.index].id;
+      console.log('handleSaveRow rowProfileID: ', rowProfileID);
+
+      // const updatedData = [...data];
+      // updatedData[row.index] = values;
+
+      const updatedData = {
+        // Name: values.name,
+        // Age: values.age,
+
+      }
+
+      // setData(updatedData);
+      // table.setEditingRow(null);
+      
+      // api call to update the row in the database
+      const updatedPatient = await PatientsCRUD.updatePatient(rowProfileID, updatedData);
+      console.log('handleSaveRow updatedPatient: ', updatedPatient);
+      exitEditingMode();
+      setRefreshTable(!refreshTable);
+    } catch (error) {
+      console.error('Failed to update row:', error);
+    }
   }
   
   const table = useMantineReactTable({
@@ -79,7 +99,7 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }
         <ActionIcon
           color="red"
           onClick={() => {
-            data.splice(row.index, 1); //assuming simple data table
+            data.splice(row.index, 1);
             setData([...data]);
           }}
         >
@@ -87,21 +107,15 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }
         </ActionIcon>
         <ActionIcon
           color="red"
-          onClick={() => {
-            data.splice(row.index, 1); //assuming simple data table
-            setData([...data]);
-          }}
+          onClick={() => {}}
         >
-          <IconTrash />
+          <Image src={heartMonitorIcon} alt="Heart Monitor Icon" />
         </ActionIcon>
         <ActionIcon
           color="red"
-          onClick={() => {
-            data.splice(row.index, 1); //assuming simple data table
-            setData([...data]);
-          }}
+          onClick={() => {}}
         >
-          <IconTrash />
+          <Image src={flipChartIcon} alt="Flip Chart Icon" />
         </ActionIcon>
       </Box>
     ),
@@ -112,9 +126,14 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }
     mantinePaginationProps: {
       showRowsPerPage: false,
     },
+    onEditingRowSave: handleSaveRow,
   });
   
-  return <MantineReactTable table={table} />;
+  return (
+    <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
+      <MantineReactTable table={table} />;
+    </Box>
+  );
 };
 
 export default PatientsTable;

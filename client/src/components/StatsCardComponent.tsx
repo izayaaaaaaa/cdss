@@ -24,6 +24,7 @@ const StatsCard = (props: StatsCardProps) => {
       border={'1px solid'}
       borderColor={useColorModeValue('gray.800', 'gray.500')}
       rounded={'lg'}
+      bg={useColorModeValue('white', 'gray.700')}
     >
       <Flex justifyContent={'space-between'}>
         <Box pl={{ base: 2, md: 4 }}>
@@ -37,7 +38,8 @@ const StatsCard = (props: StatsCardProps) => {
         <Box
           my={'auto'}
           color={useColorModeValue('gray.800', 'gray.200')}
-          alignContent={'center'}>
+          alignContent={'center'}
+        >
           {icon}
         </Box>
       </Flex>
