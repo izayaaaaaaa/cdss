@@ -15,6 +15,8 @@ import { Image } from '@chakra-ui/react';
 interface TableFactoryProps {
   fetchData: () => Promise<any>;
   defineColumns: () => MRT_ColumnDef<any>[];
+  setIsADPIEModalOpen: (isOpen: boolean) => void;
+  setIsVitalSignsModalOpen: (isOpen: boolean) => void;
 }
 
 type Person = {
@@ -27,7 +29,7 @@ type Person = {
   nurseName: string | null;
 };
 
-const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }) => {
+const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns, setIsADPIEModalOpen, setIsVitalSignsModalOpen }) => {
   const [data, setData] = useState<any[]>([]);
   const [refreshTable, setRefreshTable] = useState<boolean>(false);
   
@@ -99,6 +101,7 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }
         <ActionIcon
           color="red"
           onClick={() => {
+
             data.splice(row.index, 1);
             setData([...data]);
           }}
@@ -107,15 +110,21 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }
         </ActionIcon>
         <ActionIcon
           color="red"
-          onClick={() => {}}
+          onClick={() => {
+            console.log('onclick vital signs running');
+            setIsADPIEModalOpen(true);
+          }}
         >
-          <Image src={heartMonitorIcon} alt="Heart Monitor Icon" />
+          <Image src={heartMonitorIcon} alt="Vital Signs" />
         </ActionIcon>
         <ActionIcon
           color="red"
-          onClick={() => {}}
+          onClick={() => {
+            console.log('onclick adpie running');
+            setIsVitalSignsModalOpen(true);
+          }}
         >
-          <Image src={flipChartIcon} alt="Flip Chart Icon" />
+          <Image src={flipChartIcon} alt="ADPIE" />
         </ActionIcon>
       </Box>
     ),
