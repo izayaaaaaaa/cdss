@@ -6,7 +6,7 @@ import {
   type MRT_ColumnDef,
 } from 'mantine-react-table';
 import { ActionIcon, Box } from '@mantine/core';
-import { IconEdit } from '@tabler/icons-react';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
 // import { DoctorsCRUD } from '../services';
 
 interface TableFactoryProps {
@@ -54,7 +54,7 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
   const handleSaveRow: MRT_TableOptions<any>['onEditingRowSave'] = async ({ values, row, table, exitEditingMode }) => {
     // validation function to be implemented
 
-    // console.log('handleSaveRow values: ', values);
+    console.log('handleSaveRow values: ', values);
     // console.log('handleSaveRow row: ', row);
     // console.log('handleSaveRow table: ', table);
 
@@ -69,8 +69,8 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
       availability: values.available,
     };
 
-    // console.log('handleSaveRow updatedEmployeeDto: ', updatedEmployeeDto);
-    // console.log('handleSaveRow updatedEmployeeID: ', rowProfileID);
+    console.log('handleSaveRow updatedEmployeeDto: ', updatedEmployeeDto);
+    console.log('handleSaveRow updatedEmployeeID: ', rowProfileID);
     
     try {
       const updatedEmployee = await updateEmployee(rowProfileID, updatedEmployeeDto);
@@ -97,7 +97,7 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
       >
       <IconEdit />
       </ActionIcon>
-      {/* <ActionIcon
+      <ActionIcon
         color="red"
         onClick={async () => {
           const rowProfileID = data[row.index].id;
@@ -114,7 +114,7 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
        }}
       >
         <IconTrash />
-      </ActionIcon> */}
+      </ActionIcon>
       </Box>
     ),
     initialState: { pagination: { pageIndex: 0, pageSize: 7 }},

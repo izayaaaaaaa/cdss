@@ -20,8 +20,8 @@ export class DoctorService {
   }
 
   async update(id: number, dto: UpdateDoctorDto) {
-    console.log('id: ', id);
-    console.log('service dto: ', dto);
+    // console.log('id: ', id);
+    // console.log('service dto: ', dto);
 
     return await this.prisma.doctor.update({
       where: { ProfileID: id },

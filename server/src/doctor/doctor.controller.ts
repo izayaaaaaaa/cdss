@@ -17,7 +17,7 @@ export class DoctorController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateDoctorDto) {
-    console.log('controller dto: ', dto);
+    // console.log('controller dto: ', dto);
     return this.doctorService.update(+id, dto);
   }
 
