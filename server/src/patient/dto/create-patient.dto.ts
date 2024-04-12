@@ -1,11 +1,4 @@
-import {
-  IsBoolean,
-  // IsDate,
-  IsDateString,
-  IsNotEmpty,
-  // IsNumber,
-  IsString,
-} from 'class-validator';
+import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreatePatientDto {
   @IsNotEmpty()
@@ -36,22 +29,7 @@ export class CreatePatientDto {
   @IsString()
   MedicalHistory: string;
 
-  // @IsNotEmpty()
-  // @IsBoolean()
-  // OutpatientAdmissionStatus: boolean;
-
   @IsNotEmpty()
   @IsDateString()
   Date_Admitted: Date;
-
-  // @IsNotEmpty()
-  // @IsNumber()
-  // AssignedRoomNumber: number;
-
-  // @IsNotEmpty()
-  // @IsNumber()
-  // BedNumber: number;
-
-  // PhysicianInCharge: number;
-  // NurseProfileID: number;
 }

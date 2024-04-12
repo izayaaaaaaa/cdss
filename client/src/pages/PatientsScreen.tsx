@@ -3,7 +3,6 @@ import {
   Button, 
   FormControl, 
   FormLabel, 
-  Grid, 
   Heading,
   HStack,
   Input,
@@ -19,7 +18,6 @@ import { SimpleSidebar } from '../components/SidebarComponent';
 import { PatientsTable } from '../components';
 import { PatientsCRUD } from '../services';
 import { useEffect, useState } from 'react';
-// import { Form } from 'react-router-dom';
 
 interface Patient {
   ProfileID: number;
@@ -76,6 +74,7 @@ const fetchPatientsData = async () => {
         return patient;
       }
       
+      console.log('physician and or nurse id exists');
       const physicianName = await getPhysicianName(patient.PhysicianInCharge);
       const nurseName = await getNurseName(patient.NurseProfileID);
       
@@ -148,6 +147,7 @@ const Patients = () => {
   const [nurseName, setNurseName] = useState<NameObject | {}>({});
 
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshTable, setRefreshTable] = useState<boolean>(false);
 
   const handleCreatePatient = async (event: any) => {
     event.preventDefault();
@@ -177,16 +177,7 @@ const Patients = () => {
     setIsLoading(false);
     setIsEditModalOpen(true);
   }
-  
-  // useEffect(() => {
-  //   if (isEditModalOpen) {
-  //     console.log('useEffect isEditModalOpen triggered');
-  //     getPatient(patientId).then(response => {
-  //       setPatientDetails([response]);
-  //     });
-  //   }
-  // }, [isEditModalOpen, patientId]);
-  
+
   useEffect(() => {
     const fetchNames = async () => {
       if (patientDetails && patientDetails[0]) {
@@ -213,15 +204,6 @@ const Patients = () => {
    fetchNames();
   }, [patientDetails]);
   
-  
-  // const handleEditPatient = async (event: any) => {
-  //   event.preventDefault();
-  //   console.log('handleEditPatient runs');
-  //   console.log('handleEditPatient patient details: ', patientDetails[0]);
-  //   await updatePatient(patientDetails[0].ProfileID, patientDetails[0]);
-  //   // setIsEditModalOpen(false);
-  // }
-
   const handleEditPatient = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log('handleEditPatient runs');
@@ -229,14 +211,23 @@ const Patients = () => {
     // Capture form data
     const formData = new FormData(event.currentTarget);
     const updatedPatientData = Object.fromEntries(formData);
-   
+
+    console.log('Updated patient data: ', updatedPatientData);
+
     // Update the state with the new form data
     setPatientDetails([{ ...patientDetails[0], ...updatedPatientData }]);
    
     // Now, use the updated patientDetails for the update operation
-    console.log('Updated patient details: ', patientDetails[0]);
-    await updatePatient(patientDetails[0].ProfileID, patientDetails[0]);
+    console.log('Updated patient details: ', updatedPatientData);
+    await updatePatient(patientDetails[0].ProfileID, updatedPatientData);
+
+    setRefreshTable(!refreshTable);
+    setIsEditModalOpen(false);
   };
+
+  // useEffect(() => {
+  //   console.log('useEffect Updated patient details: ', patientDetails[0]);
+  //  }, [patientDetails]); // This effect runs whenever patientDetails changes
   
   const handleADPIE = async (event: any) => {
     event.preventDefault();
@@ -264,7 +255,7 @@ const Patients = () => {
           <Button colorScheme="facebook" size="lg" onClick={() => setIsCreateModalOpen(true)}>Create Patient</Button>
         </HStack>
       
-        <PatientsTable patientId={patientId} onEditClick={handleEditClick} fetchData={fetchPatientsData} defineColumns={defineColumns} setIsEditModalOpen={setIsEditModalOpen} setIsADPIEModalOpen={setIsADPIEModalOpen} setIsVitalSignsModalOpen={setIsVitalSignsModalOpen} />
+        <PatientsTable refreshTable={refreshTable} setRefreshTable={setRefreshTable} patientId={patientId} onEditClick={handleEditClick} fetchData={fetchPatientsData} defineColumns={defineColumns} setIsEditModalOpen={setIsEditModalOpen} setIsADPIEModalOpen={setIsADPIEModalOpen} setIsVitalSignsModalOpen={setIsVitalSignsModalOpen} />
       </Box>
       <Modal isOpen={isCreateModalOpen} onClose={handleCreateModalClose}>
         <ModalOverlay />

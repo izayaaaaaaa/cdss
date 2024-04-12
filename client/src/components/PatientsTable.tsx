@@ -20,6 +20,8 @@ interface TableFactoryProps {
   setIsEditModalOpen: (isOpen: boolean) => void;
   patientId: number;
   onEditClick: (id: number) => void;
+  refreshTable: boolean;
+  setRefreshTable: (value: boolean) => void;
 }
 
 type Person = {
@@ -42,10 +44,9 @@ type Person = {
   flowChart: string | null;
 };
 
-const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns, setIsADPIEModalOpen, setIsVitalSignsModalOpen, setIsEditModalOpen, patientId, onEditClick }) => {
+const PatientsTable: React.FC<TableFactoryProps> = ({ refreshTable, setRefreshTable, fetchData, defineColumns, setIsADPIEModalOpen, setIsVitalSignsModalOpen, setIsEditModalOpen, patientId, onEditClick }) => {
   const [data, setData] = useState<any[]>([]);
-  const [refreshTable, setRefreshTable] = useState<boolean>(false);
-  
+
   useEffect(() => {
     fetchData().then((fetchedData) => {
       console.log('useEffect fetchedData: ', fetchedData);
@@ -75,40 +76,9 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns, 
       setData(formattedData);
     });
   }, [fetchData, refreshTable]);
-  
+
   const columns = useMemo(() => defineColumns(), [defineColumns]);
-  
-  // const handleSaveRow: MRT_TableOptions<any>['onEditingRowSave'] = async ({ values, row, table, exitEditingMode }) => {
-  //   try {
-  //     const rowProfileID = data[row.index].id;
-  //     console.log('handleSaveRow rowProfileID: ', rowProfileID);
-  //     console.log('handleSaveRow values: ', values);
 
-  //     const nurseId = data[row.index].nurseId;
-  //     const physicianId = data[row.index].physicianId;
-
-  //     // console.log('handleSaveRow nurseId: ', nurseId);
-  //     // console.log('handleSaveRow physicianId: ', physicianId);
-
-  //     const updatedPatientDto = {
-  //       Name: values.name,
-  //       Age: values.age,
-  //       Gender: values.gender,
-  //       PhoneNumber: values.phoneNumber,
-  //       EmailAddress: values.emailAddress,
-  //       PhysicianInCharge: physicianId,
-  //       NurseProfileID: nurseId,
-  //     }
-
-  //     const updatedPatient = await PatientsCRUD.updatePatient(rowProfileID, updatedPatientDto);
-  //     console.log('handleSaveRow updatedPatient: ', updatedPatient);
-  //     exitEditingMode();
-  //     setRefreshTable(!refreshTable);
-  //   } catch (error) {
-  //     console.error('Failed to update row:', error);
-  //   }
-  // }
-  
   const table = useMantineReactTable({
     columns,
     data,
@@ -130,9 +100,8 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns, 
           onClick={async () => {
             console.log('edit icon clicked');
             setIsEditModalOpen(true);
-            // patientId = data[row.index].id;
             onEditClick(data[row.index].id);
-            console.log('rowProfileID: ', patientId);
+            console.log('rowProfileID: ', data[row.index].id);
           }}
         >
         <IconEdit />

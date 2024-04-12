@@ -78,18 +78,26 @@ const createPatient = async (patientData: any) => {
 
  const updatePatient = async (patientId: number, patientData: any) => {
   try {
-     const response = await fetch(`${BASE_URL}/patient/${patientId}`, {
-       method: 'PUT',
-       headers: {
-         'Content-Type': 'application/json',
-       },
-       body: JSON.stringify(patientData),
-     });
-     if (!response.ok) {
-       throw new Error('Network response was not ok');
-     }
-     const data = await response.json();
-     return data;
+    // convert age, assignedroomnumber and bednumber to string
+    patientData.Age = patientData.Age.toString();
+    patientData.AssignedRoomNumber = patientData.AssignedRoomNumber.toString();
+    patientData.BedNumber = patientData.BedNumber.toString();
+
+    console.log('patientData on patientscrud to be sent: ', patientData);
+
+    const response = await fetch(`${BASE_URL}/patient/${patientId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(patientData),
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    console.log('response returned on patientscrud: ', data);
+    return data;
   } catch (error) {
      console.error('Error updating patient:', error);
      throw error;

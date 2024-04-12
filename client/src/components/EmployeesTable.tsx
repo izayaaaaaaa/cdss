@@ -90,12 +90,12 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
     renderRowActions: ({ row }) => (
       <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
       <ActionIcon
-      color="orange"
-        onClick={() => {
-          table.setEditingRow(row);
-        }}
+        color="orange"
+          onClick={() => {
+            table.setEditingRow(row);
+          }}
       >
-      <IconEdit />
+        <IconEdit />
       </ActionIcon>
       <ActionIcon
         color="red"

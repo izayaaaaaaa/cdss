@@ -34,6 +34,12 @@ export class PatientService {
     });
   }
 
+  find(id: number) {
+    return this.prisma.patient.findUnique({
+      where: { ProfileID: id },
+    });
+  }
+
   findAll() {
     return this.prisma.patient.findMany();
   }
@@ -42,19 +48,86 @@ export class PatientService {
   //   return `This action returns a #${id} patient`;
   // }
 
-  async update(id: number, dto: UpdatePatientDto) {
-    console.log('id: ', id);
-    console.log('service dto: ', dto);
+  async update(patientId: number, dto: UpdatePatientDto) {
+    console.log('service update id: ', patientId);
+    console.log('service update dto: ', dto);
 
-    // convert age string to number
     const convertedAge = parseInt(dto.Age);
+    const convertedDate = new Date(dto.Date_Admitted);
+    const convertedAssignedRoomNumber = parseInt(dto.AssignedRoomNumber);
+    const convertedBedNumber = parseInt(dto.BedNumber);
 
-    return await this.prisma.patient.update({
-      where: { ProfileID: id },
+    await this.prisma.patient.update({
+      where: { ProfileID: patientId },
       data: {
-        ...dto,
+        Name: dto.Name,
         Age: convertedAge,
+        Gender: dto.Gender,
+        PhoneNumber: dto.PhoneNumber,
+        EmailAddress: dto.EmailAddress,
+        ChiefComplaint: dto.ChiefComplaint,
+        MedicalHistory: dto.MedicalHistory,
+        OutpatientAdmissionStatus: dto.OutpatientAdmissionStatus,
+        Date_Admitted: convertedDate,
+        AssignedRoomNumber: convertedAssignedRoomNumber,
+        BedNumber: convertedBedNumber,
+        NurseNotes: dto.NurseNotes,
+        FlowChart: dto.FlowChart,
+        NurseProfileID: dto.NurseProfileID,
       },
+    });
+
+    // connect the physician to the patient
+    // Update the relation to the doctor
+    if (dto.PhysicianInCharge) {
+      await this.prisma.patient.update({
+        where: { ProfileID: patientId },
+        data: {
+          DoctorInCharge: {
+            connect: { ProfileID: dto.PhysicianInCharge },
+          },
+        },
+      });
+    }
+
+    // await this.prisma.doctor.update({
+    //   where: { ProfileID: dto.PhysicianInCharge },
+    //   data: {
+    //     Patient: {
+    //       connect: {
+    //         ProfileID: patientId,
+    //       },
+    //     },
+    //     Availability: false,
+    //   },
+    // });
+
+    if (dto.NurseProfileID) {
+      await this.prisma.patient.update({
+        where: { ProfileID: patientId },
+        data: {
+          NurseInCharge: {
+            connect: { ProfileID: dto.NurseProfileID },
+          },
+        },
+      });
+    }
+
+    // connect the nurse to the patient
+    // await this.prisma.nurse.update({
+    //   where: { ProfileID: dto.NurseProfileID },
+    //   data: {
+    //     Patient: {
+    //       connect: {
+    //         ProfileID: patientId,
+    //       },
+    //     },
+    //     Availability: false,
+    //   },
+    // });
+
+    return this.prisma.patient.findUnique({
+      where: { ProfileID: patientId },
     });
   }
 
