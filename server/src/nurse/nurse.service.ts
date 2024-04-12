@@ -43,7 +43,7 @@ export class NurseService {
   }
 
   getAvailableNurses() {
-    return this.prisma.nurse.count({
+    return this.prisma.nurse.findMany({
       where: {
         Availability: true,
       },
