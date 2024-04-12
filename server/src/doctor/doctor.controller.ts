@@ -10,6 +10,11 @@ export class DoctorController {
     return this.doctorService.findAll();
   }
 
+  @Get('available')
+  getAvailableDoctors() {
+    return this.doctorService.getAvailableDoctors();
+  }
+
   @Get(':id')
   getDoctorName(@Param('id') ProfileID: string) {
     return this.doctorService.getDoctorName(+ProfileID);

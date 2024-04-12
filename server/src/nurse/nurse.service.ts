@@ -41,4 +41,12 @@ export class NurseService {
       where: { ProfileID: id },
     });
   }
+
+  getAvailableNurses() {
+    return this.prisma.nurse.count({
+      where: {
+        Availability: true,
+      },
+    });
+  }
 }

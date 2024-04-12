@@ -41,4 +41,12 @@ export class DoctorService {
       where: { ProfileID: id },
     });
   }
+
+  getAvailableDoctors() {
+    return this.prisma.doctor.count({
+      where: {
+        Availability: true,
+      },
+    });
+  }
 }

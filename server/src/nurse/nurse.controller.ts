@@ -10,6 +10,11 @@ export class NurseController {
     return this.nurseService.findAll();
   }
 
+  @Get('available')
+  getAvailableNurses() {
+    return this.nurseService.getAvailableNurses();
+  }
+
   @Get(':id')
   getNurseName(@Param('id') id: string) {
     return this.nurseService.getNurseName(+id);
