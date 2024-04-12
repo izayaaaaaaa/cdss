@@ -55,8 +55,8 @@ model Patient {
   Gender                    String
   PhoneNumber               String
   EmailAddress              String
-  ChiefComplaint            String
-  MedicalHistory            String
+  ChiefComplaint            String?
+  MedicalHistory            String?
   OutpatientAdmissionStatus Boolean?
   Date_Admitted             DateTime?
   AssignedRoomNumber        Int?

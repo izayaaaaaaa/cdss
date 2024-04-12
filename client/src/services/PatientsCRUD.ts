@@ -42,7 +42,19 @@ const getNurseName = async (nurseId: Number) => {
   }
 }
 
-const getPatient = async () => {};
+const getPatient = async (patientId: Number) => {
+  try {
+    const response = await fetch(`${BASE_URL}/patient/${patientId}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching patient:', error);
+    throw error;
+  }
+};
 
 const createPatient = async (patientData: any) => {
   try {
@@ -64,9 +76,9 @@ const createPatient = async (patientData: any) => {
   }
  };
 
- const updatePatient = async (id: number, patientData: any) => {
+ const updatePatient = async (patientId: number, patientData: any) => {
   try {
-     const response = await fetch(`${BASE_URL}/patient/${id}`, {
+     const response = await fetch(`${BASE_URL}/patient/${patientId}`, {
        method: 'PUT',
        headers: {
          'Content-Type': 'application/json',
