@@ -108,10 +108,16 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ refreshTable, setRefreshTa
       </ActionIcon>
         <ActionIcon
           color="red"
-          onClick={() => {
-
-            data.splice(row.index, 1);
-            setData([...data]);
+          onClick={async () => {
+            const rowProfileID = data[row.index].id;
+            console.log('Delete rowProfileID: ', rowProfileID);
+            try {
+              await PatientsCRUD.deletePatient(rowProfileID);
+              console.log('Patient deleted successfully');
+              setRefreshTable(!refreshTable);
+            } catch (error) {
+              console.error('Failed to delete patient:', error);
+            }
           }}
         >
           <IconTrash />
