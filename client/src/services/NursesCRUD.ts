@@ -14,6 +14,20 @@ const getAllNurses = async () => {
   }
 };
 
+const getAvailableNurses = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/nurse/available`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching available nurses:', error);
+    throw error;
+  }
+};
+
 const updateNurse = async (id: number, payload: any) => {
   console.log('updateNurse service id: ', id);
   console.log('updateNurse service payload: ', payload);
@@ -71,6 +85,7 @@ const NursesCRUD = {
   getAllNurses,
   updateNurse,
   deleteNurse,
+  getAvailableNurses,
 };
 
 export default NursesCRUD;

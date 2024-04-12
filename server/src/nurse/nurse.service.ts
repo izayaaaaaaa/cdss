@@ -20,10 +20,10 @@ export class NurseService {
   }
 
   async update(id: number, dto: UpdateNurseDto) {
-    console.log('id: ', id);
-    console.log('service dto: ', dto);
+    // console.log('id: ', id);
+    // console.log('service dto: ', dto);
 
-    return await this.prisma.doctor.update({
+    return await this.prisma.nurse.update({
       where: { ProfileID: id },
       data: {
         Name: dto.name,
@@ -32,6 +32,20 @@ export class NurseService {
         PhoneNumber: dto.phoneNumber,
         EmailAddress: dto.emailAddress,
         Availability: dto.availability,
+      },
+    });
+  }
+
+  async remove(id: number) {
+    return await this.prisma.nurse.delete({
+      where: { ProfileID: id },
+    });
+  }
+
+  getAvailableNurses() {
+    return this.prisma.nurse.findMany({
+      where: {
+        Availability: true,
       },
     });
   }

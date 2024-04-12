@@ -10,6 +10,11 @@ export class DoctorController {
     return this.doctorService.findAll();
   }
 
+  @Get('available')
+  getAvailableDoctors() {
+    return this.doctorService.getAvailableDoctors();
+  }
+
   @Get(':id')
   getDoctorName(@Param('id') ProfileID: string) {
     return this.doctorService.getDoctorName(+ProfileID);
@@ -17,7 +22,7 @@ export class DoctorController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateDoctorDto) {
-    console.log('controller dto: ', dto);
+    // console.log('controller dto: ', dto);
     return this.doctorService.update(+id, dto);
   }
 

@@ -20,18 +20,20 @@ export class PatientController {
     return this.patientService.create(dto);
   }
 
+  @Get(':id')
+  find(@Param('id') id: string) {
+    return this.patientService.find(+id);
+  }
+
   @Get()
   findAll() {
     return this.patientService.findAll();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.patientService.findOne(+id);
-  // }
-
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdatePatientDto) {
+    console.log('controller update id: ', id);
+    console.log('controller update dto: ', dto);
     return this.patientService.update(+id, dto);
   }
 

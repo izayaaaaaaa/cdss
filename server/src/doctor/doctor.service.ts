@@ -20,8 +20,8 @@ export class DoctorService {
   }
 
   async update(id: number, dto: UpdateDoctorDto) {
-    console.log('id: ', id);
-    console.log('service dto: ', dto);
+    // console.log('id: ', id);
+    // console.log('service dto: ', dto);
 
     return await this.prisma.doctor.update({
       where: { ProfileID: id },
@@ -39,6 +39,14 @@ export class DoctorService {
   async remove(id: number) {
     return await this.prisma.doctor.delete({
       where: { ProfileID: id },
+    });
+  }
+
+  getAvailableDoctors() {
+    return this.prisma.doctor.findMany({
+      where: {
+        Availability: true,
+      },
     });
   }
 }

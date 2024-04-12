@@ -10,11 +10,18 @@ import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { PatientsCRUD } from '../services';
 import heartMonitorIcon from '../assets/images/icons8-heart-monitor-80.png';
 import flipChartIcon from '../assets/images/icons8-flip-chart-100.png';
-import { Image } from '@chakra-ui/react';
+import { Image, Text } from '@chakra-ui/react';
 
 interface TableFactoryProps {
   fetchData: () => Promise<any>;
   defineColumns: () => MRT_ColumnDef<any>[];
+  setIsADPIEModalOpen: (isOpen: boolean) => void;
+  setIsVitalSignsModalOpen: (isOpen: boolean) => void;
+  setIsEditModalOpen: (isOpen: boolean) => void;
+  patientId: number;
+  onEditClick: (id: number) => void;
+  refreshTable: boolean;
+  setRefreshTable: (value: boolean) => void;
 }
 
 type Person = {
@@ -23,14 +30,23 @@ type Person = {
   gender: string;
   phoneNumber: string;
   emailAddress: string;
+  chiefComplaint: string | null;
+  medicalHistory: string | null;
+  outpatientAdmissionStatus: string | null;
+  dateAdmitted: string | null;
+  assignedRoomNumber: string | null;
+  bedNumber: string | null;
   physicianName: string | null;
   nurseName: string | null;
+  nurseNotes: string | null;
+  physicianId: number | null;
+  nurseId: number | null;
+  flowChart: string | null;
 };
 
-const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }) => {
+const PatientsTable: React.FC<TableFactoryProps> = ({ refreshTable, setRefreshTable, fetchData, defineColumns, setIsADPIEModalOpen, setIsVitalSignsModalOpen, setIsEditModalOpen, patientId, onEditClick }) => {
   const [data, setData] = useState<any[]>([]);
-  const [refreshTable, setRefreshTable] = useState<boolean>(false);
-  
+
   useEffect(() => {
     fetchData().then((fetchedData) => {
       console.log('useEffect fetchedData: ', fetchedData);
@@ -42,83 +58,33 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }
         gender: person.Gender,
         phoneNumber: person.PhoneNumber,
         emailAddress: person.EmailAddress,
+        chiefComplaint: person.ChiefComplaint ? person.ChiefComplaint : null,
+        medicalHistory: person.MedicalHistory ? person.MedicalHistory : null,
+        outpatientAdmissionStatus: person.OutpatientAdmissionStatus ? person.OutpatientAdmissionStatus : null,
+        dateAdmitted: person.Date_Admitted ? person.Date_Admitted : null,
+        assignedRoomNumber: person.AssignedRoomNumber ? person.AssignedRoomNumber : null,
+        bedNumber: person.BedNumber ? person.BedNumber : null,
         physicianName: person.physicianName ? person.physicianName.Name : null,
         nurseName: person.nurseName ? person.nurseName.Name : null,
+        physicianId: person.PhysicianInCharge,
+        nurseId: person.NurseProfileID,
+        nurseNotes: person.NurseNotes ? person.NurseNotes : null,
+        flowChart: person.FlowChart ? person.FlowChart : null,
       }));
       console.log('useEffect formattedData: ', formattedData);
       
       setData(formattedData);
     });
   }, [fetchData, refreshTable]);
-  
+
   const columns = useMemo(() => defineColumns(), [defineColumns]);
-  
-  const handleSaveRow: MRT_TableOptions<any>['onEditingRowSave'] = async ({ values, row, table, exitEditingMode }) => {
-    try {
-      const rowProfileID = data[row.index].id;
-      console.log('handleSaveRow rowProfileID: ', rowProfileID);
 
-      // const updatedData = [...data];
-      // updatedData[row.index] = values;
-
-      const updatedData = {
-        // Name: values.name,
-        // Age: values.age,
-
-      }
-
-      // setData(updatedData);
-      // table.setEditingRow(null);
-      
-      // api call to update the row in the database
-      const updatedPatient = await PatientsCRUD.updatePatient(rowProfileID, updatedData);
-      console.log('handleSaveRow updatedPatient: ', updatedPatient);
-      exitEditingMode();
-      setRefreshTable(!refreshTable);
-    } catch (error) {
-      console.error('Failed to update row:', error);
-    }
-  }
-  
   const table = useMantineReactTable({
     columns,
     data,
     enableGrouping: true,
     enableRowActions: true,
     positionActionsColumn: 'last',
-    renderRowActions: ({ row }) => (
-      <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-        <ActionIcon
-          color="orange"
-          onClick={() => {
-            table.setEditingRow(row);
-          }}
-        >
-          <IconEdit />
-        </ActionIcon>
-        <ActionIcon
-          color="red"
-          onClick={() => {
-            data.splice(row.index, 1);
-            setData([...data]);
-          }}
-        >
-          <IconTrash />
-        </ActionIcon>
-        <ActionIcon
-          color="red"
-          onClick={() => {}}
-        >
-          <Image src={heartMonitorIcon} alt="Heart Monitor Icon" />
-        </ActionIcon>
-        <ActionIcon
-          color="red"
-          onClick={() => {}}
-        >
-          <Image src={flipChartIcon} alt="Flip Chart Icon" />
-        </ActionIcon>
-      </Box>
-    ),
     initialState: { 
       pagination: { pageIndex: 0, pageSize: 8 },
       // grouping: 
@@ -126,7 +92,75 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns }
     mantinePaginationProps: {
       showRowsPerPage: false,
     },
-    onEditingRowSave: handleSaveRow,
+    // onEditingRowSave: handleSaveRow,
+    renderRowActions: ({ row }) => (
+      <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
+        <ActionIcon
+          color="red"
+          onClick={async () => {
+            console.log('edit icon clicked');
+            setIsEditModalOpen(true);
+            onEditClick(data[row.index].id);
+            console.log('rowProfileID: ', data[row.index].id);
+          }}
+        >
+        <IconEdit />
+      </ActionIcon>
+        <ActionIcon
+          color="red"
+          onClick={async () => {
+            const rowProfileID = data[row.index].id;
+            console.log('Delete rowProfileID: ', rowProfileID);
+            try {
+              await PatientsCRUD.deletePatient(rowProfileID);
+              console.log('Patient deleted successfully');
+              setRefreshTable(!refreshTable);
+            } catch (error) {
+              console.error('Failed to delete patient:', error);
+            }
+          }}
+        >
+          <IconTrash />
+        </ActionIcon>
+        <ActionIcon
+          color="red"
+          onClick={() => {
+            console.log('onclick vital signs running');
+            setIsADPIEModalOpen(true);
+          }}
+        >
+          <Image src={heartMonitorIcon} alt="Vital Signs" />
+        </ActionIcon>
+        <ActionIcon
+          color="red"
+          onClick={() => {
+            console.log('onclick adpie running');
+            setIsVitalSignsModalOpen(true);
+          }}
+        >
+          <Image src={flipChartIcon} alt="ADPIE" />
+        </ActionIcon>
+      </Box>
+    ),
+    renderDetailPanel: ({ row }) => (
+      <Box
+        sx={{
+          display: 'grid',
+          margin: 'auto',
+          gridTemplateColumns: '1fr 1fr',
+          width: '100%',
+        }}
+      >
+        <Text>Chief Complaint: {row.original.chiefComplaint}</Text>
+        <Text>Medical History: {row.original.medicalHistory}</Text>
+        <Text>Outpatient Admission Status: {row.original.outpatientAdmissionStatus}</Text>
+        <Text>Date Admitted: {row.original.dateAdmitted}</Text>
+        <Text>Assigned Room Number: {row.original.assignedRoomNumber}</Text>
+        <Text>Bed Number: {row.original.bedNumber}</Text>
+        <Text>Nurse Notes: {row.original.nurseNotes}</Text>
+        <Text>Flow Chart: {row.original.flowChart}</Text>
+      </Box>
+    ),
   });
   
   return (
