@@ -25,6 +25,7 @@ interface TableFactoryProps {
 }
 
 type Person = {
+  id: number;
   name: string;
   age: number;
   gender: string;
@@ -151,6 +152,7 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ refreshTable, setRefreshTa
           width: '100%',
         }}
       >
+        <Text><strong>PatientID:</strong> {row.original.id}</Text>
         <Text>Chief Complaint: {row.original.chiefComplaint}</Text>
         <Text>Medical History: {row.original.medicalHistory}</Text>
         <Text>Outpatient Admission Status: {row.original.outpatientAdmissionStatus}</Text>

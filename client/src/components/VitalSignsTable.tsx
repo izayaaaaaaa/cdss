@@ -56,6 +56,7 @@ const VitalSignsTable: React.FC<VitalSignsTableProps> = ({ fetchData, defineColu
     positionActionsColumn: 'last',
     initialState: { 
       pagination: { pageIndex: 0, pageSize: 8 },
+      grouping: ['PatientID'],
     },
     mantinePaginationProps: {
       showRowsPerPage: false,

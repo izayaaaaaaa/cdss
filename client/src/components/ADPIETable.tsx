@@ -52,6 +52,7 @@ const ADPIETable: React.FC<ADPIETableProps> = ({ fetchData, defineColumns }) => 
     positionActionsColumn: 'last',
     initialState: { 
       pagination: { pageIndex: 0, pageSize: 8 },
+      grouping: ['PatientID'],
     },
     mantinePaginationProps: {
       showRowsPerPage: false,
