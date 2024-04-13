@@ -21,7 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { SimpleSidebar } from '../components/SidebarComponent';
 import { PatientsTable } from '../components';
-import { PatientsCRUD, VitalSignsCRUD } from '../services';
+import { ADPIECRUD, PatientsCRUD, VitalSignsCRUD } from '../services';
 import { useEffect, useState } from 'react';
 import VitalSignsTable from '../components/VitalSignsTable';
 import ADPIETable from '../components/ADPIETable';
@@ -67,6 +67,14 @@ const vitalSignColumns = () => [
   { accessorKey: 'BloodPressure', header: 'Blood Pressure', size: 100 },
   { accessorKey: 'PainScale', header: 'Pain Scale', size: 100 },
   { accessorKey: 'OxygenSaturation', header: 'Oxygen Saturation', size: 100 },
+];
+
+const ADPIEColumns = () => [
+  { accessorKey: 'PatientID', header: 'Patient ID', size: 100 },
+  { accessorKey: 'Diagnosis', header: 'Diagnosis', size: 200 },
+  { accessorKey: 'Planning', header: 'Planning', size: 200 },
+  { accessorKey: 'InterventionImplementation', header: 'Intervention Implementation', size: 200 },
+  { accessorKey: 'Evaluation', header: 'Evaluation', size: 200 },
 ];
 
 const getPhysicianName = async (physicianId: Number) => {
@@ -119,6 +127,18 @@ const fetchVitalSignsData = async () => {
     return vitalSigns;
   } catch (error) {
     console.error('Failed to fetch vital signs:', error);
+  }
+}
+
+const fetchADPIEData = async () => {
+  try {
+    console.log('fetchADPIEData function PatientsScreen.tsx runs')
+    const adpie = await ADPIECRUD.getAllADPIE();
+    console.log('fetchADPIEData response: ', adpie);
+    
+    return adpie;
+  } catch (error) {
+    console.error('Failed to fetch ADPIE:', error);
   }
 }
 
@@ -294,7 +314,7 @@ const Patients = () => {
               <VitalSignsTable fetchData={fetchVitalSignsData} defineColumns={vitalSignColumns} />
             </TabPanel>
             <TabPanel>
-              {/* <ADPIETable refreshTable={refreshTable} setRefreshTable={setRefreshTable} patientId={patientId} onEditClick={handleEditClick} fetchData={fetchPatientsData} defineColumns={defineColumns} setIsEditModalOpen={setIsEditModalOpen} /> */}
+              <ADPIETable fetchData={fetchADPIEData} defineColumns={ADPIEColumns} />
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -378,36 +398,36 @@ const Patients = () => {
       </ModalContent>
       </Modal>
       <Modal isOpen={isVitalSignsModalOpen} onClose={handleVitalSignsModalClose}>
-      <ModalOverlay />
-      <ModalContent>
-      <ModalHeader>Vital Signs</ModalHeader>
-      <ModalCloseButton />
-      <ModalBody>
-      <form onSubmit={handleVitalSigns}>
-      <FormControl>
-      <FormLabel>Temperature</FormLabel>
-      <Input name="Temperature" placeholder="Temperature" required />
-      </FormControl>
-      <FormControl>
-      <FormLabel>Heart Rate</FormLabel>
-      <Input name="Heart Rate" placeholder="Heart Rate" required />
-      </FormControl>
-      <FormControl>
-      <FormLabel>Blood Pressure</FormLabel>
-      <Input name="Blood Pressure" placeholder="Blood Pressure" required />
-      </FormControl>
-      <FormControl>
-      <FormLabel>Respiratory Rate</FormLabel>
-      <Input name="Respiratory Rate" placeholder="Respiratory Rate" required />
-      </FormControl>
-      <FormControl>
-      <FormLabel>Oxygen Saturation</FormLabel>
-      <Input name="Oxygen Saturation" placeholder="Oxygen Saturation" required />
-      </FormControl>
-      <Button w="full" mt={5} type="submit" colorScheme="blue">Save Vital Signs</Button>
-      </form>
-      </ModalBody>
-      </ModalContent>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Vital Signs</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <form onSubmit={handleVitalSigns}>
+              <FormControl>
+                <FormLabel>Temperature</FormLabel>
+                <Input name="Temperature" placeholder="Temperature" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Heart Rate</FormLabel>
+                <Input name="Heart Rate" placeholder="Heart Rate" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Blood Pressure</FormLabel>
+                <Input name="Blood Pressure" placeholder="Blood Pressure" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Respiratory Rate</FormLabel>
+                <Input name="Respiratory Rate" placeholder="Respiratory Rate" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Oxygen Saturation</FormLabel>
+                <Input name="Oxygen Saturation" placeholder="Oxygen Saturation" required />
+              </FormControl>
+              <Button w="full" mt={5} type="submit" colorScheme="blue">Save Vital Signs</Button>
+            </form>
+          </ModalBody>
+        </ModalContent>
       </Modal>
       <Modal isOpen={isEditPatientModalOpen && !isLoading} onClose={handleEditPatientModalClose}>
         <ModalOverlay />
