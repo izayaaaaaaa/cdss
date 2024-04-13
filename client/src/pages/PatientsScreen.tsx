@@ -12,12 +12,19 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
 } from '@chakra-ui/react';
 import { SimpleSidebar } from '../components/SidebarComponent';
 import { PatientsTable } from '../components';
-import { PatientsCRUD } from '../services';
+import { PatientsCRUD, VitalSignsCRUD } from '../services';
 import { useEffect, useState } from 'react';
+import VitalSignsTable from '../components/VitalSignsTable';
+import ADPIETable from '../components/ADPIETable';
 
 interface Patient {
   ProfileID: number;
@@ -42,7 +49,7 @@ interface NameObject {
   Name: string;
 }
 
-const defineColumns = () => [
+const definePatientColumns = () => [
   { accessorKey: 'name', header: 'Name' },
   { accessorKey: 'age', header: 'Age', size: 100 },
   { accessorKey: 'gender', header: 'Gender', size: 100 },
@@ -50,6 +57,16 @@ const defineColumns = () => [
   { accessorKey: 'emailAddress', header: 'Email Address' },
   { accessorKey: 'physicianName', header: 'Physician' },
   { accessorKey: 'nurseName', header: 'Nurse' },
+];
+
+const vitalSignColumns = () => [
+  { accessorKey: 'PatientID', header: 'Patient ID', size: 100 },
+  { accessorKey: 'DateTime', header: 'Date Taken', size: 200 },
+  { accessorKey: 'Temperature', header: 'Temperature', size: 100 },
+  { accessorKey: 'PulseRate', header: 'Pulse Rate', size: 100 },
+  { accessorKey: 'BloodPressure', header: 'Blood Pressure', size: 100 },
+  { accessorKey: 'PainScale', header: 'Pain Scale', size: 100 },
+  { accessorKey: 'OxygenSaturation', header: 'Oxygen Saturation', size: 100 },
 ];
 
 const getPhysicianName = async (physicianId: Number) => {
@@ -90,6 +107,18 @@ const fetchPatientsData = async () => {
     return patientsDetailed;
   } catch (error) {
     console.error('Failed to fetch patients:', error);
+  }
+}
+
+const fetchVitalSignsData = async () => {
+  try {
+    console.log('fetchVitalSignsData function PatientsScreen.tsx runs')
+    const vitalSigns = await VitalSignsCRUD.getVitalSigns();
+    console.log('fetchVitalSignsData response: ', vitalSigns);
+    
+    return vitalSigns;
+  } catch (error) {
+    console.error('Failed to fetch vital signs:', error);
   }
 }
 
@@ -134,10 +163,10 @@ const formatDateForInput = (dateString: string): string => {
 const Patients = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const handleCreateModalClose = () => setIsCreateModalOpen(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditPatientModalOpen, setIsEditPatientModalOpen] = useState(false);
   const [patientId, setPatientId] = useState(0);
   const [patientDetails, setPatientDetails] = useState<Patient[]>([]);
-  const handleEditModalClose = () => setIsEditModalOpen(false);
+  const handleEditPatientModalClose = () => setIsEditPatientModalOpen(false);
   const [isADPIEModalOpen, setIsADPIEModalOpen] = useState(false);
   const handleADPIEModalClose = () => setIsADPIEModalOpen(false);
   const [isVitalSignsModalOpen, setIsVitalSignsModalOpen] = useState(false);
@@ -147,7 +176,7 @@ const Patients = () => {
   const [nurseName, setNurseName] = useState<NameObject | {}>({});
 
   const [isLoading, setIsLoading] = useState(false);
-  const [refreshTable, setRefreshTable] = useState<boolean>(false);
+  const [refreshPatientsTable, setRefreshPatientsTable] = useState<boolean>(false);
 
   const handleCreatePatient = async (event: any) => {
     event.preventDefault();
@@ -169,13 +198,13 @@ const Patients = () => {
     }
   }
   
-  const handleEditClick = async (patientId: any) => {
+  const handleEditPatientClick = async (patientId: any) => {
     setIsLoading(true);
     setPatientId(patientId);
     const patient = await getPatient(patientId);
     setPatientDetails([patient]);
     setIsLoading(false);
-    setIsEditModalOpen(true);
+    setIsEditPatientModalOpen(true);
   }
 
   useEffect(() => {
@@ -221,13 +250,9 @@ const Patients = () => {
     console.log('Updated patient details: ', updatedPatientData);
     await updatePatient(patientDetails[0].ProfileID, updatedPatientData);
 
-    setRefreshTable(!refreshTable);
-    setIsEditModalOpen(false);
+    setRefreshPatientsTable(!refreshPatientsTable);
+    setIsEditPatientModalOpen(false);
   };
-
-  // useEffect(() => {
-  //   console.log('useEffect Updated patient details: ', patientDetails[0]);
-  //  }, [patientDetails]); // This effect runs whenever patientDetails changes
   
   const handleADPIE = async (event: any) => {
     event.preventDefault();
@@ -246,7 +271,7 @@ const Patients = () => {
     <HStack background="#E0EAF3">
       <SimpleSidebar />
     
-      <Box ml={50}>
+      <Box ml={25}>
         <HStack justifyContent={"space-between"}>
           <Box>
             <Heading mb={2} color={"#345673"}>Patients</Heading>
@@ -255,8 +280,27 @@ const Patients = () => {
           <Button colorScheme="facebook" size="lg" onClick={() => setIsCreateModalOpen(true)}>Create Patient</Button>
         </HStack>
       
-        <PatientsTable refreshTable={refreshTable} setRefreshTable={setRefreshTable} patientId={patientId} onEditClick={handleEditClick} fetchData={fetchPatientsData} defineColumns={defineColumns} setIsEditModalOpen={setIsEditModalOpen} setIsADPIEModalOpen={setIsADPIEModalOpen} setIsVitalSignsModalOpen={setIsVitalSignsModalOpen} />
+        <Tabs>
+          <TabList>
+            <Tab>Patients</Tab>
+            <Tab>Vital Signs</Tab>
+            <Tab>ADPIE</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <PatientsTable refreshTable={refreshPatientsTable} setRefreshTable={setRefreshPatientsTable} patientId={patientId} onEditClick={handleEditPatientClick} fetchData={fetchPatientsData} defineColumns={definePatientColumns} setIsEditModalOpen={setIsEditPatientModalOpen} setIsADPIEModalOpen={setIsADPIEModalOpen} setIsVitalSignsModalOpen={setIsVitalSignsModalOpen} />
+            </TabPanel>
+            <TabPanel>
+              <VitalSignsTable fetchData={fetchVitalSignsData} defineColumns={vitalSignColumns} />
+            </TabPanel>
+            <TabPanel>
+              {/* <ADPIETable refreshTable={refreshTable} setRefreshTable={setRefreshTable} patientId={patientId} onEditClick={handleEditClick} fetchData={fetchPatientsData} defineColumns={defineColumns} setIsEditModalOpen={setIsEditModalOpen} /> */}
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </Box>
+
+
       <Modal isOpen={isCreateModalOpen} onClose={handleCreateModalClose}>
         <ModalOverlay />
         <ModalContent>
@@ -365,7 +409,7 @@ const Patients = () => {
       </ModalBody>
       </ModalContent>
       </Modal>
-      <Modal isOpen={isEditModalOpen && !isLoading} onClose={handleEditModalClose}>
+      <Modal isOpen={isEditPatientModalOpen && !isLoading} onClose={handleEditPatientModalClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Edit Patient</ModalHeader>
