@@ -76,6 +76,41 @@ async function main() {
     });
     console.log(`Created Patient: ${patient.Name}`);
   }
+
+  // Generate 10 VitalSigns records for each patient
+  const patients = await prisma.patient.findMany();
+  for (const patient of patients) {
+    for (let i = 1; i <= 10; i++) {
+      await prisma.vitalSigns.create({
+        data: {
+          DateTime: new Date(),
+          Temperature: 36.5 + i * 0.1, // Example temperature values
+          BloodPressure: `${120 + i}-${80 + i}`, // Example blood pressure values
+          PulseRate: 70 + i,
+          OxygenSaturation: 98 - i,
+          PainScale: i % 10,
+          PatientID: patient.ProfileID,
+        },
+      });
+    }
+  }
+
+  // Generate 10 ADPIE records for each patient
+  for (const patient of patients) {
+    for (let i = 1; i <= 10; i++) {
+      await prisma.aDPIE.create({
+        data: {
+          Diagnosis: `Diagnosis ${i}`,
+          Planning: `Planning ${i}`,
+          InterventionImplementation: `Intervention ${i}`,
+          Evaluation: `Evaluation ${i}`,
+          PatientID: patient.ProfileID,
+        },
+      });
+    }
+  }
+
+  console.log('Seeding completed.');
 }
 
 main()
