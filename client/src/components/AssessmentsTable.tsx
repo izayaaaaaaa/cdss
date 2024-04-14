@@ -2,9 +2,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
 import { ActionIcon, Box } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
-import AssessmentsCRUD from '../services/AssessmentsCRUD';
-import { Image } from '@chakra-ui/react';
+import { Image, Text } from '@chakra-ui/react';
 import assessmentIcon from '../assets/images/icons8-assessment-100.png';
+
+interface Test {
+  label: string;
+  value: string;
+ }
 
 interface AssessmentsTableProps {
   fetchData: () => Promise<any>;
@@ -20,10 +24,10 @@ type Assessment = {
   PastMedicalHistory: string;
   SocialHistory: string;
   NurseNotes: string;
-  // LaboratoryTests?: any; // Assuming this is a JSON object, adjust the type as necessary
-  // PhysicalExaminations?: any; // Assuming this is a JSON object, adjust the type as necessary
-  // DiagnosticTests?: any; // Assuming this is a JSON object, adjust the type as necessary
-  // ImagingStudies?: any; // Assuming this is a JSON object, adjust the type as necessary
+  LaboratoryTests?: any; // Assuming this is a JSON object, adjust the type as necessary
+  PhysicalExaminations?: any; // Assuming this is a JSON object, adjust the type as necessary
+  DiagnosticTests?: any; // Assuming this is a JSON object, adjust the type as necessary
+  ImagingStudies?: any; // Assuming this is a JSON object, adjust the type as necessary
 };
 
 const AssessmentsTable: React.FC<AssessmentsTableProps> = ({ fetchData, defineColumns }) => {
@@ -42,7 +46,10 @@ const AssessmentsTable: React.FC<AssessmentsTableProps> = ({ fetchData, defineCo
         PastMedicalHistory: assessment.PastMedicalHistory,
         SocialHistory: assessment.SocialHistory,
         NurseNotes: assessment.NurseNotes,
-        // more fields here
+        LaboratoryTests: assessment.LaboratoryTests,
+        PhysicalExaminations: assessment.PhysicalExaminations,
+        DiagnosticTests: assessment.DiagnosticTests,
+        ImagingStudies: assessment.ImagingStudies,
       }));
       setData(formattedData);
     });
@@ -89,6 +96,40 @@ const AssessmentsTable: React.FC<AssessmentsTableProps> = ({ fetchData, defineCo
       >
       <Image src={assessmentIcon} alt="Assessments" />
       </ActionIcon>
+      </Box>
+    ),
+    renderDetailPanel: ({ row }) => (
+      <Box
+        sx={{
+          display: 'grid',
+          margin: 'auto',
+          gridTemplateColumns: '1fr 1fr',
+          width: '100%',
+        }}
+      >
+        <Text>Past Medical History: {row.original.PastMedicalHistory}</Text>
+        <Text>Social History: {row.original.SocialHistory}</Text>
+        <Text>Nurse Notes: {row.original.NurseNotes}</Text>
+        {Array.isArray(row.original.LaboratoryTests) && row.original.LaboratoryTests.map((test: Test, index: number) => (
+          <Text key={index}>
+            Laboratory Test {index + 1}: <a href={test.value} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: 'blue' }}>{test.label}</a>
+          </Text>
+        ))}
+        {Array.isArray(row.original.PhysicalExaminations) && row.original.PhysicalExaminations.map((test: Test, index: number) => (
+          <Text key={index}>
+            Physical Examination {index + 1}: <a href={test.value} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: 'blue' }}>{test.label}</a>
+          </Text>
+        ))}
+        {Array.isArray(row.original.DiagnosticTests) && row.original.DiagnosticTests.map((test: Test, index: number) => (
+          <Text key={index}>
+            Diagnostic Test {index + 1}: <a href={test.value} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: 'blue' }}>{test.label}</a>
+          </Text>
+        ))}
+        {Array.isArray(row.original.ImagingStudies) && row.original.ImagingStudies.map((test: Test, index: number) => (
+          <Text key={index}>
+            Imaging Study {index + 1}: <a href={test.value} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: 'blue' }}>{test.label}</a>
+          </Text>
+        ))}
       </Box>
     ),
   });
