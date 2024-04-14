@@ -101,66 +101,19 @@ model ADPIE {
 }
 
 model Assessment {
-  ADPIEID                 Int                   @id @default(autoincrement())
+  AssessmentID            Int    @id @default(autoincrement())
+  ADPIEID                 Int
   HealthHistory           String
   ChiefComplaint          String
   HistoryOfPresentIllness String
   PastMedicalHistory      String
   SocialHistory           String
   NurseNotes              String
-  ADPIE                   ADPIE                 @relation(fields: [ADPIEID], references: [ADPIEID])
-  LaboratoryTests         LaboratoryTest[]
-  PhysicalExaminations    PhysicalExamination[]
-  DiagnosticTests         DiagnosticTest[]
-  ImagingStudies          ImagingStudy[]
+  ADPIE                   ADPIE  @relation(fields: [ADPIEID], references: [ADPIEID])
+  LaboratoryTests         Json?
+  PhysicalExaminations    Json?
+  DiagnosticTests         Json?
+  ImagingStudies          Json?
 
   @@map(name: "assessments")
-}
-
-model LaboratoryTest {
-  TestID      Int        @id @default(autoincrement())
-  ADPIEID     Int
-  TestName    String
-  TestResult  String
-  MediaURL    String
-  Description String
-  Assessment  Assessment @relation(fields: [ADPIEID], references: [ADPIEID])
-
-  @@map(name: "laboratory_tests")
-}
-
-model PhysicalExamination {
-  ExaminationID   Int        @id @default(autoincrement())
-  ADPIEID         Int
-  ExaminationName String
-  Findings        String
-  MediaURL        String
-  Description     String
-  Assessment      Assessment @relation(fields: [ADPIEID], references: [ADPIEID])
-
-  @@map(name: "physical_examinations")
-}
-
-model DiagnosticTest {
-  DiagnosticTestID Int        @id @default(autoincrement())
-  ADPIEID          Int
-  TestName         String
-  TestResult       String
-  MediaURL         String
-  Description      String
-  Assessment       Assessment @relation(fields: [ADPIEID], references: [ADPIEID])
-
-  @@map(name: "diagnostic_tests")
-}
-
-model ImagingStudy {
-  ImagingStudyID Int        @id @default(autoincrement())
-  ADPIEID        Int
-  StudyName      String
-  Findings       String
-  MediaURL       String
-  Description    String
-  Assessment     Assessment @relation(fields: [ADPIEID], references: [ADPIEID])
-
-  @@map(name: "imaging_studies")
 }

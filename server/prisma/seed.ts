@@ -54,6 +54,7 @@ async function main() {
   }
 
   // Generate 10 sample patients
+  const patients = [];
   for (let i = 1; i <= 10; i++) {
     const patient = await prisma.patient.create({
       data: {
@@ -74,13 +75,13 @@ async function main() {
         NurseProfileID: 1, // Assuming the first nurse is in charge
       },
     });
+    patients.push(patient);
     console.log(`Created Patient: ${patient.Name}`);
   }
 
-  // Generate 10 VitalSigns records for each patient
-  const patients = await prisma.patient.findMany();
+  // Generate 5 VitalSigns records for each patient
   for (const patient of patients) {
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 5; i++) {
       await prisma.vitalSigns.create({
         data: {
           DateTime: new Date(),
@@ -95,10 +96,10 @@ async function main() {
     }
   }
 
-  // Generate 10 ADPIE records for each patient
+  // Generate 5 ADPIE records for each patient
   for (const patient of patients) {
-    for (let i = 1; i <= 10; i++) {
-      await prisma.aDPIE.create({
+    for (let i = 1; i <= 5; i++) {
+      const adpie = await prisma.aDPIE.create({
         data: {
           Diagnosis: `Diagnosis ${i}`,
           Planning: `Planning ${i}`,
@@ -107,6 +108,45 @@ async function main() {
           PatientID: patient.ProfileID,
         },
       });
+
+      // Generate 2 Assessments for each ADPIE record
+      for (let j = 1; j <= 2; j++) {
+        await prisma.assessment.create({
+          data: {
+            HealthHistory: 'No significant history',
+            ChiefComplaint: 'Headache',
+            HistoryOfPresentIllness: 'Started 2 days ago',
+            PastMedicalHistory: 'No significant history',
+            SocialHistory: 'Non-smoker, no alcohol consumption',
+            NurseNotes: 'Patient is in good condition',
+            ADPIEID: adpie.ADPIEID,
+            LaboratoryTests: [
+              {
+                label: 'Blood Test',
+                value: `https://drive.google.com/file/d/${i}${j}`,
+              },
+            ],
+            PhysicalExaminations: [
+              {
+                label: 'General Examination',
+                value: `https://drive.google.com/file/d/${i}${j}`,
+              },
+            ],
+            DiagnosticTests: [
+              {
+                label: 'MRI Scan',
+                value: `https://drive.google.com/file/d/${i}${j}`,
+              },
+            ],
+            ImagingStudies: [
+              {
+                label: 'X-Ray',
+                value: `https://drive.google.com/file/d/${i}${j}`,
+              },
+            ],
+          },
+        });
+      }
     }
   }
 

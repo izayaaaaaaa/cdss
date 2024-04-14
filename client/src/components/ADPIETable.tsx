@@ -3,7 +3,8 @@ import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
 import { ActionIcon, Box } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { ADPIECRUD } from '../services'; // Assuming you have a service for ADPIE
-// import { Image } from '@chakra-ui/react';
+import { Image } from '@chakra-ui/react';
+import assessmentIcon from '../assets/images/icons8-assessment-100.png';
 
 interface ADPIETableProps {
  fetchData: () => Promise<any>;
@@ -81,6 +82,20 @@ const ADPIETable: React.FC<ADPIETableProps> = ({ fetchData, defineColumns }) => 
           }}
         >
           <IconTrash />
+        </ActionIcon>
+        <ActionIcon
+          color="red"
+          onClick={async () => {
+            // const rowId = data[row.index].id;
+            // try {
+            //   await ADPIECRUD.deleteADPIE(rowId); // Assuming you have a delete method
+            //   setRefreshTable(!refreshTable);
+            // } catch (error) {
+            //   console.error('Failed to delete ADPIE:', error);
+            // }
+          }}
+        >
+          <Image src={assessmentIcon} alt="Assessments" />
         </ActionIcon>
       </Box>
     ),
