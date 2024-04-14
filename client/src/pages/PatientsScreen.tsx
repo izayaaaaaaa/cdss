@@ -305,6 +305,7 @@ const Patients = () => {
             <Tab>Patients</Tab>
             <Tab>Vital Signs</Tab>
             <Tab>ADPIE</Tab>
+            <Tab>Assessments</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -315,6 +316,9 @@ const Patients = () => {
             </TabPanel>
             <TabPanel>
               <ADPIETable fetchData={fetchADPIEData} defineColumns={ADPIEColumns} />
+            </TabPanel>
+            <TabPanel>
+              {/* <AssessmentsTable fetchData={fetchADPIEData} defineColumns={ADPIEColumns} /> */}
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -366,36 +370,36 @@ const Patients = () => {
         </ModalContent>
       </Modal>
       <Modal isOpen={isADPIEModalOpen} onClose={handleADPIEModalClose}>
-      <ModalOverlay />
-      <ModalContent>
-      <ModalHeader>ADPIE</ModalHeader>
-      <ModalCloseButton />
-      <ModalBody>
-      <form onSubmit={handleADPIE}>
-      <FormControl>
-      <FormLabel>Assessment</FormLabel>
-      <Input name="Assessment" placeholder="Assessment" required />
-      </FormControl>
-      <FormControl>
-      <FormLabel>Diagnosis</FormLabel>
-      <Input name="Diagnosis" placeholder="Diagnosis" required />
-      </FormControl>
-      <FormControl>
-      <FormLabel>Planning</FormLabel>
-      <Input name="Planning" placeholder="Planning" required />
-      </FormControl>
-      <FormControl>
-      <FormLabel>Implementation</FormLabel>
-      <Input name="Implementation" placeholder="Implementation" required />
-      </FormControl>
-      <FormControl>
-      <FormLabel>Evaluation</FormLabel>
-      <Input name="Evaluation" placeholder="Evaluation" required />
-      </FormControl>
-      <Button w="full" mt={5} type="submit" colorScheme="blue">Save ADPIE</Button>
-      </form>
-      </ModalBody>
-      </ModalContent>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>ADPIE</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <form onSubmit={handleADPIE}>
+              <FormControl>
+                <FormLabel>Assessment</FormLabel>
+                <Input name="Assessment" placeholder="Assessment" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Diagnosis</FormLabel>
+                <Input name="Diagnosis" placeholder="Diagnosis" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Planning</FormLabel>
+                <Input name="Planning" placeholder="Planning" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Implementation</FormLabel>
+                <Input name="Implementation" placeholder="Implementation" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Evaluation</FormLabel>
+                <Input name="Evaluation" placeholder="Evaluation" required />
+              </FormControl>
+              <Button w="full" mt={5} type="submit" colorScheme="blue">Save ADPIE</Button>
+            </form>
+          </ModalBody>
+        </ModalContent>
       </Modal>
       <Modal isOpen={isVitalSignsModalOpen} onClose={handleVitalSignsModalClose}>
         <ModalOverlay />

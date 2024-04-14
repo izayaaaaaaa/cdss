@@ -124,22 +124,20 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ refreshTable, setRefreshTa
           <IconTrash />
         </ActionIcon>
         <ActionIcon
-          color="red"
           onClick={() => {
             console.log('onclick vital signs running');
             setIsADPIEModalOpen(true);
           }}
         >
-          <Image src={heartMonitorIcon} alt="Vital Signs" />
+          <Image src={flipChartIcon} alt="Vital Signs" />
         </ActionIcon>
         <ActionIcon
-          color="red"
           onClick={() => {
             console.log('onclick adpie running');
             setIsVitalSignsModalOpen(true);
           }}
         >
-          <Image src={flipChartIcon} alt="ADPIE" />
+          <Image src={heartMonitorIcon} alt="ADPIE" />
         </ActionIcon>
       </Box>
     ),
