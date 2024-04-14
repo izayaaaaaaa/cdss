@@ -101,7 +101,8 @@ model ADPIE {
 }
 
 model Assessment {
-  ADPIEID                 Int    @id @default(autoincrement())
+  AssessmentID            Int    @id @default(autoincrement())
+  ADPIEID                 Int
   HealthHistory           String
   ChiefComplaint          String
   HistoryOfPresentIllness String
@@ -109,10 +110,10 @@ model Assessment {
   SocialHistory           String
   NurseNotes              String
   ADPIE                   ADPIE  @relation(fields: [ADPIEID], references: [ADPIEID])
-  LaboratoryTests         Json
-  PhysicalExaminations    Json
-  DiagnosticTests         Json
-  ImagingStudies          Json
+  LaboratoryTests         Json?
+  PhysicalExaminations    Json?
+  DiagnosticTests         Json?
+  ImagingStudies          Json?
 
   @@map(name: "assessments")
 }
