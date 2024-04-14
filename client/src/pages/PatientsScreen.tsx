@@ -19,12 +19,9 @@ import {
   Tabs,
   Text,
 } from '@chakra-ui/react';
-import { SimpleSidebar } from '../components/SidebarComponent';
-import { PatientsTable } from '../components';
-import { ADPIECRUD, PatientsCRUD, VitalSignsCRUD } from '../services';
+import { PatientsTable, SimpleSidebar, VitalSignsTable, ADPIETable, AssessmentsTable  } from '../components';
+import { ADPIECRUD, PatientsCRUD, VitalSignsCRUD, AssessmentsCRUD } from '../services';
 import { useEffect, useState } from 'react';
-import VitalSignsTable from '../components/VitalSignsTable';
-import ADPIETable from '../components/ADPIETable';
 
 interface Patient {
   ProfileID: number;
@@ -44,6 +41,21 @@ interface Patient {
   FlowChart: string;
   NurseProfileID: number;
 }
+
+// interface Assessment {
+//   AssessmentID: number;
+//   ADPIEID: number;
+//   HealthHistory: string;
+//   ChiefComplaint: string;
+//   HistoryOfPresentIllness: string;
+//   PastMedicalHistory: string;
+//   SocialHistory: string;
+//   NurseNotes: string;
+//   LaboratoryTests?: any; // Assuming this is a JSON object, adjust the type as necessary
+//   PhysicalExaminations?: any; // Assuming this is a JSON object, adjust the type as necessary
+//   DiagnosticTests?: any; // Assuming this is a JSON object, adjust the type as necessary
+//   ImagingStudies?: any; // Assuming this is a JSON object, adjust the type as necessary
+// }
 
 interface NameObject {
   Name: string;
@@ -75,6 +87,18 @@ const ADPIEColumns = () => [
   { accessorKey: 'Planning', header: 'Planning', size: 200 },
   { accessorKey: 'InterventionImplementation', header: 'Intervention Implementation', size: 200 },
   { accessorKey: 'Evaluation', header: 'Evaluation', size: 200 },
+];
+
+const AssessmentColumns = () => [
+  { accessorKey: 'AssessmentID', header: 'Assessment ID', size: 100 },
+  { accessorKey: 'ADPIEID', header: 'ADPIE ID', size: 100 },
+  { accessorKey: 'HealthHistory', header: 'Health History', size: 200 },
+  { accessorKey: 'ChiefComplaint', header: 'Chief Complaint', size: 200 },
+  { accessorKey: 'HistoryOfPresentIllness', header: 'History of Present Illness', size: 200 },
+  { accessorKey: 'PastMedicalHistory', header: 'Past Medical History', size: 200 },
+  // { accessorKey: 'SocialHistory', header: 'Social History', size: 200 },
+  // { accessorKey: 'NurseNotes', header: 'Nurse Notes', size: 200 },
+  // Additional columns for LaboratoryTests, PhysicalExaminations, DiagnosticTests, ImagingStudies can be added here
 ];
 
 const getPhysicianName = async (physicianId: Number) => {
@@ -141,6 +165,17 @@ const fetchADPIEData = async () => {
     console.error('Failed to fetch ADPIE:', error);
   }
 }
+
+const fetchAssessmentsData = async () => {
+  try {
+    console.log('fetchAssessmentsData function PatientsScreen.tsx runs')
+    const assessments = await AssessmentsCRUD.findAllAssessments();
+    console.log('fetchAssessmentsData response: ', assessments);
+    return assessments;
+  } catch (error) {
+     console.error('Failed to fetch assessments:', error);
+  }
+};
 
 const updatePatient = async (id: number, payload: any) => {
   try {
@@ -318,7 +353,7 @@ const Patients = () => {
               <ADPIETable fetchData={fetchADPIEData} defineColumns={ADPIEColumns} />
             </TabPanel>
             <TabPanel>
-              {/* <AssessmentsTable fetchData={fetchADPIEData} defineColumns={ADPIEColumns} /> */}
+              <AssessmentsTable fetchData={fetchAssessmentsData} defineColumns={AssessmentColumns} />
             </TabPanel>
           </TabPanels>
         </Tabs>
