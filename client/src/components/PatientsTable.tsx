@@ -97,12 +97,12 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ refreshTable, setRefreshTa
     renderRowActions: ({ row }) => (
       <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
         <ActionIcon
-          color="red"
+          color="green"
           onClick={async () => {
-            console.log('edit icon clicked');
+            // console.log('edit icon clicked');
             setIsEditModalOpen(true);
             onEditClick(data[row.index].id);
-            console.log('rowProfileID: ', data[row.index].id);
+            // console.log('rowProfileID: ', data[row.index].id);
           }}
         >
         <IconEdit />

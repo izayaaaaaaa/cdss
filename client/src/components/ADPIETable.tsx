@@ -61,7 +61,7 @@ const ADPIETable: React.FC<ADPIETableProps> = ({ fetchData, defineColumns }) => 
     renderRowActions: ({ row }) => (
       <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
         <ActionIcon
-          color="red"
+          color="green"
           onClick={() => {
             // setIsEditModalOpen(true);
             // onEditClick(data[row.index].id);

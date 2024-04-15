@@ -64,7 +64,7 @@ const VitalSignsTable: React.FC<VitalSignsTableProps> = ({ fetchData, defineColu
     renderRowActions: ({ row }) => (
       <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
         <ActionIcon
-          color="red"
+          color="green"
           onClick={() => {}}
         >
           <IconEdit />

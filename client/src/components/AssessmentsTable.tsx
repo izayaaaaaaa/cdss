@@ -77,7 +77,7 @@ const AssessmentsTable: React.FC<AssessmentsTableProps> = ({ refreshTable, setRe
     renderRowActions: ({ row }) => (
       <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
         <ActionIcon
-          color="red"
+          color="green"
           onClick={() => {
             console.log('edit icon clicked');
             setIsEditModalOpen(true);
