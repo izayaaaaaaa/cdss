@@ -42,20 +42,20 @@ interface Patient {
   NurseProfileID: number;
 }
 
-// interface Assessment {
-//   AssessmentID: number;
-//   ADPIEID: number;
-//   HealthHistory: string;
-//   ChiefComplaint: string;
-//   HistoryOfPresentIllness: string;
-//   PastMedicalHistory: string;
-//   SocialHistory: string;
-//   NurseNotes: string;
-//   LaboratoryTests?: any; // Assuming this is a JSON object, adjust the type as necessary
-//   PhysicalExaminations?: any; // Assuming this is a JSON object, adjust the type as necessary
-//   DiagnosticTests?: any; // Assuming this is a JSON object, adjust the type as necessary
-//   ImagingStudies?: any; // Assuming this is a JSON object, adjust the type as necessary
-// }
+interface Assessment {
+  AssessmentID: number;
+  ADPIEID: number;
+  HealthHistory: string;
+  ChiefComplaint: string;
+  HistoryOfPresentIllness: string;
+  PastMedicalHistory: string;
+  SocialHistory: string;
+  NurseNotes: string;
+  LaboratoryTests?: any; // Assuming this is a JSON object, adjust the type as necessary
+  PhysicalExaminations?: any; // Assuming this is a JSON object, adjust the type as necessary
+  DiagnosticTests?: any; // Assuming this is a JSON object, adjust the type as necessary
+  ImagingStudies?: any; // Assuming this is a JSON object, adjust the type as necessary
+}
 
 interface NameObject {
   Name: string;
@@ -218,20 +218,28 @@ const formatDateForInput = (dateString: string): string => {
 const Patients = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const handleCreateModalClose = () => setIsCreateModalOpen(false);
+
   const [isEditPatientModalOpen, setIsEditPatientModalOpen] = useState(false);
+  const handleEditPatientModalClose = () => setIsEditPatientModalOpen(false);
+  const [isEditPatientLoading, setIsEditPatientLoading] = useState(false);
+  const [refreshPatientsTable, setRefreshPatientsTable] = useState<boolean>(false);
   const [patientId, setPatientId] = useState(0);
   const [patientDetails, setPatientDetails] = useState<Patient[]>([]);
-  const handleEditPatientModalClose = () => setIsEditPatientModalOpen(false);
+
   const [isADPIEModalOpen, setIsADPIEModalOpen] = useState(false);
   const handleADPIEModalClose = () => setIsADPIEModalOpen(false);
+
   const [isVitalSignsModalOpen, setIsVitalSignsModalOpen] = useState(false);
   const handleVitalSignsModalClose = () => setIsVitalSignsModalOpen(false);
   
   const [physicianName, setPhysicianName] = useState<NameObject | {}>({});
   const [nurseName, setNurseName] = useState<NameObject | {}>({});
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [refreshPatientsTable, setRefreshPatientsTable] = useState<boolean>(false);
+  const [isEditAssessmentsModalOpen, setIsEditAssessmentsModalOpen] = useState(false);
+  const handleEditAssessmentsModalClose = () => setIsEditAssessmentsModalOpen(false);
+  const [isEditAssessmentsLoading, setIsEditAssessmentsLoading] = useState(false);
+  const [assessmentId, setAssessmentId] = useState(0);
+  const [assessmentDetails, setAssessmentDetails] = useState<Assessment[]>([]);
 
   const handleCreatePatient = async (event: any) => {
     event.preventDefault();
@@ -254,12 +262,21 @@ const Patients = () => {
   }
   
   const handleEditPatientClick = async (patientId: any) => {
-    setIsLoading(true);
+    setIsEditPatientLoading(true);
     setPatientId(patientId);
     const patient = await getPatient(patientId);
     setPatientDetails([patient]);
-    setIsLoading(false);
+    setIsEditPatientLoading(false);
     setIsEditPatientModalOpen(true);
+  }
+
+  const handleEditAssessmentClick = async (assessmentId: any) => {
+    setIsEditAssessmentsLoading(true); 
+    setAssessmentId(assessmentId);
+    const assessment = await AssessmentsCRUD.findOneAssessment(assessmentId);
+    setAssessmentDetails([assessment]);
+    setIsEditAssessmentsLoading(false);
+    setIsEditAssessmentsModalOpen(true);
   }
 
   useEffect(() => {
@@ -321,6 +338,11 @@ const Patients = () => {
     event.preventDefault();
     console.log('handleVitalSigns runs');
   }
+
+  const handleEditAssessment = async (event: any) => {
+    event.preventDefault();
+    console.log('handleEditAssessment runs');
+  }
   
   return (
     <HStack background="#E0EAF3">
@@ -353,7 +375,7 @@ const Patients = () => {
               <ADPIETable fetchData={fetchADPIEData} defineColumns={ADPIEColumns} />
             </TabPanel>
             <TabPanel>
-              <AssessmentsTable fetchData={fetchAssessmentsData} defineColumns={AssessmentColumns} />
+              <AssessmentsTable fetchData={fetchAssessmentsData} defineColumns={AssessmentColumns} setIsEditModalOpen={setIsEditAssessmentsModalOpen} onEditClick={handleEditAssessmentClick} />
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -468,13 +490,13 @@ const Patients = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-      <Modal isOpen={isEditPatientModalOpen && !isLoading} onClose={handleEditPatientModalClose}>
+      <Modal isOpen={isEditPatientModalOpen && !isEditPatientLoading} onClose={handleEditPatientModalClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Edit Patient</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {isLoading ? (
+            {isEditPatientLoading ? (
               <Text>Loading...</Text>
             ) : (
               <form onSubmit={handleEditPatient}>
@@ -540,6 +562,95 @@ const Patients = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
+      <Modal isOpen={isEditAssessmentsModalOpen && !isEditAssessmentsLoading} onClose={handleEditAssessmentsModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Assessment</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {isEditAssessmentsLoading ? (
+              <Text>Loading...</Text>
+            ) : (
+              <form onSubmit={handleEditAssessment}>
+                <FormControl>
+                  <FormLabel>Health History</FormLabel>
+                  <Input name="HealthHistory" defaultValue={assessmentDetails[0]?.HealthHistory} required />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Chief Complaint</FormLabel>
+                  <Input name="ChiefComplaint" defaultValue={assessmentDetails[0]?.ChiefComplaint} required />  
+                </FormControl>
+                <FormControl>
+                  <FormLabel>History of Present Illness</FormLabel>
+                  <Input name="HistoryOfPresentIllness" defaultValue={assessmentDetails[0]?.HistoryOfPresentIllness} required />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Past Medical History</FormLabel>
+                  <Input name="PastMedicalHistory" defaultValue={assessmentDetails[0]?.PastMedicalHistory} required />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Social History</FormLabel>
+                  <Input name="SocialHistory" defaultValue={assessmentDetails[0]?.SocialHistory} required />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Nurse Notes</FormLabel>
+                  <Input name="NurseNotes" defaultValue={assessmentDetails[0]?.NurseNotes} required />
+                </FormControl>
+                {Array.isArray(assessmentDetails[0]?.LaboratoryTests) && assessmentDetails[0]?.LaboratoryTests.map((test: any, index: number) => (
+                  <div key={index}>
+                    <FormControl>
+                      <FormLabel>Laboratory Test {index + 1} Label</FormLabel>
+                      <Input name={`LaboratoryTests[${index}].label`} defaultValue={test.label} required />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Laboratory Test {index + 1} Link</FormLabel>
+                      <Input name={`LaboratoryTests[${index}].value`} defaultValue={test.value} required />
+                    </FormControl>
+                  </div>
+                ))}
+                {Array.isArray(assessmentDetails[0]?.PhysicalExaminations) && assessmentDetails[0]?.PhysicalExaminations.map((test: any, index: number) => (
+                  <div key={index}>
+                    <FormControl>
+                      <FormLabel>Physical Examination {index + 1} Label</FormLabel>
+                      <Input name={`PhysicalExaminations[${index}].label`} defaultValue={test.label} required />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Physical Examination {index + 1} Link</FormLabel>
+                      <Input name={`PhysicalExaminations[${index}].value`} defaultValue={test.value} required />
+                    </FormControl>
+                  </div>
+                ))}
+                {Array.isArray(assessmentDetails[0]?.DiagnosticTests) && assessmentDetails[0]?.DiagnosticTests.map((test: any, index: number) => (
+                  <div key={index}>
+                    <FormControl>
+                      <FormLabel>Diagnostic Test {index + 1} Label</FormLabel>
+                      <Input name={`DiagnosticTests[${index}].label`} defaultValue={test.label} required />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Diagnostic Test {index + 1} Link</FormLabel>
+                      <Input name={`DiagnosticTests[${index}].value`} defaultValue={test.value} required />
+                    </FormControl>
+                  </div>
+                ))}
+                {Array.isArray(assessmentDetails[0]?.ImagingStudies) && assessmentDetails[0]?.ImagingStudies.map((test: any, index: number) => (
+                  <div key={index}>
+                    <FormControl>
+                      <FormLabel>Imaging Study {index + 1} Label</FormLabel>
+                      <Input name={`ImagingStudies[${index}].label`} defaultValue={test.label} required />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Imaging Study {index + 1} Link</FormLabel>
+                      <Input name={`ImagingStudies[${index}].value`} defaultValue={test.value} required />
+                    </FormControl>
+                  </div>
+                ))}
+                <Button type="submit" colorScheme="blue" mt={4}>Save Changes</Button>
+              </form>
+            )}            
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
     </HStack>
   );
 };

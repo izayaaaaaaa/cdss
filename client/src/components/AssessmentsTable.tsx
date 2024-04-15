@@ -13,6 +13,8 @@ interface Test {
 interface AssessmentsTableProps {
   fetchData: () => Promise<any>;
   defineColumns: () => any[];
+  setIsEditModalOpen: (isOpen: boolean) => void;
+  onEditClick: (id: number) => void;
 }
 
 type Assessment = {
@@ -30,7 +32,7 @@ type Assessment = {
   ImagingStudies?: any; // Assuming this is a JSON object, adjust the type as necessary
 };
 
-const AssessmentsTable: React.FC<AssessmentsTableProps> = ({ fetchData, defineColumns }) => {
+const AssessmentsTable: React.FC<AssessmentsTableProps> = ({ fetchData, defineColumns, setIsEditModalOpen, onEditClick }) => {
   const [data, setData] = useState<any[]>([]); 
   const [refreshTable, setRefreshTable] = useState<boolean>(false);
   
@@ -72,30 +74,33 @@ const AssessmentsTable: React.FC<AssessmentsTableProps> = ({ fetchData, defineCo
     },
     renderRowActions: ({ row }) => (
       <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-      <ActionIcon
-      color="red"
-      onClick={() => {
-        // Implement edit functionality here
-      }}
-      >
-      <IconEdit />
-      </ActionIcon>
-      <ActionIcon
-      color="red"
-      onClick={async () => {
-        // Implement delete functionality here
-      }}
-      >
-      <IconTrash />
-      </ActionIcon>
-      <ActionIcon
-      color="red"
-      onClick={async () => {
-        // Implement additional action functionality here
-      }}
-      >
-      <Image src={assessmentIcon} alt="Assessments" />
-      </ActionIcon>
+        <ActionIcon
+          color="red"
+          onClick={() => {
+            console.log('edit icon clicked');
+            setIsEditModalOpen(true);
+            onEditClick(data[row.index].AssessmentID);
+            console.log('rowProfileID: ', data[row.index].AssessmentID);
+          }}
+        >
+          <IconEdit />
+        </ActionIcon>
+        <ActionIcon
+          color="red"
+          onClick={async () => {
+            // Implement delete functionality here
+          }}
+        >
+          <IconTrash />
+        </ActionIcon>
+        <ActionIcon
+          color="red"
+          onClick={async () => {
+            // Implement additional action functionality here
+          }}
+        >
+          <Image src={assessmentIcon} alt="Assessments" />
+        </ActionIcon>
       </Box>
     ),
     renderDetailPanel: ({ row }) => (
