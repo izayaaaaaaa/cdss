@@ -15,6 +15,8 @@ interface AssessmentsTableProps {
   defineColumns: () => any[];
   setIsEditModalOpen: (isOpen: boolean) => void;
   onEditClick: (id: number) => void;
+  refreshTable: boolean;
+  setRefreshTable: (value: boolean) => void;
 }
 
 type Assessment = {
@@ -32,9 +34,8 @@ type Assessment = {
   ImagingStudies?: any; // Assuming this is a JSON object, adjust the type as necessary
 };
 
-const AssessmentsTable: React.FC<AssessmentsTableProps> = ({ fetchData, defineColumns, setIsEditModalOpen, onEditClick }) => {
+const AssessmentsTable: React.FC<AssessmentsTableProps> = ({ refreshTable, setRefreshTable, fetchData, defineColumns, setIsEditModalOpen, onEditClick }) => {
   const [data, setData] = useState<any[]>([]); 
-  const [refreshTable, setRefreshTable] = useState<boolean>(false);
   
   useEffect(() => {
     fetchData().then((fetchedData) => {

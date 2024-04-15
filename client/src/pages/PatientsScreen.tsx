@@ -240,6 +240,7 @@ const Patients = () => {
   const [isEditAssessmentsLoading, setIsEditAssessmentsLoading] = useState(false);
   const [assessmentId, setAssessmentId] = useState(0);
   const [assessmentDetails, setAssessmentDetails] = useState<Assessment[]>([]);
+  const [refreshAssessmentsTable, setRefreshAssessmentsTable] = useState<boolean>(false);
 
   const handleCreatePatient = async (event: any) => {
     event.preventDefault();
@@ -342,6 +343,22 @@ const Patients = () => {
   const handleEditAssessment = async (event: any) => {
     event.preventDefault();
     console.log('handleEditAssessment runs');
+
+    // Capture form data
+    const formData = new FormData(event.currentTarget);
+    const updatedAssessmentData = Object.fromEntries(formData);
+
+    console.log('Updated assessment data: ', updatedAssessmentData);
+
+    // Update the state with the new form data
+    setAssessmentDetails([{ ...assessmentDetails[0], ...updatedAssessmentData }]);
+
+    // Now, use the updated assessmentDetails for the update operation
+    console.log('Updated assessment details: ', updatedAssessmentData);
+    await AssessmentsCRUD.updateAssessment(assessmentDetails[0].AssessmentID, updatedAssessmentData);
+
+    setRefreshAssessmentsTable(!refreshAssessmentsTable);
+    setIsEditAssessmentsModalOpen(false);
   }
   
   return (
@@ -375,7 +392,7 @@ const Patients = () => {
               <ADPIETable fetchData={fetchADPIEData} defineColumns={ADPIEColumns} />
             </TabPanel>
             <TabPanel>
-              <AssessmentsTable fetchData={fetchAssessmentsData} defineColumns={AssessmentColumns} setIsEditModalOpen={setIsEditAssessmentsModalOpen} onEditClick={handleEditAssessmentClick} />
+              <AssessmentsTable refreshTable={refreshAssessmentsTable} setRefreshTable={setRefreshAssessmentsTable} fetchData={fetchAssessmentsData} defineColumns={AssessmentColumns} setIsEditModalOpen={setIsEditAssessmentsModalOpen} onEditClick={handleEditAssessmentClick} />
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -644,7 +661,7 @@ const Patients = () => {
                     </FormControl>
                   </div>
                 ))}
-                <Button type="submit" colorScheme="blue" mt={4}>Save Changes</Button>
+                <Button type="submit" colorScheme="blue" mt={4}>Save Assessment Changes</Button>
               </form>
             )}            
           </ModalBody>
