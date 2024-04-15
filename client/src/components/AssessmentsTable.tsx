@@ -4,6 +4,7 @@ import { ActionIcon, Box } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { Image, Text } from '@chakra-ui/react';
 import assessmentIcon from '../assets/images/icons8-assessment-100.png';
+import { AssessmentsCRUD } from '../services';
 
 interface Test {
   label: string;
@@ -89,18 +90,18 @@ const AssessmentsTable: React.FC<AssessmentsTableProps> = ({ refreshTable, setRe
         <ActionIcon
           color="red"
           onClick={async () => {
-            // Implement delete functionality here
+            const rowProfileID = data[row.index].AssessmentID;
+            console.log('Delete rowProfileID: ', rowProfileID);
+            try {
+              await AssessmentsCRUD.removeAssessment(rowProfileID);
+              console.log('Assessment deleted successfully');
+              setRefreshTable(!refreshTable);
+            } catch (error) {
+              console.error('Failed to delete assessment:', error);
+            }
           }}
         >
           <IconTrash />
-        </ActionIcon>
-        <ActionIcon
-          color="red"
-          onClick={async () => {
-            // Implement additional action functionality here
-          }}
-        >
-          <Image src={assessmentIcon} alt="Assessments" />
         </ActionIcon>
       </Box>
     ),
