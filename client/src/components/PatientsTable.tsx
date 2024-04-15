@@ -97,7 +97,7 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ refreshTable, setRefreshTa
     renderRowActions: ({ row }) => (
       <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
         <ActionIcon
-          color="green"
+          color="orange"
           onClick={async () => {
             // console.log('edit icon clicked');
             setIsEditModalOpen(true);
