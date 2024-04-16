@@ -55,7 +55,7 @@ const SignIn = () => {
 
       localStorage.setItem('user_id', response.user_id);
 
-      navigate('/employees');
+      navigate('/dashboard');
     } catch (error) {
       console.error('handleSubmit Sign-in error:', error);
     } finally {
