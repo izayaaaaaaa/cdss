@@ -189,17 +189,6 @@ const updatePatient = async (id: number, payload: any) => {
   }
 }
 
-const createPatient = async (patientData: any) => {
-  try {
-    const createdPatient = await PatientsCRUD.createPatient(patientData);
-    console.log('createPatient response: ', createdPatient);
-    
-    return createdPatient;
-  } catch (error) {
-    console.error('Failed to create patient:', error);
-  }
-}
-
 const formatDateForInput = (dateString: string): string => {
   // Check if the dateString is not empty and can be parsed into a valid Date object
   if (dateString && !isNaN(Date.parse(dateString))) {
@@ -229,6 +218,7 @@ const Patients = () => {
 
   const [isADPIEModalOpen, setIsADPIEModalOpen] = useState(false);
   const handleADPIEModalClose = () => setIsADPIEModalOpen(false);
+  const [refreshAdpieTable, setRefreshAdpieTable] = useState<boolean>(false);
 
   const [isVitalSignsModalOpen, setIsVitalSignsModalOpen] = useState(false);
   const handleVitalSignsModalClose = () => setIsVitalSignsModalOpen(false);
@@ -250,6 +240,18 @@ const Patients = () => {
     await createPatient(patientData);
     setIsCreateModalOpen(false);
   };
+
+  const createPatient = async (patientData: any) => {
+    try {
+      const createdPatient = await PatientsCRUD.createPatient(patientData);
+      console.log('createPatient response: ', createdPatient);
+      setRefreshPatientsTable(!refreshPatientsTable);
+      
+      return createdPatient;
+    } catch (error) {
+      console.error('Failed to create patient:', error);
+    }
+  }
   
   const getPatient = async (id: number) => {
     try {
@@ -306,6 +308,14 @@ const Patients = () => {
   
    fetchNames();
   }, [patientDetails]);
+
+  useEffect(() => {
+    fetchPatientsData();
+  }, [refreshPatientsTable]);
+
+  useEffect(() => {
+    fetchADPIEData();
+  }, [refreshAdpieTable]);
   
   const handleEditPatient = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -332,11 +342,26 @@ const Patients = () => {
   const handleADPIE = async (event: any) => {
     event.preventDefault();
     console.log('handleADPIE runs');
-    // const formData = new FormData(event.target);
-    // const patientData = Object.fromEntries(formData);
-    // await createPatient(patientData);
-    // setIsADPIEModalOpen(false);
+    const formData = new FormData(event.target);
+    const adpieData = Object.fromEntries(formData);
+    console.log('ADPIE data: ', adpieData);
+    await createAdpie(adpieData);
+    setIsADPIEModalOpen(false);
+    setRefreshAdpieTable(!refreshAdpieTable);
   }
+
+  const createAdpie = async (adpieData: any) => {
+    try {
+      // convvert PatientID to number
+      adpieData.PatientID = parseInt(adpieData.PatientID);
+      const createdAdpie = await ADPIECRUD.createADPIE(adpieData);
+      console.log('createAdpie response: ', createdAdpie);
+      return createdAdpie;
+    } catch (error) {
+      console.error('Failed to create ADPIE:', error);
+    }
+  }
+
   const handleVitalSigns = async (event: any) => {
     event.preventDefault();
     console.log('handleVitalSigns runs');
@@ -401,6 +426,7 @@ const Patients = () => {
       </Box>
 
 
+      {/* create patient modal global */}
       <Modal isOpen={isCreateModalOpen} onClose={handleCreateModalClose}>
         <ModalOverlay />
         <ModalContent>
@@ -445,70 +471,8 @@ const Patients = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-      <Modal isOpen={isADPIEModalOpen} onClose={handleADPIEModalClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>ADPIE</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <form onSubmit={handleADPIE}>
-              <FormControl>
-                <FormLabel>Assessment</FormLabel>
-                <Input name="Assessment" placeholder="Assessment" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Diagnosis</FormLabel>
-                <Input name="Diagnosis" placeholder="Diagnosis" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Planning</FormLabel>
-                <Input name="Planning" placeholder="Planning" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Implementation</FormLabel>
-                <Input name="Implementation" placeholder="Implementation" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Evaluation</FormLabel>
-                <Input name="Evaluation" placeholder="Evaluation" required />
-              </FormControl>
-              <Button w="full" mt={5} type="submit" colorScheme="blue">Save ADPIE</Button>
-            </form>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-      <Modal isOpen={isVitalSignsModalOpen} onClose={handleVitalSignsModalClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Vital Signs</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <form onSubmit={handleVitalSigns}>
-              <FormControl>
-                <FormLabel>Temperature</FormLabel>
-                <Input name="Temperature" placeholder="Temperature" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Heart Rate</FormLabel>
-                <Input name="Heart Rate" placeholder="Heart Rate" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Blood Pressure</FormLabel>
-                <Input name="Blood Pressure" placeholder="Blood Pressure" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Respiratory Rate</FormLabel>
-                <Input name="Respiratory Rate" placeholder="Respiratory Rate" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Oxygen Saturation</FormLabel>
-                <Input name="Oxygen Saturation" placeholder="Oxygen Saturation" required />
-              </FormControl>
-              <Button w="full" mt={5} type="submit" colorScheme="blue">Save Vital Signs</Button>
-            </form>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+
+      {/* edit patient modal in patients tab */}
       <Modal isOpen={isEditPatientModalOpen && !isEditPatientLoading} onClose={handleEditPatientModalClose}>
         <ModalOverlay />
         <ModalContent>
@@ -585,6 +549,82 @@ const Patients = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
+
+      {/* create new adpie in patients tab */}
+      <Modal isOpen={isADPIEModalOpen} onClose={handleADPIEModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>ADPIE</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <form onSubmit={handleADPIE}>
+              <FormControl>
+                <FormLabel>Diagnosis</FormLabel>
+                <Input name="Diagnosis" placeholder="Diagnosis" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Planning</FormLabel>
+                <Input name="Planning" placeholder="Planning" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>InterventionImplementation</FormLabel>
+                <Input name="InterventionImplementation" placeholder="InterventionImplementation" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Evaluation</FormLabel>
+                <Input name="Evaluation" placeholder="Evaluation" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Patient ID</FormLabel>
+                <Input name="PatientID" placeholder="Patient ID" required />
+              </FormControl>
+              <Button w="full" mt={5} type="submit" colorScheme="blue">Save ADPIE</Button>
+            </form>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* create new vitalsigns in patients tab */}
+      <Modal isOpen={isVitalSignsModalOpen} onClose={handleVitalSignsModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Vital Signs</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <form onSubmit={handleVitalSigns}>
+              <FormControl>
+                <FormLabel>Temperature</FormLabel>
+                <Input name="Temperature" placeholder="Temperature" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Heart Rate</FormLabel>
+                <Input name="Heart Rate" placeholder="Heart Rate" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Blood Pressure</FormLabel>
+                <Input name="Blood Pressure" placeholder="Blood Pressure" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Respiratory Rate</FormLabel>
+                <Input name="Respiratory Rate" placeholder="Respiratory Rate" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Oxygen Saturation</FormLabel>
+                <Input name="Oxygen Saturation" placeholder="Oxygen Saturation" required />
+              </FormControl>
+              <Button w="full" mt={5} type="submit" colorScheme="blue">Save Vital Signs</Button>
+            </form>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      
+      {/* edit vital signs modal in vital signs tab */}
+
+      {/* edit adpie modal in adpie tab */}
+
+      {/* create new assessment modal in adpie tab */}
+
+      {/* edit assessment modal in assessments tab */}
       <Modal isOpen={isEditAssessmentsModalOpen && !isEditAssessmentsLoading} onClose={handleEditAssessmentsModalClose}>
         <ModalOverlay />
         <ModalContent>
