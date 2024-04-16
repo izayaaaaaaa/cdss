@@ -22,7 +22,7 @@ const Employees = () => {
     { accessorKey: 'gender', header: 'Gender', size: 100 },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'emailAddress', header: 'Email Address' },
-    { accessorKey: 'available', header: 'Available', size: 100 },
+    // { accessorKey: 'available', header: 'Available', size: 100 },
   ];
 
   const fetchDoctorsData = async () => {
