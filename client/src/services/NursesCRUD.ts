@@ -81,7 +81,23 @@ const deleteNurse = async (id: number) => {
   }
 };
 
+const getNurseIdFromName = async (nurseName: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/nurse/name/${nurseName}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    console.log('nursecrud getNurseIdFromName data:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching nurse id:', error);
+    throw error;
+  }
+};
+
 const NursesCRUD = {
+  getNurseIdFromName,
   getAllNurses,
   updateNurse,
   deleteNurse,

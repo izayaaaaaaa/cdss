@@ -7,7 +7,7 @@ export class PatientService {
   constructor(private prisma: PrismaService) {}
 
   create(dto: CreatePatientDto) {
-    console.log('service dto: ', dto);
+    console.log('CreatePatientDto: ', dto);
 
     // convert age string to number
     const convertedAge = parseInt(dto.Age);
@@ -74,57 +74,27 @@ export class PatientService {
         NurseNotes: dto.NurseNotes,
         FlowChart: dto.FlowChart,
         NurseProfileID: dto.NurseProfileID,
+        PhysicianInCharge: dto.PhysicianInCharge,
       },
     });
 
-    // connect the physician to the patient
-    // Update the relation to the doctor
     if (dto.PhysicianInCharge) {
-      await this.prisma.patient.update({
-        where: { ProfileID: patientId },
+      await this.prisma.doctor.update({
+        where: { ProfileID: dto.PhysicianInCharge },
         data: {
-          DoctorInCharge: {
-            connect: { ProfileID: dto.PhysicianInCharge },
-          },
+          Availability: false,
         },
       });
     }
-
-    // await this.prisma.doctor.update({
-    //   where: { ProfileID: dto.PhysicianInCharge },
-    //   data: {
-    //     Patient: {
-    //       connect: {
-    //         ProfileID: patientId,
-    //       },
-    //     },
-    //     Availability: false,
-    //   },
-    // });
 
     if (dto.NurseProfileID) {
-      await this.prisma.patient.update({
-        where: { ProfileID: patientId },
+      await this.prisma.nurse.update({
+        where: { ProfileID: dto.NurseProfileID },
         data: {
-          NurseInCharge: {
-            connect: { ProfileID: dto.NurseProfileID },
-          },
+          Availability: false,
         },
       });
     }
-
-    // connect the nurse to the patient
-    // await this.prisma.nurse.update({
-    //   where: { ProfileID: dto.NurseProfileID },
-    //   data: {
-    //     Patient: {
-    //       connect: {
-    //         ProfileID: patientId,
-    //       },
-    //     },
-    //     Availability: false,
-    //   },
-    // });
 
     return this.prisma.patient.findUnique({
       where: { ProfileID: patientId },

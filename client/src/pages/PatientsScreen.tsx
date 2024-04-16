@@ -179,6 +179,7 @@ const fetchAssessmentsData = async () => {
 
 const updatePatient = async (id: number, payload: any) => {
   try {
+    console.log('updatePatient payload: ', payload)
     const updatedPatient = await PatientsCRUD.updatePatient(id, payload);
     console.log('updatePatient response: ', updatedPatient);
     
@@ -313,14 +314,15 @@ const Patients = () => {
     // Capture form data
     const formData = new FormData(event.currentTarget);
     const updatedPatientData = Object.fromEntries(formData);
-
-    console.log('Updated patient data: ', updatedPatientData);
+    
+    // update OutpatientAdmissionStatus to boolean
+    patientDetails[0].OutpatientAdmissionStatus = updatedPatientData.OutpatientAdmissionStatus === 'true' ? true : false;
 
     // Update the state with the new form data
     setPatientDetails([{ ...patientDetails[0], ...updatedPatientData }]);
-   
+
     // Now, use the updated patientDetails for the update operation
-    console.log('Updated patient details: ', updatedPatientData);
+    console.log('handleEditPatient Updated patient details: ', updatedPatientData);
     await updatePatient(patientDetails[0].ProfileID, updatedPatientData);
 
     setRefreshPatientsTable(!refreshPatientsTable);
@@ -544,6 +546,10 @@ const Patients = () => {
                 <FormControl>
                   <FormLabel>Medical History</FormLabel>
                   <Input name="MedicalHistory" defaultValue={patientDetails[0]?.MedicalHistory} required />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Outpatient Admission Status</FormLabel>
+                  <Input name="OutpatientAdmissionStatus" defaultValue={patientDetails[0]?.OutpatientAdmissionStatus.toString()} required />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Date Admitted</FormLabel>

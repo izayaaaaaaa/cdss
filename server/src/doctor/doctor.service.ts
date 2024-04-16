@@ -19,6 +19,18 @@ export class DoctorService {
     });
   }
 
+  getDoctorId(Name: string) {
+    console.log('getDoctorId service name: ', Name);
+    const doctor_id = this.prisma.doctor.findUnique({
+      where: { Name },
+      select: {
+        ProfileID: true,
+      },
+    });
+    console.log('service getDoctorId doctor_id: ', doctor_id);
+    return doctor_id;
+  }
+
   async update(id: number, dto: UpdateDoctorDto) {
     // console.log('id: ', id);
     // console.log('service dto: ', dto);

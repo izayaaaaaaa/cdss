@@ -19,6 +19,18 @@ export class NurseService {
     });
   }
 
+  async getNurseId(Name: string) {
+    console.log('getNurseId service name: ', Name);
+    const nurse = await this.prisma.nurse.findUnique({
+      where: { Name },
+      select: {
+        ProfileID: true,
+      },
+    });
+    console.log('service getNurseId nurse_id: ', nurse.ProfileID);
+    return nurse.ProfileID;
+  }
+
   async update(id: number, dto: UpdateNurseDto) {
     // console.log('id: ', id);
     // console.log('service dto: ', dto);
