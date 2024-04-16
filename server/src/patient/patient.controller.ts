@@ -39,6 +39,7 @@ export class PatientController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
+    console.log('patient delete controller runs w/ id: ', id);
     return this.patientService.remove(+id);
   }
 }

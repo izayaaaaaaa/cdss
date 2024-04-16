@@ -83,7 +83,24 @@ const updateDoctor = async (id: number, payload: any) => {
   }
  };
 
+ const getDoctorIdFromName = async (name: string) => {
+  try {
+    console.log('getDoctorIdFromName name: ', name);
+    const response = await fetch(`${BASE_URL}/doctor/name/${name}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    console.log('getDoctorIdFromName data: ', data)
+    return data;
+  } catch (error) {
+    console.error('Error fetching doctor id from name:', error);
+    throw error;
+  }
+ };
+
 const DoctorsCRUD = {
+  getDoctorIdFromName,
   getAllDoctors,
   updateDoctor,
   deleteDoctor,

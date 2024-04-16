@@ -20,6 +20,12 @@ export class DoctorController {
     return this.doctorService.getDoctorName(+ProfileID);
   }
 
+  @Get('name/:name')
+  getDoctorId(@Param('name') Name: string) {
+    // console.log('getDoctorId controller name: ', Name);
+    return this.doctorService.getDoctorId(Name);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateDoctorDto) {
     // console.log('controller dto: ', dto);

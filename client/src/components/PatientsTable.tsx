@@ -97,12 +97,12 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ refreshTable, setRefreshTa
     renderRowActions: ({ row }) => (
       <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
         <ActionIcon
-          color="red"
+          color="orange"
           onClick={async () => {
-            console.log('edit icon clicked');
+            // console.log('edit icon clicked');
             setIsEditModalOpen(true);
             onEditClick(data[row.index].id);
-            console.log('rowProfileID: ', data[row.index].id);
+            // console.log('rowProfileID: ', data[row.index].id);
           }}
         >
         <IconEdit />
@@ -111,7 +111,7 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ refreshTable, setRefreshTa
           color="red"
           onClick={async () => {
             const rowProfileID = data[row.index].id;
-            console.log('Delete rowProfileID: ', rowProfileID);
+            console.log('Patients Table Delete rowProfileID: ', rowProfileID);
             try {
               await PatientsCRUD.deletePatient(rowProfileID);
               console.log('Patient deleted successfully');

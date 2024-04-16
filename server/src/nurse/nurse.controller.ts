@@ -20,6 +20,11 @@ export class NurseController {
     return this.nurseService.getNurseName(+id);
   }
 
+  @Get('name/:name')
+  getNurseId(@Param('name') Name: string) {
+    return this.nurseService.getNurseId(Name);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateNurseDto) {
     return this.nurseService.update(+id, dto);

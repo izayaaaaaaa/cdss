@@ -21,7 +21,7 @@ model User {
 model Doctor {
   ProfileID    Int       @id @default(autoincrement())
   UserID       Int       @unique
-  Name         String
+  Name         String    @unique
   Age          Int
   Gender       String
   PhoneNumber  String
@@ -36,7 +36,7 @@ model Doctor {
 model Nurse {
   ProfileID    Int       @id @default(autoincrement())
   UserID       Int       @unique
-  Name         String
+  Name         String    @unique
   Age          Int
   Gender       String
   PhoneNumber  String

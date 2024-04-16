@@ -7,7 +7,7 @@ export class PatientService {
   constructor(private prisma: PrismaService) {}
 
   create(dto: CreatePatientDto) {
-    console.log('service dto: ', dto);
+    console.log('CreatePatientDto: ', dto);
 
     // convert age string to number
     const convertedAge = parseInt(dto.Age);
@@ -74,57 +74,27 @@ export class PatientService {
         NurseNotes: dto.NurseNotes,
         FlowChart: dto.FlowChart,
         NurseProfileID: dto.NurseProfileID,
+        PhysicianInCharge: dto.PhysicianInCharge,
       },
     });
 
-    // connect the physician to the patient
-    // Update the relation to the doctor
     if (dto.PhysicianInCharge) {
-      await this.prisma.patient.update({
-        where: { ProfileID: patientId },
+      await this.prisma.doctor.update({
+        where: { ProfileID: dto.PhysicianInCharge },
         data: {
-          DoctorInCharge: {
-            connect: { ProfileID: dto.PhysicianInCharge },
-          },
+          Availability: false,
         },
       });
     }
-
-    // await this.prisma.doctor.update({
-    //   where: { ProfileID: dto.PhysicianInCharge },
-    //   data: {
-    //     Patient: {
-    //       connect: {
-    //         ProfileID: patientId,
-    //       },
-    //     },
-    //     Availability: false,
-    //   },
-    // });
 
     if (dto.NurseProfileID) {
-      await this.prisma.patient.update({
-        where: { ProfileID: patientId },
+      await this.prisma.nurse.update({
+        where: { ProfileID: dto.NurseProfileID },
         data: {
-          NurseInCharge: {
-            connect: { ProfileID: dto.NurseProfileID },
-          },
+          Availability: false,
         },
       });
     }
-
-    // connect the nurse to the patient
-    // await this.prisma.nurse.update({
-    //   where: { ProfileID: dto.NurseProfileID },
-    //   data: {
-    //     Patient: {
-    //       connect: {
-    //         ProfileID: patientId,
-    //       },
-    //     },
-    //     Availability: false,
-    //   },
-    // });
 
     return this.prisma.patient.findUnique({
       where: { ProfileID: patientId },
@@ -132,6 +102,31 @@ export class PatientService {
   }
 
   async remove(id: number) {
+    console.log('patient delete service runs w/ id: ', id);
+
+    // First, delete all VitalSigns records associated with the patient
+    await this.prisma.vitalSigns.deleteMany({
+      where: { PatientID: id },
+    });
+
+    // Fetch all ADPIE records associated with the patient
+    const adpies = await this.prisma.aDPIE.findMany({
+      where: { PatientID: id },
+    });
+
+    // Delete all Assessment records associated with the fetched ADPIE records
+    if (adpies.length > 0) {
+      await this.prisma.assessment.deleteMany({
+        where: { ADPIEID: { in: adpies.map((adpie) => adpie.ADPIEID) } },
+      });
+    }
+
+    // Next, delete all ADPIE records associated with the patient
+    await this.prisma.aDPIE.deleteMany({
+      where: { PatientID: id },
+    });
+
+    // Finally, delete the patient
     return this.prisma.patient.delete({
       where: { ProfileID: id },
     });

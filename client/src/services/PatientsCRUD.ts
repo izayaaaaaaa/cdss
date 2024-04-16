@@ -1,3 +1,6 @@
+import DoctorsCRUD from "./DoctorsCRUD";
+import NursesCRUD from "./NursesCRUD";
+
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 const getAllPatients = async () => {
@@ -82,6 +85,26 @@ const createPatient = async (patientData: any) => {
     patientData.Age = patientData.Age.toString();
     patientData.AssignedRoomNumber = patientData.AssignedRoomNumber.toString();
     patientData.BedNumber = patientData.BedNumber.toString();
+
+    console.log('updatePatientupdatePatient nurse name: ', patientData.NurseName);
+
+    // get physician id from physician name
+    const PhysicianInCharge = await DoctorsCRUD.getDoctorIdFromName(patientData.PhysicianName);
+    
+    // get nurse id from nurse name
+    const NurseProfileID = await NursesCRUD.getNurseIdFromName(patientData.NurseName);
+
+    console.log('updatePatientupdatePatient nurse id: ', NurseProfileID);
+
+    console.log('PatientsCRUD updatePatient PhysicianInCharge: ', PhysicianInCharge.ProfileID);
+    console.log('PatientsCRUD updatePatient NurseProfileID: ', NurseProfileID);
+
+    // assign physician id and nurse id to patientData
+    patientData.PhysicianInCharge = PhysicianInCharge.ProfileID;
+    patientData.NurseProfileID = NurseProfileID;
+
+    // convert outpatientadmissionstatus to boolean
+    patientData.OutpatientAdmissionStatus = patientData.OutpatientAdmissionStatus === 'true' ? true : false;
 
     console.log('patientData on patientscrud to be sent: ', patientData);
 
