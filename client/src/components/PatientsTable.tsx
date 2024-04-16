@@ -111,7 +111,7 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ refreshTable, setRefreshTa
           color="red"
           onClick={async () => {
             const rowProfileID = data[row.index].id;
-            console.log('Delete rowProfileID: ', rowProfileID);
+            console.log('Patients Table Delete rowProfileID: ', rowProfileID);
             try {
               await PatientsCRUD.deletePatient(rowProfileID);
               console.log('Patient deleted successfully');
