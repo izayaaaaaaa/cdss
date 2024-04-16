@@ -6,11 +6,16 @@ import { CreateAdpieDto, UpdateAdpieDto } from './dto';
 export class AdpieService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateAdpieDto, patientId: number) {
+  async create(dto: CreateAdpieDto) {
+    const { PatientID, ...rest } = dto; // Destructure PatientID and the rest of the properties
     return this.prisma.aDPIE.create({
       data: {
-        ...dto,
-        PatientID: patientId,
+        ...rest, // Spread the rest of the properties
+        Patient: {
+          connect: {
+            ProfileID: PatientID, // Use PatientID here
+          },
+        },
       },
     });
   }

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateAdpieDto {
   @IsNotEmpty()
@@ -16,4 +16,8 @@ export class CreateAdpieDto {
   @IsNotEmpty()
   @IsString()
   Evaluation: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  PatientID: number;
 }

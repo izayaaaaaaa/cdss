@@ -15,11 +15,8 @@ export class AdpieController {
   constructor(private readonly adpieService: AdpieService) {}
 
   @Post()
-  create(
-    @Body() createAdpieDto: CreateAdpieDto,
-    @Body('patientId') patientId: number,
-  ) {
-    return this.adpieService.create(createAdpieDto, patientId);
+  create(@Body() createAdpieDto: CreateAdpieDto) {
+    return this.adpieService.create(createAdpieDto);
   }
 
   @Get()

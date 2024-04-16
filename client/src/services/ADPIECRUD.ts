@@ -22,15 +22,15 @@ const getADPIE = async (patientId: number) => {
   }
 };
 
-const createADPIE = async (patientId: number, data: any) => {
+const createADPIE = async (data: any) => {
   try {
-    const response = await axios.post(`${BASE_URL}/adpie/${patientId}`, data);
-    return response.data;
+     const response = await axios.post(`${BASE_URL}/adpie`, { ...data });
+     return response.data;
   } catch (error) {
-    console.error('Failed to create ADPIE:', error);
-    throw error;
+     console.error('Failed to create ADPIE:', error);
+     throw error;
   }
-};
+ };
 
 const updateADPIE = async (patientId: number, adpieId: number, data: any) => {
     try {
