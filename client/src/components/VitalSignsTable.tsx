@@ -37,10 +37,10 @@ const VitalSignsTable: React.FC<VitalSignsTableProps> = ({ fetchData, defineColu
         VitalSignID: vitalsign.VitalSignID,
         DateTime: vitalsign.DateTime,
         Temperature: vitalsign.Temperature,
-        PulseRate: vitalsign.PulseRate,
         BloodPressure: vitalsign.BloodPressure,
-        PainScale: vitalsign.PainScale,
+        PulseRate: vitalsign.PulseRate,
         OxygenSaturation: vitalsign.OxygenSaturation,
+        PainScale: vitalsign.PainScale,
       }));
       setData(formattedData);
     });

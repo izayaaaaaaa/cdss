@@ -6,11 +6,11 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class VitalsignsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateVitalSignsDto, patientId: number) {
+  async create(dto: CreateVitalSignsDto) {
     return this.prisma.vitalSigns.create({
       data: {
         ...dto,
-        PatientID: patientId,
+        PatientID: dto.PatientID,
       },
     });
   }

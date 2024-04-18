@@ -15,11 +15,8 @@ export class VitalsignsController {
   constructor(private readonly vitalsignsService: VitalsignsService) {}
 
   @Post()
-  create(
-    @Body() dto: CreateVitalSignsDto,
-    @Body('patientId') patientId: number,
-  ) {
-    return this.vitalsignsService.create(dto, patientId);
+  create(@Body() dto: CreateVitalSignsDto) {
+    return this.vitalsignsService.create(dto);
   }
 
   @Get()

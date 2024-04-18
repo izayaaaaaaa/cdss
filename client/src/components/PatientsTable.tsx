@@ -135,6 +135,9 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ setPatientId, refreshTable
         </ActionIcon>
         <ActionIcon
           onClick={() => {
+            console.log('row index: ', row.index);
+            setPatientId(data[row.index].id);
+            console.log('create adpie with patientId: ', patientId);
             setIsVitalSignsModalOpen(true);
           }}
         >

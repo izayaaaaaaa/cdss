@@ -78,6 +78,17 @@ interface Adpie {
   DateModified: string;
 }
 
+interface VitalSigns {
+  VitalSignsID: number;
+  PatientID: number;
+  DateTime: string;
+  Temperature: number;
+  PulseRate: number;
+  BloodPressure: number;
+  PainScale: number;
+  OxygenSaturation: number;
+}
+
 interface NameObject {
   Name: string;
 }
@@ -96,10 +107,10 @@ const vitalSignColumns = () => [
   { accessorKey: 'PatientID', header: 'Patient ID', size: 100 },
   { accessorKey: 'DateTime', header: 'Date Taken', size: 200 },
   { accessorKey: 'Temperature', header: 'Temperature', size: 100 },
-  { accessorKey: 'PulseRate', header: 'Pulse Rate', size: 100 },
   { accessorKey: 'BloodPressure', header: 'Blood Pressure', size: 100 },
-  { accessorKey: 'PainScale', header: 'Pain Scale', size: 100 },
+  { accessorKey: 'PulseRate', header: 'Pulse Rate', size: 100 },
   { accessorKey: 'OxygenSaturation', header: 'Oxygen Saturation', size: 100 },
+  { accessorKey: 'PainScale', header: 'Pain Scale', size: 100 },
 ];
 
 const ADPIEColumns = () => [
@@ -238,6 +249,7 @@ const Patients = () => {
 
   const [isVitalSignsModalOpen, setIsVitalSignsModalOpen] = useState(false);
   const handleVitalSignsModalClose = () => setIsVitalSignsModalOpen(false);
+  const [refreshVitalSignsTable, setRefreshVitalSignsTable] = useState<boolean>(false);
 
   const [physicianName, setPhysicianName] = useState<NameObject | {}>({});
   const [nurseName, setNurseName] = useState<NameObject | {}>({});
@@ -359,7 +371,6 @@ const Patients = () => {
 
   const createAdpie = async (adpieData: any) => {
     try {
-      // add adpieid to adpieData
       adpieData.PatientID = patientId;
       // console.log('createAdpie w/ patientId: ', patientId)
       
@@ -374,6 +385,29 @@ const Patients = () => {
   const handleVitalSigns = async (event: any) => {
     event.preventDefault();
     console.log('handleVitalSigns runs');
+    const formData = new FormData(event.target);
+    const vitalSignsData = Object.fromEntries(formData);
+    console.log('Vital Signs data: ', vitalSignsData);
+    await createVitalSigns(vitalSignsData);
+    setIsVitalSignsModalOpen(false);
+    setRefreshVitalSignsTable(!refreshVitalSignsTable);
+  }
+
+  const createVitalSigns = async (vitalSignsData: any) => {
+    try {
+      vitalSignsData.PatientID = patientId;
+      // set the datetime to now and convert to ISO string
+      vitalSignsData.DateTime = new Date().toISOString();
+
+      console.log('createVitalSigns w/ patientId: ', patientId)
+      console.log('data to be sent to vitalsigns crud: ', vitalSignsData)
+      
+      const createdVitalSigns = await VitalSignsCRUD.createVitalSigns(vitalSignsData);
+      console.log('createVitalSigns response: ', createdVitalSigns);
+      return createdVitalSigns;
+    } catch (error) {
+      console.error('Failed to create Vital Signs:', error);
+    }
   }
 
   const handleEditADPIEClick = async (adpieId: any) => {
@@ -606,42 +640,6 @@ const Patients = () => {
         </ModalContent>
       </Modal>
 
-      {/* create new vitalsigns in patients tab */}
-      <Modal isOpen={isVitalSignsModalOpen} onClose={handleVitalSignsModalClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Vital Signs</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <form onSubmit={handleVitalSigns}>
-              <FormControl>
-                <FormLabel>Temperature</FormLabel>
-                <Input name="Temperature" placeholder="Temperature" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Heart Rate</FormLabel>
-                <Input name="Heart Rate" placeholder="Heart Rate" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Blood Pressure</FormLabel>
-                <Input name="Blood Pressure" placeholder="Blood Pressure" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Respiratory Rate</FormLabel>
-                <Input name="Respiratory Rate" placeholder="Respiratory Rate" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Oxygen Saturation</FormLabel>
-                <Input name="Oxygen Saturation" placeholder="Oxygen Saturation" required />
-              </FormControl>
-              <Button w="full" mt={5} type="submit" colorScheme="blue">Save Vital Signs</Button>
-            </form>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-
-      {/* edit vital signs modal in vital signs tab */}
-
       {/* edit adpie modal in adpie tab */}
       <Modal isOpen={isADPIEEDitModalOpen && !isADPIEEditLoading} onClose={handleADPIEEditModalClose}>
         <ModalOverlay />
@@ -676,6 +674,44 @@ const Patients = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
+
+      {/* create new vitalsigns in patients tab */}
+      <Modal isOpen={isVitalSignsModalOpen} onClose={handleVitalSignsModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Vital Signs</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <form onSubmit={handleVitalSigns}>
+              <FormControl>
+                <FormLabel>Temperature</FormLabel>
+                <Input name="Temperature" placeholder="Temperature" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Blood Pressure</FormLabel>
+                <Input name="BloodPressure" placeholder="Blood Pressure" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Pulse Rate</FormLabel>
+                <Input name="PulseRate" placeholder="Pulse Rate" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Oxygen Saturation</FormLabel>
+                <Input name="OxygenSaturation" placeholder="Oxygen Saturation" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Pain Scale </FormLabel>
+                <Input name="PainScale" placeholder="Pain Scale" required />
+              </FormControl>
+              <Button w="full" mt={5} type="submit" colorScheme="blue">Save Vital Signs</Button>
+            </form>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* edit vital signs modal in vital signs tab */}
+
+      
 
     </HStack>
   );

@@ -15,6 +15,15 @@ const getVitalSigns = async () => {
 
 const createVitalSigns = async (data: any) => {
   try {
+    // convert temp to number
+    data.Temperature = parseFloat(data.Temperature);
+    // convert pulse rate to number
+    data.PulseRate = parseFloat(data.PulseRate);
+    // convert oxygen saturation to number
+    data.OxygenSaturation = parseFloat(data.OxygenSaturation);
+    // convert pain scale to number
+    data.PainScale = parseFloat(data.PainScale);
+    console.log('createVitalSigns CRUD sends data to api: ', data)
     const response = await axios.post(`${BASE_URL}/vitalsigns`, data);
     return response.data;
   } catch (error) {

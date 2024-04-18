@@ -24,4 +24,8 @@ export class CreateVitalSignsDto {
   @IsNotEmpty()
   @IsNumber()
   PainScale: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  PatientID: number;
 }
