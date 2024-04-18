@@ -105,7 +105,7 @@ const vitalSignColumns = () => [
 const ADPIEColumns = () => [
   { accessorKey: 'PatientID', header: 'Patient ID', size: 100 },
   { accessorKey: 'DocumentType', header: 'Document Type', size: 100 },
-  // { accessorKey: 'Content', header: 'Content', size: 100 },
+  { accessorKey: 'Content', header: 'Content Link', size: 100 },
   { accessorKey: 'DateCreated', header: 'Date Created', size: 200 },
   { accessorKey: 'DateModified', header: 'Date Modified', size: 200 },
 ];
@@ -395,20 +395,23 @@ const Patients = () => {
     console.log('handleEditADPIE runs');
 
     // Convert the editor's content to a raw format
-    const contentState = editorState.getCurrentContent();
-    console.log('ContentState:', contentState);
-    const rawContent = convertToRaw(contentState);
-    console.log('Raw content:', rawContent);
+    // const contentState = editorState.getCurrentContent();
+    // console.log('ContentState:', contentState);
+    // const rawContent = convertToRaw(contentState);
+    // console.log('Raw content:', rawContent);
     // extract text from raw content
-    const text = rawContent.blocks.map(block => block.text).join('\n');
-    console.log('Text:', text);
-    const updatedAdpieData = {
-      PatientID: adpieDetails[0].PatientID, 
-      DocumentType: adpieDetails[0].DocumentType, 
-      Content: text,
-      DateCreated: adpieDetails[0].DateCreated, 
-      DateModified: new Date().toISOString(),
-    };
+    // const text = rawContent.blocks.map(block => block.text).join('\n');
+    // console.log('Text:', text);
+    // const updatedAdpieData = {
+    //   PatientID: adpieDetails[0].PatientID, 
+    //   DocumentType: adpieDetails[0].DocumentType, 
+    //   // Content: text,
+    //   DateCreated: adpieDetails[0].DateCreated, 
+    //   DateModified: new Date().toISOString(),
+    // };
+    // capture form data
+    const formData = new FormData(event.target);
+    const updatedAdpieData = Object.fromEntries(formData);
     console.log('adpie id: ', adpieDetails[0].ADPIEID);
     console.log('handleEditADPIE Updated adpie details: ', updatedAdpieData);
     await ADPIECRUD.updateADPIE(adpieDetails[0].ADPIEID, updatedAdpieData);
@@ -665,14 +668,18 @@ const Patients = () => {
                   onToggle={toggleInlineStyle}
                 /> */}
                 {/* <Editor editorState={editorState} onChange={handleEditorChange} /> */}
-                <div style={{ border: '1px solid gray', minHeight: '200px', padding: '10px' }}>
+                {/* <div style={{ border: '1px solid gray', minHeight: '200px', padding: '10px' }}>
                   <Editor
                     editorState={editorState}
                     // handleKeyCommand={handleKeyCommand}
                     // onChange={setEditorState}
                     onChange={handleEditorChange}
                   />
-                </div>
+                </div> */}
+                <FormControl>
+                  <FormLabel>Content Link</FormLabel>
+                  <Input name="Content" defaultValue={adpieDetails[0]?.Content} required />
+                </FormControl>
                 <Button type="submit" colorScheme="blue" mt={4}>Save Changes</Button>
               </form>
             )}
