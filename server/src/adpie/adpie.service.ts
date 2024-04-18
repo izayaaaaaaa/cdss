@@ -38,6 +38,9 @@ export class AdpieService {
   }
 
   async update(id: number, dto: UpdateAdpieDto) {
+    console.log('update adpie service');
+    console.log('update adpie service id: ', id);
+    console.log('update adpie service dto: ', dto);
     return this.prisma.aDPIE.update({
       where: { ADPIEID: id },
       data: dto,

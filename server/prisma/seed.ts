@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, DocumentType } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -79,18 +79,18 @@ async function main() {
     console.log(`Created Patient: ${patient.Name}`);
   }
 
-  // Generate 5 VitalSigns records for each patient
+  // Generate 5 vital signs for each patient
   for (const patient of patients) {
     for (let i = 1; i <= 5; i++) {
       await prisma.vitalSigns.create({
         data: {
-          DateTime: new Date(),
-          Temperature: 36.5 + i * 0.1, // Example temperature values
-          BloodPressure: `${120 + i}-${80 + i}`, // Example blood pressure values
-          PulseRate: 70 + i,
-          OxygenSaturation: 98 - i,
-          PainScale: i % 10,
           PatientID: patient.ProfileID,
+          DateTime: new Date(), // Example date, adjust as needed
+          Temperature: 36.5 + i * 0.1, // Example temperature, adjust as needed
+          BloodPressure: `${120 + i} / ${80 + i}`, // Example blood pressure, adjust as needed
+          PulseRate: 70 + i, // Example pulse rate, adjust as needed
+          OxygenSaturation: 98 + i, // Example oxygen saturation, adjust as needed
+          PainScale: 5, // Example pain scale, adjust as needed
         },
       });
     }
@@ -99,54 +99,32 @@ async function main() {
   // Generate 5 ADPIE records for each patient
   for (const patient of patients) {
     for (let i = 1; i <= 5; i++) {
-      const adpie = await prisma.aDPIE.create({
+      // Determine the DocumentType based on the iteration
+      let documentType: DocumentType;
+      switch (i % 5) {
+        case 1:
+          documentType = DocumentType.Assessment;
+          break;
+        case 2:
+          documentType = DocumentType.Diagnosis;
+          break;
+        case 3:
+          documentType = DocumentType.Planning;
+          break;
+        case 4:
+          documentType = DocumentType.InterventionImplementation;
+          break;
+        default:
+          documentType = DocumentType.Evaluation;
+      }
+
+      await prisma.aDPIE.create({
         data: {
-          Diagnosis: `Diagnosis ${i}`,
-          Planning: `Planning ${i}`,
-          InterventionImplementation: `Intervention ${i}`,
-          Evaluation: `Evaluation ${i}`,
+          DocumentType: documentType,
           PatientID: patient.ProfileID,
+          Content: `https://www.google.com/`, // Example content
         },
       });
-
-      // Generate 2 Assessments for each ADPIE record
-      for (let j = 1; j <= 2; j++) {
-        await prisma.assessment.create({
-          data: {
-            HealthHistory: 'No significant history',
-            ChiefComplaint: 'Headache',
-            HistoryOfPresentIllness: 'Started 2 days ago',
-            PastMedicalHistory: 'No significant history',
-            SocialHistory: 'Non-smoker, no alcohol consumption',
-            NurseNotes: 'Patient is in good condition',
-            ADPIEID: adpie.ADPIEID,
-            LaboratoryTests: [
-              {
-                label: 'Blood Test',
-                value: `https://drive.google.com/file/d/${i}${j}`,
-              },
-            ],
-            PhysicalExaminations: [
-              {
-                label: 'General Examination',
-                value: `https://drive.google.com/file/d/${i}${j}`,
-              },
-            ],
-            DiagnosticTests: [
-              {
-                label: 'MRI Scan',
-                value: `https://drive.google.com/file/d/${i}${j}`,
-              },
-            ],
-            ImagingStudies: [
-              {
-                label: 'X-Ray',
-                value: `https://drive.google.com/file/d/${i}${j}`,
-              },
-            ],
-          },
-        });
-      }
     }
   }
 

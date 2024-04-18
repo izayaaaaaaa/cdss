@@ -111,18 +111,6 @@ export class PatientService {
       where: { PatientID: id },
     });
 
-    // Fetch all ADPIE records associated with the patient
-    const adpies = await this.prisma.aDPIE.findMany({
-      where: { PatientID: id },
-    });
-
-    // Delete all Assessment records associated with the fetched ADPIE records
-    if (adpies.length > 0) {
-      await this.prisma.assessment.deleteMany({
-        where: { ADPIEID: { in: adpies.map((adpie) => adpie.ADPIEID) } },
-      });
-    }
-
     // Next, delete all ADPIE records associated with the patient
     await this.prisma.aDPIE.deleteMany({
       where: { PatientID: id },

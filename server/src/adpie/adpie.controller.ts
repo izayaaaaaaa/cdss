@@ -30,8 +30,11 @@ export class AdpieController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAdpieDto: UpdateAdpieDto) {
-    return this.adpieService.update(+id, updateAdpieDto);
+  update(@Param('id') id: string, @Body() dto: UpdateAdpieDto) {
+    console.log('update adpie controller');
+    console.log('update adpie controller id: ', id);
+    console.log('update adpie controller dto: ', dto);
+    return this.adpieService.update(+id, dto);
   }
 
   @Delete(':id')

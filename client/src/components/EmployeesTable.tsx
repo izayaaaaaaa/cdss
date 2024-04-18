@@ -32,7 +32,7 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
   
   useEffect(() => {
     fetchData().then((fetchedData) => {
-      // console.log('useEffect fetchedData: ', fetchedData);
+      console.log('useEffect fetchedData: ', fetchedData);
       
       const formattedData: Person[] = fetchedData.map((person: any) => ({
         id: person.ProfileID,
@@ -41,9 +41,9 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
         gender: person.Gender,
         phoneNumber: person.PhoneNumber,
         emailAddress: person.EmailAddress,
-        available: person.Availability.toString(),
+        // available: person.Availability.toString(),
       }));
-      // console.log('useEffect formattedData: ', formattedData);
+      console.log('useEffect formattedData: ', formattedData);
       
       setData(formattedData);
     });
@@ -97,7 +97,7 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
       >
         <IconEdit />
       </ActionIcon>
-      <ActionIcon
+      {/* <ActionIcon
         color="red"
         onClick={async () => {
           const rowProfileID = data[row.index].id;
@@ -114,7 +114,7 @@ const EmployeesTable: React.FC<TableFactoryProps> = ({ fetchData, defineColumns,
        }}
       >
         <IconTrash />
-      </ActionIcon>
+      </ActionIcon> */}
       </Box>
     ),
     initialState: { pagination: { pageIndex: 0, pageSize: 7 }},

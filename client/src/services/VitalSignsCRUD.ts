@@ -13,8 +13,27 @@ const getVitalSigns = async () => {
   }
 };
 
+const getVitalSign = async (vitalSignsId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/vitalsigns/${vitalSignsId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch Vital Signs:', error);
+    throw error;
+  }
+}
+
 const createVitalSigns = async (data: any) => {
   try {
+    // convert temp to number
+    data.Temperature = parseFloat(data.Temperature);
+    // convert pulse rate to number
+    data.PulseRate = parseFloat(data.PulseRate);
+    // convert oxygen saturation to number
+    data.OxygenSaturation = parseFloat(data.OxygenSaturation);
+    // convert pain scale to number
+    data.PainScale = parseFloat(data.PainScale);
+    console.log('createVitalSigns CRUD sends data to api: ', data)
     const response = await axios.post(`${BASE_URL}/vitalsigns`, data);
     return response.data;
   } catch (error) {
@@ -43,6 +62,7 @@ const deleteVitalSigns = async (vitalSignsId: number) => {
 };
 
 const VitalSignsCRUD = {
+  getVitalSign,
   getVitalSigns,
   createVitalSigns,
   updateVitalSigns,

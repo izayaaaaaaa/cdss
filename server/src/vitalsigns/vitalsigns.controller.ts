@@ -15,11 +15,8 @@ export class VitalsignsController {
   constructor(private readonly vitalsignsService: VitalsignsService) {}
 
   @Post()
-  create(
-    @Body() dto: CreateVitalSignsDto,
-    @Body('patientId') patientId: number,
-  ) {
-    return this.vitalsignsService.create(dto, patientId);
+  create(@Body() dto: CreateVitalSignsDto) {
+    return this.vitalsignsService.create(dto);
   }
 
   @Get()
@@ -27,10 +24,10 @@ export class VitalsignsController {
     return this.vitalsignsService.findAll();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.vitalsignsService.findOne(+id);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.vitalsignsService.findOne(+id);
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateVitalSignsDto) {

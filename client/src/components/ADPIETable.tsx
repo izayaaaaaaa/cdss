@@ -3,43 +3,42 @@ import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
 import { ActionIcon, Box } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { ADPIECRUD } from '../services'; // Assuming you have a service for ADPIE
-import { Image } from '@chakra-ui/react';
-import assessmentIcon from '../assets/images/icons8-assessment-100.png';
 
 interface ADPIETableProps {
  fetchData: () => Promise<any>;
  defineColumns: () => any[];
-//  setIsEditModalOpen: (isOpen: boolean) => void;
-//  patientId: number;
-//  onEditClick: (id: number) => void;
-//  refreshTable: boolean;
-//  setRefreshTable: (value: boolean) => void;
+ setIsEditModalOpen: (isOpen: boolean) => void;
+ AdpieID: number;
+ onEditClick: (id: number) => void;
+ refreshTable: boolean;
+ setRefreshTable: (value: boolean) => void;
 }
 
 type ADPIE = {
+  AdpieID: number;
   PatientID: number;
-  Diagnosis: string;
-  Planning: string;
-  InterventionImplementation: string;
-  Evaluation: string;
+  DocumentType: string;
+  Content: string;
+  DateCreated: string;
+  DateModified?: string;
 };
 
 
-const ADPIETable: React.FC<ADPIETableProps> = ({ fetchData, defineColumns }) => {
+const ADPIETable: React.FC<ADPIETableProps> = ({ fetchData, defineColumns, setIsEditModalOpen, AdpieID, onEditClick, refreshTable, setRefreshTable }) => {
   const [data, setData] = useState<any[]>([]); 
-  const [refreshTable, setRefreshTable] = useState<boolean>(false);
-
 
   useEffect(() => {
     fetchData().then((fetchedData) => {
       const formattedData: ADPIE[] = fetchedData.map((adpie: any) => ({
+        AdpieID: adpie.ADPIEID,
         PatientID: adpie.PatientID,
-        Diagnosis: adpie.Diagnosis,
-        Planning: adpie.Planning,
-        InterventionImplementation: adpie.InterventionImplementation,
-        Evaluation: adpie.Evaluation,
+        DocumentType: adpie.DocumentType,
+        Content: adpie.Content,
+        DateCreated: adpie.DateCreated,
+        DateModified: adpie.DateModified,
       }));
       setData(formattedData);
+      console.log('formatted adpie data: ', formattedData);
     });
   }, [fetchData, refreshTable]);
 
@@ -63,8 +62,8 @@ const ADPIETable: React.FC<ADPIETableProps> = ({ fetchData, defineColumns }) => 
         <ActionIcon
           color="orange"
           onClick={() => {
-            // setIsEditModalOpen(true);
-            // onEditClick(data[row.index].id);
+            setIsEditModalOpen(true);
+            onEditClick(data[row.index].AdpieID);
           }}
         >
           <IconEdit />
@@ -72,30 +71,17 @@ const ADPIETable: React.FC<ADPIETableProps> = ({ fetchData, defineColumns }) => 
         <ActionIcon
           color="red"
           onClick={async () => {
-            // const rowId = data[row.index].id;
-            // try {
-            //   await ADPIECRUD.deleteADPIE(rowId); // Assuming you have a delete method
-            //   setRefreshTable(!refreshTable);
-            // } catch (error) {
-            //   console.error('Failed to delete ADPIE:', error);
-            // }
+            const rowId = data[row.index].AdpieID;
+            console.log('delete adpie rowId:', rowId);
+            try {
+              await ADPIECRUD.deleteADPIE(rowId); // Assuming you have a delete method
+              setRefreshTable(!refreshTable);
+            } catch (error) {
+              console.error('Failed to delete ADPIE:', error);
+            }
           }}
         >
           <IconTrash />
-        </ActionIcon>
-        <ActionIcon
-          color="red"
-          onClick={async () => {
-            // const rowId = data[row.index].id;
-            // try {
-            //   await ADPIECRUD.deleteADPIE(rowId); // Assuming you have a delete method
-            //   setRefreshTable(!refreshTable);
-            // } catch (error) {
-            //   console.error('Failed to delete ADPIE:', error);
-            // }
-          }}
-        >
-          <Image src={assessmentIcon} alt="Assessments" />
         </ActionIcon>
       </Box>
     ),

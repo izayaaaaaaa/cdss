@@ -1,8 +1,8 @@
-import { 
-  Box, 
-  Button, 
-  FormControl, 
-  FormLabel, 
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
   Heading,
   HStack,
   Input,
@@ -19,9 +19,36 @@ import {
   Tabs,
   Text,
 } from '@chakra-ui/react';
-import { PatientsTable, SimpleSidebar, VitalSignsTable, ADPIETable, AssessmentsTable  } from '../components';
-import { ADPIECRUD, PatientsCRUD, VitalSignsCRUD, AssessmentsCRUD } from '../services';
+import { PatientsTable, SimpleSidebar, VitalSignsTable, ADPIETable } from '../components';
+import { ADPIECRUD, PatientsCRUD, VitalSignsCRUD } from '../services';
 import { useEffect, useState } from 'react';
+// import {Editor, EditorState, convertToRaw, convertFromRaw, ContentState, RichUtils} from 'draft-js';
+// import 'draft-js/dist/Draft.css';
+
+// const TextFormatControls = ({ editorState, onToggle }: { editorState: EditorState, onToggle: (style: string) => void }) => {
+//   const currentStyle = editorState.getCurrentInlineStyle();
+ 
+//   return (
+//      <div>
+//        {['BOLD', 'ITALIC', 'UNDERLINE'].map(style => (
+//          <button
+//            key={style}
+//            onMouseDown={event => {
+//              event.preventDefault();
+//              onToggle(style);
+//            }}
+//            style={{
+//              fontWeight: currentStyle.has(style) ? 'bold' : 'normal',
+//              fontStyle: style === 'ITALIC' && currentStyle.has(style) ? 'italic' : 'normal',
+//              textDecoration: style === 'UNDERLINE' && currentStyle.has(style) ? 'underline' : 'none',
+//            }}
+//          >
+//            {style}
+//          </button>
+//        ))}
+//      </div>
+//   );
+//  };
 
 interface Patient {
   ProfileID: number;
@@ -42,19 +69,24 @@ interface Patient {
   NurseProfileID: number;
 }
 
-interface Assessment {
-  AssessmentID: number;
+interface Adpie {
   ADPIEID: number;
-  HealthHistory: string;
-  ChiefComplaint: string;
-  HistoryOfPresentIllness: string;
-  PastMedicalHistory: string;
-  SocialHistory: string;
-  NurseNotes: string;
-  LaboratoryTests?: any; // Assuming this is a JSON object, adjust the type as necessary
-  PhysicalExaminations?: any; // Assuming this is a JSON object, adjust the type as necessary
-  DiagnosticTests?: any; // Assuming this is a JSON object, adjust the type as necessary
-  ImagingStudies?: any; // Assuming this is a JSON object, adjust the type as necessary
+  PatientID: number;
+  DocumentType: string;
+  Content: string;
+  DateCreated: string;
+  DateModified: string;
+}
+
+interface VitalSigns {
+  VitalSignID: number;
+  PatientID: number;
+  DateTime: string;
+  Temperature: number;
+  PulseRate: number;
+  BloodPressure: number;
+  PainScale: number;
+  OxygenSaturation: number;
 }
 
 interface NameObject {
@@ -75,30 +107,18 @@ const vitalSignColumns = () => [
   { accessorKey: 'PatientID', header: 'Patient ID', size: 100 },
   { accessorKey: 'DateTime', header: 'Date Taken', size: 200 },
   { accessorKey: 'Temperature', header: 'Temperature', size: 100 },
-  { accessorKey: 'PulseRate', header: 'Pulse Rate', size: 100 },
   { accessorKey: 'BloodPressure', header: 'Blood Pressure', size: 100 },
-  { accessorKey: 'PainScale', header: 'Pain Scale', size: 100 },
+  { accessorKey: 'PulseRate', header: 'Pulse Rate', size: 100 },
   { accessorKey: 'OxygenSaturation', header: 'Oxygen Saturation', size: 100 },
+  { accessorKey: 'PainScale', header: 'Pain Scale', size: 100 },
 ];
 
 const ADPIEColumns = () => [
   { accessorKey: 'PatientID', header: 'Patient ID', size: 100 },
-  { accessorKey: 'Diagnosis', header: 'Diagnosis', size: 200 },
-  { accessorKey: 'Planning', header: 'Planning', size: 200 },
-  { accessorKey: 'InterventionImplementation', header: 'Intervention Implementation', size: 200 },
-  { accessorKey: 'Evaluation', header: 'Evaluation', size: 200 },
-];
-
-const AssessmentColumns = () => [
-  { accessorKey: 'AssessmentID', header: 'Assessment ID', size: 100 },
-  { accessorKey: 'ADPIEID', header: 'ADPIE ID', size: 100 },
-  { accessorKey: 'HealthHistory', header: 'Health History', size: 200 },
-  { accessorKey: 'ChiefComplaint', header: 'Chief Complaint', size: 200 },
-  { accessorKey: 'HistoryOfPresentIllness', header: 'History of Present Illness', size: 200 },
-  { accessorKey: 'PastMedicalHistory', header: 'Past Medical History', size: 200 },
-  // { accessorKey: 'SocialHistory', header: 'Social History', size: 200 },
-  // { accessorKey: 'NurseNotes', header: 'Nurse Notes', size: 200 },
-  // Additional columns for LaboratoryTests, PhysicalExaminations, DiagnosticTests, ImagingStudies can be added here
+  { accessorKey: 'DocumentType', header: 'Document Type', size: 100 },
+  { accessorKey: 'Content', header: 'Content Link', size: 100 },
+  { accessorKey: 'DateCreated', header: 'Date Created', size: 200 },
+  { accessorKey: 'DateModified', header: 'Date Modified', size: 200 },
 ];
 
 const getPhysicianName = async (physicianId: Number) => {
@@ -116,26 +136,26 @@ const fetchPatientsData = async () => {
   try {
     const patients = await PatientsCRUD.getAllPatients();
     console.log('fetchPatientsData response: ', patients);
-    
+
     // Fetch physician and nurse names for each patient
     const patientsDetailed = await Promise.all(patients.map(async (patient: Patient) => {
-      if(!patient.PhysicianInCharge || !patient.NurseProfileID) {
+      if (!patient.PhysicianInCharge || !patient.NurseProfileID) {
         return patient;
       }
-      
+
       console.log('physician and or nurse id exists');
       const physicianName = await getPhysicianName(patient.PhysicianInCharge);
       const nurseName = await getNurseName(patient.NurseProfileID);
-      
+
       return {
         ...patient,
         physicianName,
         nurseName,
       };
     }));
-    
+
     console.log('fetchPatientsData patientsDetailed: ', patientsDetailed);
-    
+
     return patientsDetailed;
   } catch (error) {
     console.error('Failed to fetch patients:', error);
@@ -147,7 +167,7 @@ const fetchVitalSignsData = async () => {
     console.log('fetchVitalSignsData function PatientsScreen.tsx runs')
     const vitalSigns = await VitalSignsCRUD.getVitalSigns();
     console.log('fetchVitalSignsData response: ', vitalSigns);
-    
+
     return vitalSigns;
   } catch (error) {
     console.error('Failed to fetch vital signs:', error);
@@ -159,30 +179,19 @@ const fetchADPIEData = async () => {
     console.log('fetchADPIEData function PatientsScreen.tsx runs')
     const adpie = await ADPIECRUD.getAllADPIE();
     console.log('fetchADPIEData response: ', adpie);
-    
+
     return adpie;
   } catch (error) {
     console.error('Failed to fetch ADPIE:', error);
   }
 }
 
-const fetchAssessmentsData = async () => {
-  try {
-    console.log('fetchAssessmentsData function PatientsScreen.tsx runs')
-    const assessments = await AssessmentsCRUD.findAllAssessments();
-    console.log('fetchAssessmentsData response: ', assessments);
-    return assessments;
-  } catch (error) {
-     console.error('Failed to fetch assessments:', error);
-  }
-};
-
 const updatePatient = async (id: number, payload: any) => {
   try {
     console.log('updatePatient payload: ', payload)
     const updatedPatient = await PatientsCRUD.updatePatient(id, payload);
     console.log('updatePatient response: ', updatedPatient);
-    
+
     return updatedPatient;
   } catch (error) {
     console.error('Failed to update patient:', error);
@@ -204,8 +213,21 @@ const formatDateForInput = (dateString: string): string => {
   // Return an empty string or a default value if the dateString is not valid
   return '';
 };
- 
+
 const Patients = () => {
+  // const toggleInlineStyle = (style: any) => {
+  //   setEditorState(RichUtils.toggleInlineStyle(editorState, style));
+  // };
+
+  // const handleKeyCommand = (command: any, editorState: any) => {
+  //   const newState = RichUtils.handleKeyCommand(editorState, command);
+  //   if (newState) {
+  //      setEditorState(newState);
+  //      return 'handled';
+  //   }
+  //   return 'not-handled';
+  //  };
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const handleCreateModalClose = () => setIsCreateModalOpen(false);
 
@@ -219,19 +241,31 @@ const Patients = () => {
   const [isADPIEModalOpen, setIsADPIEModalOpen] = useState(false);
   const handleADPIEModalClose = () => setIsADPIEModalOpen(false);
   const [refreshAdpieTable, setRefreshAdpieTable] = useState<boolean>(false);
+  const [isADPIEEDitModalOpen, setIsADPIEEditModalOpen] = useState(false);
+  const handleADPIEEditModalClose = () => setIsADPIEEditModalOpen(false);
+  const [adpieId, setAdpieId] = useState(0);
+  const [adpieDetails, setAdpieDetails] = useState<Adpie[]>([]);
+  const [isADPIEEditLoading, setIsADPIEEditLoading] = useState(false);
 
   const [isVitalSignsModalOpen, setIsVitalSignsModalOpen] = useState(false);
   const handleVitalSignsModalClose = () => setIsVitalSignsModalOpen(false);
-  
+  const [refreshVitalSignsTable, setRefreshVitalSignsTable] = useState<boolean>(false);
+  const [isVitalEditModalOpen, setIsVitalEditModalOpen] = useState(false);
+  const handleVitalEditModalClose = () => setIsVitalEditModalOpen(false);
+  const [vitalSignId, setVitalSignId] = useState(0);
+  const [vitalSignDetails, setVitalSignDetails] = useState<VitalSigns[]>([]);
+  const [isVitalEditLoading, setIsVitalEditLoading] = useState(false);
+
   const [physicianName, setPhysicianName] = useState<NameObject | {}>({});
   const [nurseName, setNurseName] = useState<NameObject | {}>({});
 
-  const [isEditAssessmentsModalOpen, setIsEditAssessmentsModalOpen] = useState(false);
-  const handleEditAssessmentsModalClose = () => setIsEditAssessmentsModalOpen(false);
-  const [isEditAssessmentsLoading, setIsEditAssessmentsLoading] = useState(false);
-  const [assessmentId, setAssessmentId] = useState(0);
-  const [assessmentDetails, setAssessmentDetails] = useState<Assessment[]>([]);
-  const [refreshAssessmentsTable, setRefreshAssessmentsTable] = useState<boolean>(false);
+  // const [editorState, setEditorState] = useState(() =>
+  //   EditorState.createEmpty()
+  //  );
+   
+  //  const handleEditorChange = (state: any) => {
+  //   setEditorState(state);
+  //  };
 
   const handleCreatePatient = async (event: any) => {
     event.preventDefault();
@@ -246,25 +280,25 @@ const Patients = () => {
       const createdPatient = await PatientsCRUD.createPatient(patientData);
       console.log('createPatient response: ', createdPatient);
       setRefreshPatientsTable(!refreshPatientsTable);
-      
+
       return createdPatient;
     } catch (error) {
       console.error('Failed to create patient:', error);
     }
   }
-  
+
   const getPatient = async (id: number) => {
     try {
       console.log('getPatient id: ', id);
       const patient = await PatientsCRUD.getPatient(id);
       console.log('getPatient response: ', patient);
-      
+
       return patient;
     } catch (error) {
       console.error('Failed to get patient:', error);
     }
   }
-  
+
   const handleEditPatientClick = async (patientId: any) => {
     setIsEditPatientLoading(true);
     setPatientId(patientId);
@@ -274,28 +308,18 @@ const Patients = () => {
     setIsEditPatientModalOpen(true);
   }
 
-  const handleEditAssessmentClick = async (assessmentId: any) => {
-    setIsEditAssessmentsLoading(true); 
-    setAssessmentId(assessmentId);
-    const assessment = await AssessmentsCRUD.findOneAssessment(assessmentId);
-    setAssessmentDetails([assessment]);
-    setIsEditAssessmentsLoading(false);
-    setIsEditAssessmentsModalOpen(true);
-  }
-
   useEffect(() => {
     const fetchNames = async () => {
       if (patientDetails && patientDetails[0]) {
         // convert date to datetime-local format
 
-
         const nurseId = patientDetails[0].NurseProfileID;
         const physicianId = patientDetails[0].PhysicianInCharge;
-  
+
         try {
           const nurseNameResponse = await getNurseName(nurseId);
           const physicianNameResponse = await getPhysicianName(physicianId);
-  
+
           setNurseName(nurseNameResponse);
           setPhysicianName(physicianNameResponse);
 
@@ -304,9 +328,9 @@ const Patients = () => {
           console.error('Failed to fetch nurse or physician name:', error);
         }
       }
-   };
-  
-   fetchNames();
+    };
+
+    fetchNames();
   }, [patientDetails]);
 
   useEffect(() => {
@@ -316,15 +340,15 @@ const Patients = () => {
   useEffect(() => {
     fetchADPIEData();
   }, [refreshAdpieTable]);
-  
+
   const handleEditPatient = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log('handleEditPatient runs');
-   
+
     // Capture form data
     const formData = new FormData(event.currentTarget);
     const updatedPatientData = Object.fromEntries(formData);
-    
+
     // update OutpatientAdmissionStatus to boolean
     patientDetails[0].OutpatientAdmissionStatus = updatedPatientData.OutpatientAdmissionStatus === 'true' ? true : false;
 
@@ -338,7 +362,7 @@ const Patients = () => {
     setRefreshPatientsTable(!refreshPatientsTable);
     setIsEditPatientModalOpen(false);
   };
-  
+
   const handleADPIE = async (event: any) => {
     event.preventDefault();
     console.log('handleADPIE runs');
@@ -352,8 +376,9 @@ const Patients = () => {
 
   const createAdpie = async (adpieData: any) => {
     try {
-      // convvert PatientID to number
-      adpieData.PatientID = parseInt(adpieData.PatientID);
+      adpieData.PatientID = patientId;
+      // console.log('createAdpie w/ patientId: ', patientId)
+      
       const createdAdpie = await ADPIECRUD.createADPIE(adpieData);
       console.log('createAdpie response: ', createdAdpie);
       return createdAdpie;
@@ -365,33 +390,96 @@ const Patients = () => {
   const handleVitalSigns = async (event: any) => {
     event.preventDefault();
     console.log('handleVitalSigns runs');
+    const formData = new FormData(event.target);
+    const vitalSignsData = Object.fromEntries(formData);
+    console.log('Vital Signs data: ', vitalSignsData);
+    await createVitalSigns(vitalSignsData);
+    setIsVitalSignsModalOpen(false);
+    setRefreshVitalSignsTable(!refreshVitalSignsTable);
   }
 
-  const handleEditAssessment = async (event: any) => {
+  const createVitalSigns = async (vitalSignsData: any) => {
+    try {
+      vitalSignsData.PatientID = patientId;
+      // set the datetime to now and convert to ISO string
+      vitalSignsData.DateTime = new Date().toISOString();
+
+      console.log('createVitalSigns w/ patientId: ', patientId)
+      console.log('data to be sent to vitalsigns crud: ', vitalSignsData)
+      
+      const createdVitalSigns = await VitalSignsCRUD.createVitalSigns(vitalSignsData);
+      console.log('createVitalSigns response: ', createdVitalSigns);
+      return createdVitalSigns;
+    } catch (error) {
+      console.error('Failed to create Vital Signs:', error);
+    }
+  }
+
+  const handleEditADPIEClick = async (adpieId: any) => {
+    setIsADPIEEditLoading(true);
+    setAdpieId(adpieId);
+    const adpie = await ADPIECRUD.getADPIE(adpieId);
+    console.log('specific ADPIE data acquired to be shown on edit modal: ', adpie)
+
+    // Convert the content to a format that Draft.js can understand
+    // const contentState = ContentState.createFromText(adpie.Content);
+    // const newEditorState = EditorState.createWithContent(contentState);
+    // setEditorState(newEditorState);
+    setAdpieDetails([adpie]);
+
+    setIsADPIEEditLoading(false);
+    setIsADPIEEditModalOpen(true);
+  }
+
+  const handleEditADPIE = async (event: any) => {
     event.preventDefault();
-    console.log('handleEditAssessment runs');
+    console.log('handleEditADPIE runs');
 
-    // Capture form data
-    const formData = new FormData(event.currentTarget);
-    const updatedAssessmentData = Object.fromEntries(formData);
+    const formData = new FormData(event.target);
+    const updatedAdpieData = Object.fromEntries(formData);
+    console.log('adpie id: ', adpieDetails[0].ADPIEID);
+    console.log('handleEditADPIE Updated adpie details: ', updatedAdpieData);
+    await ADPIECRUD.updateADPIE(adpieDetails[0].ADPIEID, updatedAdpieData);
 
-    console.log('Updated assessment data: ', updatedAssessmentData);
+    setRefreshAdpieTable(!refreshAdpieTable);
+    setIsADPIEEditModalOpen(false);
+  };
 
-    // Update the state with the new form data
-    setAssessmentDetails([{ ...assessmentDetails[0], ...updatedAssessmentData }]);
+  useEffect(() => {
+    console.log('adpieDetails changed: ', adpieDetails);
+   }, [adpieDetails]);
 
-    // Now, use the updated assessmentDetails for the update operation
-    console.log('Updated assessment details: ', updatedAssessmentData);
-    await AssessmentsCRUD.updateAssessment(assessmentDetails[0].AssessmentID, updatedAssessmentData);
+  useEffect(() => {
+    console.log('vitalSignDetails changed: ', vitalSignDetails);
+  }, [vitalSignDetails]);
 
-    setRefreshAssessmentsTable(!refreshAssessmentsTable);
-    setIsEditAssessmentsModalOpen(false);
+  const handleEditVitalSignsClick = async (vitalSignId: any) => {
+    setIsVitalEditLoading(true);
+    setVitalSignId(vitalSignId);
+    const vitalSign = await VitalSignsCRUD.getVitalSign(vitalSignId);
+    console.log('specific Vital Signs data acquired to be shown on edit modal: ', vitalSign)
+    setVitalSignDetails([vitalSign]);
+    setIsVitalEditLoading(false);
+    setIsVitalEditModalOpen(true);
   }
-  
+
+  const handleEditVitalSigns = async (event: any) => {
+    event.preventDefault();
+    console.log('handleEditVitalSigns runs');
+    const formData = new FormData(event.target);
+    const updatedVitalSignsData = Object.fromEntries(formData);
+    console.log('vitalSign id: ', vitalSignDetails[0].VitalSignID);
+    console.log('handleEditVitalSigns Updated vitalSigns details: ', updatedVitalSignsData);
+    await VitalSignsCRUD.updateVitalSigns(vitalSignDetails[0].VitalSignID, updatedVitalSignsData);
+
+    setRefreshVitalSignsTable(!refreshVitalSignsTable);
+    setIsVitalEditModalOpen(false);
+  };
+
   return (
     <HStack background="#E0EAF3">
       <SimpleSidebar />
-    
+
       <Box ml={25}>
         <HStack justifyContent={"space-between"}>
           <Box>
@@ -400,26 +488,22 @@ const Patients = () => {
           </Box>
           <Button colorScheme="facebook" size="lg" onClick={() => setIsCreateModalOpen(true)}>Create Patient</Button>
         </HStack>
-      
+
         <Tabs>
           <TabList>
             <Tab>Patients</Tab>
             <Tab>Vital Signs</Tab>
             <Tab>ADPIE</Tab>
-            <Tab>Assessments</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
-              <PatientsTable refreshTable={refreshPatientsTable} setRefreshTable={setRefreshPatientsTable} patientId={patientId} onEditClick={handleEditPatientClick} fetchData={fetchPatientsData} defineColumns={definePatientColumns} setIsEditModalOpen={setIsEditPatientModalOpen} setIsADPIEModalOpen={setIsADPIEModalOpen} setIsVitalSignsModalOpen={setIsVitalSignsModalOpen} />
+              <PatientsTable setPatientId={setPatientId} refreshTable={refreshPatientsTable} setRefreshTable={setRefreshPatientsTable} patientId={patientId} onEditClick={handleEditPatientClick} fetchData={fetchPatientsData} defineColumns={definePatientColumns} setIsEditModalOpen={setIsEditPatientModalOpen} setIsADPIEModalOpen={setIsADPIEModalOpen} setIsVitalSignsModalOpen={setIsVitalSignsModalOpen} />
             </TabPanel>
             <TabPanel>
-              <VitalSignsTable fetchData={fetchVitalSignsData} defineColumns={vitalSignColumns} />
+              <VitalSignsTable refreshTable={refreshVitalSignsTable} setRefreshTable={setRefreshVitalSignsTable} fetchData={fetchVitalSignsData} defineColumns={vitalSignColumns} onEditClick={handleEditVitalSignsClick} setIsEditModalOpen={setIsVitalEditModalOpen} />
             </TabPanel>
             <TabPanel>
-              <ADPIETable fetchData={fetchADPIEData} defineColumns={ADPIEColumns} />
-            </TabPanel>
-            <TabPanel>
-              <AssessmentsTable refreshTable={refreshAssessmentsTable} setRefreshTable={setRefreshAssessmentsTable} fetchData={fetchAssessmentsData} defineColumns={AssessmentColumns} setIsEditModalOpen={setIsEditAssessmentsModalOpen} onEditClick={handleEditAssessmentClick} />
+              <ADPIETable refreshTable={refreshAdpieTable} setRefreshTable={setRefreshAdpieTable} AdpieID={adpieId} onEditClick={handleEditADPIEClick} fetchData={fetchADPIEData} defineColumns={ADPIEColumns} setIsEditModalOpen={setIsADPIEEditModalOpen} />
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -439,9 +523,9 @@ const Patients = () => {
                 <Input name="Name" placeholder="Patient Name" required />
               </FormControl>
               <FormControl>
-              <FormLabel>Age</FormLabel>
+                <FormLabel>Age</FormLabel>
                 <Input name="Age" placeholder="Patient Age" required />
-                </FormControl>
+              </FormControl>
               <FormControl>
                 <FormLabel>Gender</FormLabel>
                 <Input name="Gender" placeholder="Patient Gender" required />
@@ -464,7 +548,7 @@ const Patients = () => {
               </FormControl>
               <FormControl>
                 <FormLabel>Date Admitted</FormLabel>
-                <Input name="Date_Admitted" placeholder="Select Date Admitted" type="datetime-local" required />              
+                <Input name="Date_Admitted" placeholder="Select Date Admitted" type="datetime-local" required />
               </FormControl>
               <Button w="full" mt={5} type="submit" colorScheme="blue">Save Patient</Button>
             </form>
@@ -545,7 +629,7 @@ const Patients = () => {
                 </FormControl>
                 <Button type="submit" colorScheme="blue" mt={4}>Save Changes</Button>
               </form>
-            )}            
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>
@@ -559,27 +643,50 @@ const Patients = () => {
           <ModalBody>
             <form onSubmit={handleADPIE}>
               <FormControl>
-                <FormLabel>Diagnosis</FormLabel>
-                <Input name="Diagnosis" placeholder="Diagnosis" required />
+                <FormLabel>Document Type</FormLabel>
+                <Input name="DocumentType" placeholder="Document Type" required />
               </FormControl>
               <FormControl>
-                <FormLabel>Planning</FormLabel>
-                <Input name="Planning" placeholder="Planning" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>InterventionImplementation</FormLabel>
-                <Input name="InterventionImplementation" placeholder="InterventionImplementation" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Evaluation</FormLabel>
-                <Input name="Evaluation" placeholder="Evaluation" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Patient ID</FormLabel>
-                <Input name="PatientID" placeholder="Patient ID" required />
+                <FormLabel>Content Link</FormLabel>
+                <Input name="Content" placeholder="Content Link" required />
               </FormControl>
               <Button w="full" mt={5} type="submit" colorScheme="blue">Save ADPIE</Button>
             </form>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* edit adpie modal in adpie tab */}
+      <Modal isOpen={isADPIEEDitModalOpen && !isADPIEEditLoading} onClose={handleADPIEEditModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit ADPIE</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {isADPIEEditLoading ? (
+              <Text>Loading...</Text>
+            ) : (
+              <form onSubmit={handleEditADPIE}>
+                {/* <TextFormatControls
+                  editorState={editorState}
+                  onToggle={toggleInlineStyle}
+                /> */}
+                {/* <Editor editorState={editorState} onChange={handleEditorChange} /> */}
+                {/* <div style={{ border: '1px solid gray', minHeight: '200px', padding: '10px' }}>
+                  <Editor
+                    editorState={editorState}
+                    // handleKeyCommand={handleKeyCommand}
+                    // onChange={setEditorState}
+                    onChange={handleEditorChange}
+                  />
+                </div> */}
+                <FormControl>
+                  <FormLabel>Content Link</FormLabel>
+                  <Input name="Content" defaultValue={adpieDetails[0]?.Content} required />
+                </FormControl>
+                <Button type="submit" colorScheme="blue" mt={4}>Save Changes</Button>
+              </form>
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>
@@ -597,125 +704,67 @@ const Patients = () => {
                 <Input name="Temperature" placeholder="Temperature" required />
               </FormControl>
               <FormControl>
-                <FormLabel>Heart Rate</FormLabel>
-                <Input name="Heart Rate" placeholder="Heart Rate" required />
-              </FormControl>
-              <FormControl>
                 <FormLabel>Blood Pressure</FormLabel>
-                <Input name="Blood Pressure" placeholder="Blood Pressure" required />
+                <Input name="BloodPressure" placeholder="Blood Pressure" required />
               </FormControl>
               <FormControl>
-                <FormLabel>Respiratory Rate</FormLabel>
-                <Input name="Respiratory Rate" placeholder="Respiratory Rate" required />
+                <FormLabel>Pulse Rate</FormLabel>
+                <Input name="PulseRate" placeholder="Pulse Rate" required />
               </FormControl>
               <FormControl>
                 <FormLabel>Oxygen Saturation</FormLabel>
-                <Input name="Oxygen Saturation" placeholder="Oxygen Saturation" required />
+                <Input name="OxygenSaturation" placeholder="Oxygen Saturation" required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Pain Scale </FormLabel>
+                <Input name="PainScale" placeholder="Pain Scale" required />
               </FormControl>
               <Button w="full" mt={5} type="submit" colorScheme="blue">Save Vital Signs</Button>
             </form>
           </ModalBody>
         </ModalContent>
       </Modal>
-      
+
       {/* edit vital signs modal in vital signs tab */}
-
-      {/* edit adpie modal in adpie tab */}
-
-      {/* create new assessment modal in adpie tab */}
-
-      {/* edit assessment modal in assessments tab */}
-      <Modal isOpen={isEditAssessmentsModalOpen && !isEditAssessmentsLoading} onClose={handleEditAssessmentsModalClose}>
+      <Modal isOpen={isVitalEditModalOpen && !isVitalEditLoading} onClose={handleVitalEditModalClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Edit Assessment</ModalHeader>
+          <ModalHeader>Edit Vital Signs</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {isEditAssessmentsLoading ? (
+            {isVitalEditLoading ? (
               <Text>Loading...</Text>
             ) : (
-              <form onSubmit={handleEditAssessment}>
+              <form onSubmit={handleEditVitalSigns}>
                 <FormControl>
-                  <FormLabel>Health History</FormLabel>
-                  <Input name="HealthHistory" defaultValue={assessmentDetails[0]?.HealthHistory} required />
+                  <FormLabel>Temperature</FormLabel>
+                  <Input name="Temperature" defaultValue={vitalSignDetails[0]?.Temperature} required />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Chief Complaint</FormLabel>
-                  <Input name="ChiefComplaint" defaultValue={assessmentDetails[0]?.ChiefComplaint} required />  
+                  <FormLabel>Blood Pressure</FormLabel>
+                  <Input name="BloodPressure" defaultValue={vitalSignDetails[0]?.BloodPressure} required />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>History of Present Illness</FormLabel>
-                  <Input name="HistoryOfPresentIllness" defaultValue={assessmentDetails[0]?.HistoryOfPresentIllness} required />
+                  <FormLabel>Pulse Rate</FormLabel>
+                  <Input name="PulseRate" defaultValue={vitalSignDetails[0]?.PulseRate} required />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Past Medical History</FormLabel>
-                  <Input name="PastMedicalHistory" defaultValue={assessmentDetails[0]?.PastMedicalHistory} required />
+                  <FormLabel>Oxygen Saturation</FormLabel>
+                  <Input name="OxygenSaturation" defaultValue={vitalSignDetails[0]?.OxygenSaturation} required />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Social History</FormLabel>
-                  <Input name="SocialHistory" defaultValue={assessmentDetails[0]?.SocialHistory} required />
+                  <FormLabel>Pain Scale</FormLabel>
+                  <Input name="PainScale" defaultValue={vitalSignDetails[0]?.PainScale} required />
                 </FormControl>
-                <FormControl>
-                  <FormLabel>Nurse Notes</FormLabel>
-                  <Input name="NurseNotes" defaultValue={assessmentDetails[0]?.NurseNotes} required />
-                </FormControl>
-                {Array.isArray(assessmentDetails[0]?.LaboratoryTests) && assessmentDetails[0]?.LaboratoryTests.map((test: any, index: number) => (
-                  <div key={index}>
-                    <FormControl>
-                      <FormLabel>Laboratory Test {index + 1} Label</FormLabel>
-                      <Input name={`LaboratoryTests[${index}].label`} defaultValue={test.label} required />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Laboratory Test {index + 1} Link</FormLabel>
-                      <Input name={`LaboratoryTests[${index}].value`} defaultValue={test.value} required />
-                    </FormControl>
-                  </div>
-                ))}
-                {Array.isArray(assessmentDetails[0]?.PhysicalExaminations) && assessmentDetails[0]?.PhysicalExaminations.map((test: any, index: number) => (
-                  <div key={index}>
-                    <FormControl>
-                      <FormLabel>Physical Examination {index + 1} Label</FormLabel>
-                      <Input name={`PhysicalExaminations[${index}].label`} defaultValue={test.label} required />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Physical Examination {index + 1} Link</FormLabel>
-                      <Input name={`PhysicalExaminations[${index}].value`} defaultValue={test.value} required />
-                    </FormControl>
-                  </div>
-                ))}
-                {Array.isArray(assessmentDetails[0]?.DiagnosticTests) && assessmentDetails[0]?.DiagnosticTests.map((test: any, index: number) => (
-                  <div key={index}>
-                    <FormControl>
-                      <FormLabel>Diagnostic Test {index + 1} Label</FormLabel>
-                      <Input name={`DiagnosticTests[${index}].label`} defaultValue={test.label} required />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Diagnostic Test {index + 1} Link</FormLabel>
-                      <Input name={`DiagnosticTests[${index}].value`} defaultValue={test.value} required />
-                    </FormControl>
-                  </div>
-                ))}
-                {Array.isArray(assessmentDetails[0]?.ImagingStudies) && assessmentDetails[0]?.ImagingStudies.map((test: any, index: number) => (
-                  <div key={index}>
-                    <FormControl>
-                      <FormLabel>Imaging Study {index + 1} Label</FormLabel>
-                      <Input name={`ImagingStudies[${index}].label`} defaultValue={test.label} required />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Imaging Study {index + 1} Link</FormLabel>
-                      <Input name={`ImagingStudies[${index}].value`} defaultValue={test.value} required />
-                    </FormControl>
-                  </div>
-                ))}
-                <Button type="submit" colorScheme="blue" mt={4}>Save Assessment Changes</Button>
+                <Button type="submit" colorScheme="blue" mt={4}>Save Changes</Button>
               </form>
-            )}            
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>
+      
 
     </HStack>
   );
 };
-
 export default Patients;

@@ -29,15 +29,15 @@ const getAvailableDoctors = async () => {
 };
 
 const updateDoctor = async (id: number, payload: any) => {
-  console.log('updateDoctor service id: ', id);
-  console.log('updateDoctor service payload: ', payload);
+  console.log('updateDoctorCRUD id: ', id);
+  console.log('updateDoctorCRUD payload: ', payload);
 
   // convert availability to boolean
-  if (payload.availability.tolowerCase === 'true') {
-    payload.availability = true;
-  } else {
-    payload.availability = false;
-  }
+  // if (payload.availability.tolowerCase === 'true') {
+  //   payload.availability = true;
+  // } else {
+  //   payload.availability = false;
+  // }
 
   // convert number strings to numbers
   if (payload.age) {

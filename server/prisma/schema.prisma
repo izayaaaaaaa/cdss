@@ -7,6 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum DocumentType {
+  Assessment
+  Diagnosis
+  Planning
+  InterventionImplementation
+  Evaluation
+}
+
 model User {
   UserID    Int     @id @default(autoincrement())
   LicenseNo String  @unique
@@ -88,32 +96,13 @@ model VitalSigns {
 }
 
 model ADPIE {
-  ADPIEID                    Int          @id @default(autoincrement())
-  PatientID                  Int
-  Diagnosis                  String
-  Planning                   String
-  InterventionImplementation String
-  Evaluation                 String
-  Patient                    Patient      @relation(fields: [PatientID], references: [ProfileID])
-  Assessment                 Assessment[]
+  ADPIEID      Int          @id @default(autoincrement())
+  DocumentType DocumentType
+  DateCreated  DateTime     @default(now())
+  DateModified DateTime     @updatedAt
+  PatientID    Int
+  Content      String
+  Patient      Patient      @relation(fields: [PatientID], references: [ProfileID])
 
   @@map(name: "adpie")
-}
-
-model Assessment {
-  AssessmentID            Int    @id @default(autoincrement())
-  ADPIEID                 Int
-  HealthHistory           String
-  ChiefComplaint          String
-  HistoryOfPresentIllness String
-  PastMedicalHistory      String
-  SocialHistory           String
-  NurseNotes              String
-  ADPIE                   ADPIE  @relation(fields: [ADPIEID], references: [ADPIEID])
-  LaboratoryTests         Json?
-  PhysicalExaminations    Json?
-  DiagnosticTests         Json?
-  ImagingStudies          Json?
-
-  @@map(name: "assessments")
 }
