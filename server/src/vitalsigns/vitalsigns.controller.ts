@@ -24,10 +24,10 @@ export class VitalsignsController {
     return this.vitalsignsService.findAll();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.vitalsignsService.findOne(+id);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.vitalsignsService.findOne(+id);
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateVitalSignsDto) {

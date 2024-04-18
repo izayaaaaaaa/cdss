@@ -79,7 +79,7 @@ interface Adpie {
 }
 
 interface VitalSigns {
-  VitalSignsID: number;
+  VitalSignID: number;
   PatientID: number;
   DateTime: string;
   Temperature: number;
@@ -250,6 +250,11 @@ const Patients = () => {
   const [isVitalSignsModalOpen, setIsVitalSignsModalOpen] = useState(false);
   const handleVitalSignsModalClose = () => setIsVitalSignsModalOpen(false);
   const [refreshVitalSignsTable, setRefreshVitalSignsTable] = useState<boolean>(false);
+  const [isVitalEditModalOpen, setIsVitalEditModalOpen] = useState(false);
+  const handleVitalEditModalClose = () => setIsVitalEditModalOpen(false);
+  const [vitalSignId, setVitalSignId] = useState(0);
+  const [vitalSignDetails, setVitalSignDetails] = useState<VitalSigns[]>([]);
+  const [isVitalEditLoading, setIsVitalEditLoading] = useState(false);
 
   const [physicianName, setPhysicianName] = useState<NameObject | {}>({});
   const [nurseName, setNurseName] = useState<NameObject | {}>({});
@@ -430,22 +435,6 @@ const Patients = () => {
     event.preventDefault();
     console.log('handleEditADPIE runs');
 
-    // Convert the editor's content to a raw format
-    // const contentState = editorState.getCurrentContent();
-    // console.log('ContentState:', contentState);
-    // const rawContent = convertToRaw(contentState);
-    // console.log('Raw content:', rawContent);
-    // extract text from raw content
-    // const text = rawContent.blocks.map(block => block.text).join('\n');
-    // console.log('Text:', text);
-    // const updatedAdpieData = {
-    //   PatientID: adpieDetails[0].PatientID, 
-    //   DocumentType: adpieDetails[0].DocumentType, 
-    //   // Content: text,
-    //   DateCreated: adpieDetails[0].DateCreated, 
-    //   DateModified: new Date().toISOString(),
-    // };
-    // capture form data
     const formData = new FormData(event.target);
     const updatedAdpieData = Object.fromEntries(formData);
     console.log('adpie id: ', adpieDetails[0].ADPIEID);
@@ -459,6 +448,33 @@ const Patients = () => {
   useEffect(() => {
     console.log('adpieDetails changed: ', adpieDetails);
    }, [adpieDetails]);
+
+  useEffect(() => {
+    console.log('vitalSignDetails changed: ', vitalSignDetails);
+  }, [vitalSignDetails]);
+
+  const handleEditVitalSignsClick = async (vitalSignId: any) => {
+    setIsVitalEditLoading(true);
+    setVitalSignId(vitalSignId);
+    const vitalSign = await VitalSignsCRUD.getVitalSign(vitalSignId);
+    console.log('specific Vital Signs data acquired to be shown on edit modal: ', vitalSign)
+    setVitalSignDetails([vitalSign]);
+    setIsVitalEditLoading(false);
+    setIsVitalEditModalOpen(true);
+  }
+
+  const handleEditVitalSigns = async (event: any) => {
+    event.preventDefault();
+    console.log('handleEditVitalSigns runs');
+    const formData = new FormData(event.target);
+    const updatedVitalSignsData = Object.fromEntries(formData);
+    console.log('vitalSign id: ', vitalSignDetails[0].VitalSignID);
+    console.log('handleEditVitalSigns Updated vitalSigns details: ', updatedVitalSignsData);
+    await VitalSignsCRUD.updateVitalSigns(vitalSignDetails[0].VitalSignID, updatedVitalSignsData);
+
+    setRefreshVitalSignsTable(!refreshVitalSignsTable);
+    setIsVitalEditModalOpen(false);
+  };
 
   return (
     <HStack background="#E0EAF3">
@@ -481,10 +497,10 @@ const Patients = () => {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <PatientsTable setPatientId={setPatientId}refreshTable={refreshPatientsTable} setRefreshTable={setRefreshPatientsTable} patientId={patientId} onEditClick={handleEditPatientClick} fetchData={fetchPatientsData} defineColumns={definePatientColumns} setIsEditModalOpen={setIsEditPatientModalOpen} setIsADPIEModalOpen={setIsADPIEModalOpen} setIsVitalSignsModalOpen={setIsVitalSignsModalOpen} />
+              <PatientsTable setPatientId={setPatientId} refreshTable={refreshPatientsTable} setRefreshTable={setRefreshPatientsTable} patientId={patientId} onEditClick={handleEditPatientClick} fetchData={fetchPatientsData} defineColumns={definePatientColumns} setIsEditModalOpen={setIsEditPatientModalOpen} setIsADPIEModalOpen={setIsADPIEModalOpen} setIsVitalSignsModalOpen={setIsVitalSignsModalOpen} />
             </TabPanel>
             <TabPanel>
-              <VitalSignsTable fetchData={fetchVitalSignsData} defineColumns={vitalSignColumns} />
+              <VitalSignsTable refreshTable={refreshVitalSignsTable} setRefreshTable={setRefreshVitalSignsTable} fetchData={fetchVitalSignsData} defineColumns={vitalSignColumns} onEditClick={handleEditVitalSignsClick} setIsEditModalOpen={setIsVitalEditModalOpen} />
             </TabPanel>
             <TabPanel>
               <ADPIETable refreshTable={refreshAdpieTable} setRefreshTable={setRefreshAdpieTable} AdpieID={adpieId} onEditClick={handleEditADPIEClick} fetchData={fetchADPIEData} defineColumns={ADPIEColumns} setIsEditModalOpen={setIsADPIEEditModalOpen} />
@@ -710,7 +726,42 @@ const Patients = () => {
       </Modal>
 
       {/* edit vital signs modal in vital signs tab */}
-
+      <Modal isOpen={isVitalEditModalOpen && !isVitalEditLoading} onClose={handleVitalEditModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Vital Signs</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {isVitalEditLoading ? (
+              <Text>Loading...</Text>
+            ) : (
+              <form onSubmit={handleEditVitalSigns}>
+                <FormControl>
+                  <FormLabel>Temperature</FormLabel>
+                  <Input name="Temperature" defaultValue={vitalSignDetails[0]?.Temperature} required />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Blood Pressure</FormLabel>
+                  <Input name="BloodPressure" defaultValue={vitalSignDetails[0]?.BloodPressure} required />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Pulse Rate</FormLabel>
+                  <Input name="PulseRate" defaultValue={vitalSignDetails[0]?.PulseRate} required />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Oxygen Saturation</FormLabel>
+                  <Input name="OxygenSaturation" defaultValue={vitalSignDetails[0]?.OxygenSaturation} required />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Pain Scale</FormLabel>
+                  <Input name="PainScale" defaultValue={vitalSignDetails[0]?.PainScale} required />
+                </FormControl>
+                <Button type="submit" colorScheme="blue" mt={4}>Save Changes</Button>
+              </form>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
       
 
     </HStack>

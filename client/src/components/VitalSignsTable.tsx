@@ -5,13 +5,14 @@ import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { VitalSignsCRUD } from '../services'; // Assuming you have a service for Vital Signs
 
 interface VitalSignsTableProps {
- fetchData: () => Promise<any>;
- defineColumns: () => any[];
-//  setIsEditModalOpen: (isOpen: boolean) => void;
-//  patientId: number;
-//  onEditClick: (id: number) => void;
-//  refreshTable: boolean;
-//  setRefreshTable: (value: boolean) => void;
+  fetchData: () => Promise<any>;
+  defineColumns: () => any[];
+  setIsEditModalOpen: (isOpen: boolean) => void;
+  // patientId: number;
+  // setPatientId: (value: number) => void;
+  onEditClick: (id: number) => void;
+  refreshTable: boolean;
+  setRefreshTable: (value: boolean) => void;
 }
 
 type VitalSign = {
@@ -25,9 +26,8 @@ type VitalSign = {
   OxygenSaturation: number;
 }
 
-const VitalSignsTable: React.FC<VitalSignsTableProps> = ({ fetchData, defineColumns }) => {
+const VitalSignsTable: React.FC<VitalSignsTableProps> = ({ setIsEditModalOpen, onEditClick, setRefreshTable, refreshTable, fetchData, defineColumns }) => {
   const [data, setData] = useState<any[]>([]);
-  const [refreshTable, setRefreshTable] = useState<boolean>(false);
 
   useEffect(() => {
     fetchData().then((fetchedData) => {
@@ -65,7 +65,10 @@ const VitalSignsTable: React.FC<VitalSignsTableProps> = ({ fetchData, defineColu
       <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
         <ActionIcon
           color="orange"
-          onClick={() => {}}
+          onClick={() => {
+            setIsEditModalOpen(true);
+            onEditClick(data[row.index].VitalSignID);
+          }}
         >
           <IconEdit />
         </ActionIcon>

@@ -13,6 +13,16 @@ const getVitalSigns = async () => {
   }
 };
 
+const getVitalSign = async (vitalSignsId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/vitalsigns/${vitalSignsId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch Vital Signs:', error);
+    throw error;
+  }
+}
+
 const createVitalSigns = async (data: any) => {
   try {
     // convert temp to number
@@ -52,6 +62,7 @@ const deleteVitalSigns = async (vitalSignsId: number) => {
 };
 
 const VitalSignsCRUD = {
+  getVitalSign,
   getVitalSigns,
   createVitalSigns,
   updateVitalSigns,
