@@ -79,6 +79,23 @@ async function main() {
     console.log(`Created Patient: ${patient.Name}`);
   }
 
+  // Generate 5 vital signs for each patient
+  for (const patient of patients) {
+    for (let i = 1; i <= 5; i++) {
+      await prisma.vitalSigns.create({
+        data: {
+          PatientID: patient.ProfileID,
+          DateTime: new Date(), // Example date, adjust as needed
+          Temperature: 36.5 + i * 0.1, // Example temperature, adjust as needed
+          BloodPressure: `${120 + i} / ${80 + i}`, // Example blood pressure, adjust as needed
+          PulseRate: 70 + i, // Example pulse rate, adjust as needed
+          OxygenSaturation: 98 + i, // Example oxygen saturation, adjust as needed
+          PainScale: 5, // Example pain scale, adjust as needed
+        },
+      });
+    }
+  }
+
   // Generate 5 ADPIE records for each patient
   for (const patient of patients) {
     for (let i = 1; i <= 5; i++) {
