@@ -19,8 +19,8 @@ import {
   Tabs,
   Text,
 } from '@chakra-ui/react';
-import { PatientsTable, SimpleSidebar, VitalSignsTable, ADPIETable, AssessmentsTable  } from '../components';
-import { ADPIECRUD, PatientsCRUD, VitalSignsCRUD, AssessmentsCRUD } from '../services';
+import { PatientsTable, SimpleSidebar, VitalSignsTable, ADPIETable  } from '../components';
+import { ADPIECRUD, PatientsCRUD, VitalSignsCRUD } from '../services';
 import { useEffect, useState } from 'react';
 
 interface Patient {
@@ -68,10 +68,10 @@ const vitalSignColumns = () => [
 
 const ADPIEColumns = () => [
   { accessorKey: 'PatientID', header: 'Patient ID', size: 100 },
-  { accessorKey: 'Diagnosis', header: 'Diagnosis', size: 200 },
-  { accessorKey: 'Planning', header: 'Planning', size: 200 },
-  { accessorKey: 'InterventionImplementation', header: 'Intervention Implementation', size: 200 },
-  { accessorKey: 'Evaluation', header: 'Evaluation', size: 200 },
+  { accessorKey: 'DocumentType', header: 'Document Type', size: 100 },
+  { accessorKey: 'Content', header: 'Content', size: 100 },
+  { accessorKey: 'DateCreated', header: 'Date Created', size: 200 },
+  { accessorKey: 'DateModified', header: 'Date Modified', size: 200 },
 ];
 
 const getPhysicianName = async (physicianId: Number) => {

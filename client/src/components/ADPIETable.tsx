@@ -18,10 +18,10 @@ interface ADPIETableProps {
 
 type ADPIE = {
   PatientID: number;
-  Diagnosis: string;
-  Planning: string;
-  InterventionImplementation: string;
-  Evaluation: string;
+  DocumentType: string;
+  Content: string;
+  DateCreated: string;
+  DateModified?: string;
 };
 
 
@@ -34,10 +34,10 @@ const ADPIETable: React.FC<ADPIETableProps> = ({ fetchData, defineColumns }) => 
     fetchData().then((fetchedData) => {
       const formattedData: ADPIE[] = fetchedData.map((adpie: any) => ({
         PatientID: adpie.PatientID,
-        Diagnosis: adpie.Diagnosis,
-        Planning: adpie.Planning,
-        InterventionImplementation: adpie.InterventionImplementation,
-        Evaluation: adpie.Evaluation,
+        DocumentType: adpie.DocumentType,
+        Content: adpie.Content,
+        DateCreated: adpie.DateCreated,
+        DateModified: adpie.DateModified,
       }));
       setData(formattedData);
     });
@@ -82,20 +82,6 @@ const ADPIETable: React.FC<ADPIETableProps> = ({ fetchData, defineColumns }) => 
           }}
         >
           <IconTrash />
-        </ActionIcon>
-        <ActionIcon
-          color="red"
-          onClick={async () => {
-            // const rowId = data[row.index].id;
-            // try {
-            //   await ADPIECRUD.deleteADPIE(rowId); // Assuming you have a delete method
-            //   setRefreshTable(!refreshTable);
-            // } catch (error) {
-            //   console.error('Failed to delete ADPIE:', error);
-            // }
-          }}
-        >
-          <Image src={assessmentIcon} alt="Assessments" />
         </ActionIcon>
       </Box>
     ),
