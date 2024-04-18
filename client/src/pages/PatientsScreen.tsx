@@ -1,8 +1,8 @@
-import { 
-  Box, 
-  Button, 
-  FormControl, 
-  FormLabel, 
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
   Heading,
   HStack,
   Input,
@@ -19,9 +19,11 @@ import {
   Tabs,
   Text,
 } from '@chakra-ui/react';
-import { PatientsTable, SimpleSidebar, VitalSignsTable, ADPIETable  } from '../components';
+import { PatientsTable, SimpleSidebar, VitalSignsTable, ADPIETable } from '../components';
 import { ADPIECRUD, PatientsCRUD, VitalSignsCRUD } from '../services';
 import { useEffect, useState } from 'react';
+import {Editor, EditorState, convertToRaw, convertFromRaw, ContentState} from 'draft-js';
+import 'draft-js/dist/Draft.css';
 
 interface Patient {
   ProfileID: number;
@@ -40,6 +42,15 @@ interface Patient {
   NurseNotes: string;
   FlowChart: string;
   NurseProfileID: number;
+}
+
+interface Adpie {
+  ADPIEID: number;
+  PatientID: number;
+  DocumentType: string;
+  Content: string;
+  DateCreated: string;
+  DateModified: string;
 }
 
 interface NameObject {
@@ -89,26 +100,26 @@ const fetchPatientsData = async () => {
   try {
     const patients = await PatientsCRUD.getAllPatients();
     console.log('fetchPatientsData response: ', patients);
-    
+
     // Fetch physician and nurse names for each patient
     const patientsDetailed = await Promise.all(patients.map(async (patient: Patient) => {
-      if(!patient.PhysicianInCharge || !patient.NurseProfileID) {
+      if (!patient.PhysicianInCharge || !patient.NurseProfileID) {
         return patient;
       }
-      
+
       console.log('physician and or nurse id exists');
       const physicianName = await getPhysicianName(patient.PhysicianInCharge);
       const nurseName = await getNurseName(patient.NurseProfileID);
-      
+
       return {
         ...patient,
         physicianName,
         nurseName,
       };
     }));
-    
+
     console.log('fetchPatientsData patientsDetailed: ', patientsDetailed);
-    
+
     return patientsDetailed;
   } catch (error) {
     console.error('Failed to fetch patients:', error);
@@ -120,7 +131,7 @@ const fetchVitalSignsData = async () => {
     console.log('fetchVitalSignsData function PatientsScreen.tsx runs')
     const vitalSigns = await VitalSignsCRUD.getVitalSigns();
     console.log('fetchVitalSignsData response: ', vitalSigns);
-    
+
     return vitalSigns;
   } catch (error) {
     console.error('Failed to fetch vital signs:', error);
@@ -132,7 +143,7 @@ const fetchADPIEData = async () => {
     console.log('fetchADPIEData function PatientsScreen.tsx runs')
     const adpie = await ADPIECRUD.getAllADPIE();
     console.log('fetchADPIEData response: ', adpie);
-    
+
     return adpie;
   } catch (error) {
     console.error('Failed to fetch ADPIE:', error);
@@ -144,7 +155,7 @@ const updatePatient = async (id: number, payload: any) => {
     console.log('updatePatient payload: ', payload)
     const updatedPatient = await PatientsCRUD.updatePatient(id, payload);
     console.log('updatePatient response: ', updatedPatient);
-    
+
     return updatedPatient;
   } catch (error) {
     console.error('Failed to update patient:', error);
@@ -166,7 +177,7 @@ const formatDateForInput = (dateString: string): string => {
   // Return an empty string or a default value if the dateString is not valid
   return '';
 };
- 
+
 const Patients = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const handleCreateModalClose = () => setIsCreateModalOpen(false);
@@ -181,12 +192,25 @@ const Patients = () => {
   const [isADPIEModalOpen, setIsADPIEModalOpen] = useState(false);
   const handleADPIEModalClose = () => setIsADPIEModalOpen(false);
   const [refreshAdpieTable, setRefreshAdpieTable] = useState<boolean>(false);
+  const [isADPIEEDitModalOpen, setIsADPIEEditModalOpen] = useState(false);
+  const handleADPIEEditModalClose = () => setIsADPIEEditModalOpen(false);
+  const [adpieId, setAdpieId] = useState(0);
+  const [adpieDetails, setAdpieDetails] = useState<Adpie[]>([]);
+  const [isADPIEEditLoading, setIsADPIEEditLoading] = useState(false);
 
   const [isVitalSignsModalOpen, setIsVitalSignsModalOpen] = useState(false);
   const handleVitalSignsModalClose = () => setIsVitalSignsModalOpen(false);
-  
+
   const [physicianName, setPhysicianName] = useState<NameObject | {}>({});
   const [nurseName, setNurseName] = useState<NameObject | {}>({});
+
+  const [editorState, setEditorState] = useState(() =>
+    EditorState.createEmpty()
+   );
+   
+   const handleEditorChange = (state: any) => {
+    setEditorState(state);
+   };
 
   const handleCreatePatient = async (event: any) => {
     event.preventDefault();
@@ -201,25 +225,25 @@ const Patients = () => {
       const createdPatient = await PatientsCRUD.createPatient(patientData);
       console.log('createPatient response: ', createdPatient);
       setRefreshPatientsTable(!refreshPatientsTable);
-      
+
       return createdPatient;
     } catch (error) {
       console.error('Failed to create patient:', error);
     }
   }
-  
+
   const getPatient = async (id: number) => {
     try {
       console.log('getPatient id: ', id);
       const patient = await PatientsCRUD.getPatient(id);
       console.log('getPatient response: ', patient);
-      
+
       return patient;
     } catch (error) {
       console.error('Failed to get patient:', error);
     }
   }
-  
+
   const handleEditPatientClick = async (patientId: any) => {
     setIsEditPatientLoading(true);
     setPatientId(patientId);
@@ -236,11 +260,11 @@ const Patients = () => {
 
         const nurseId = patientDetails[0].NurseProfileID;
         const physicianId = patientDetails[0].PhysicianInCharge;
-  
+
         try {
           const nurseNameResponse = await getNurseName(nurseId);
           const physicianNameResponse = await getPhysicianName(physicianId);
-  
+
           setNurseName(nurseNameResponse);
           setPhysicianName(physicianNameResponse);
 
@@ -249,9 +273,9 @@ const Patients = () => {
           console.error('Failed to fetch nurse or physician name:', error);
         }
       }
-   };
-  
-   fetchNames();
+    };
+
+    fetchNames();
   }, [patientDetails]);
 
   useEffect(() => {
@@ -261,15 +285,15 @@ const Patients = () => {
   useEffect(() => {
     fetchADPIEData();
   }, [refreshAdpieTable]);
-  
+
   const handleEditPatient = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log('handleEditPatient runs');
-   
+
     // Capture form data
     const formData = new FormData(event.currentTarget);
     const updatedPatientData = Object.fromEntries(formData);
-    
+
     // update OutpatientAdmissionStatus to boolean
     patientDetails[0].OutpatientAdmissionStatus = updatedPatientData.OutpatientAdmissionStatus === 'true' ? true : false;
 
@@ -283,7 +307,7 @@ const Patients = () => {
     setRefreshPatientsTable(!refreshPatientsTable);
     setIsEditPatientModalOpen(false);
   };
-  
+
   const handleADPIE = async (event: any) => {
     event.preventDefault();
     console.log('handleADPIE runs');
@@ -312,10 +336,54 @@ const Patients = () => {
     console.log('handleVitalSigns runs');
   }
 
+  const handleEditADPIEClick = async (adpieId: any) => {
+    setIsADPIEEditLoading(true);
+    setAdpieId(adpieId);
+    const adpie = await ADPIECRUD.getADPIE(adpieId);
+    console.log('specific ADPIE data acquired to be shown on edit modal: ', adpie)
+
+    // Convert the content to a format that Draft.js can understand
+    const contentState = ContentState.createFromText(adpie.Content);
+    const newEditorState = EditorState.createWithContent(contentState);
+    setEditorState(newEditorState);
+    setAdpieDetails([adpie]);
+
+    setIsADPIEEditLoading(false);
+    setIsADPIEEditModalOpen(true);
+  }
+
+  const handleEditADPIE = async (event: any) => {
+    event.preventDefault();
+    console.log('handleEditADPIE runs');
+
+    // Convert the editor's content to a raw format
+    const contentState = editorState.getCurrentContent();
+    console.log('ContentState:', contentState);
+    const rawContent = convertToRaw(contentState);
+    console.log('Raw content:', rawContent);
+    const updatedAdpieData = {
+      PatientID: adpieDetails[0].PatientID, 
+      DocumentType: adpieDetails[0].DocumentType, 
+      Content: JSON.stringify(rawContent),
+      DateCreated: adpieDetails[0].DateCreated, 
+      DateModified: new Date().toISOString(),
+    };
+    console.log('adpie id: ', adpieDetails[0].ADPIEID);
+    console.log('handleEditADPIE Updated adpie details: ', updatedAdpieData);
+    await ADPIECRUD.updateADPIE(adpieDetails[0].ADPIEID, updatedAdpieData);
+
+    setRefreshAdpieTable(!refreshAdpieTable);
+    setIsADPIEEditModalOpen(false);
+  };
+
+  useEffect(() => {
+    console.log('adpieDetails changed: ', adpieDetails);
+   }, [adpieDetails]);
+
   return (
     <HStack background="#E0EAF3">
       <SimpleSidebar />
-    
+
       <Box ml={25}>
         <HStack justifyContent={"space-between"}>
           <Box>
@@ -324,7 +392,7 @@ const Patients = () => {
           </Box>
           <Button colorScheme="facebook" size="lg" onClick={() => setIsCreateModalOpen(true)}>Create Patient</Button>
         </HStack>
-      
+
         <Tabs>
           <TabList>
             <Tab>Patients</Tab>
@@ -339,7 +407,7 @@ const Patients = () => {
               <VitalSignsTable fetchData={fetchVitalSignsData} defineColumns={vitalSignColumns} />
             </TabPanel>
             <TabPanel>
-              <ADPIETable fetchData={fetchADPIEData} defineColumns={ADPIEColumns} />
+              <ADPIETable refreshTable={refreshAdpieTable} setRefreshTable={setRefreshAdpieTable} AdpieID={adpieId} onEditClick={handleEditADPIEClick} fetchData={fetchADPIEData} defineColumns={ADPIEColumns} setIsEditModalOpen={setIsADPIEEditModalOpen} />
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -359,9 +427,9 @@ const Patients = () => {
                 <Input name="Name" placeholder="Patient Name" required />
               </FormControl>
               <FormControl>
-              <FormLabel>Age</FormLabel>
+                <FormLabel>Age</FormLabel>
                 <Input name="Age" placeholder="Patient Age" required />
-                </FormControl>
+              </FormControl>
               <FormControl>
                 <FormLabel>Gender</FormLabel>
                 <Input name="Gender" placeholder="Patient Gender" required />
@@ -384,7 +452,7 @@ const Patients = () => {
               </FormControl>
               <FormControl>
                 <FormLabel>Date Admitted</FormLabel>
-                <Input name="Date_Admitted" placeholder="Select Date Admitted" type="datetime-local" required />              
+                <Input name="Date_Admitted" placeholder="Select Date Admitted" type="datetime-local" required />
               </FormControl>
               <Button w="full" mt={5} type="submit" colorScheme="blue">Save Patient</Button>
             </form>
@@ -465,7 +533,7 @@ const Patients = () => {
                 </FormControl>
                 <Button type="submit" colorScheme="blue" mt={4}>Save Changes</Button>
               </form>
-            )}            
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>
@@ -537,10 +605,27 @@ const Patients = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-      
+
       {/* edit vital signs modal in vital signs tab */}
 
       {/* edit adpie modal in adpie tab */}
+      <Modal isOpen={isADPIEEDitModalOpen && !isADPIEEditLoading} onClose={handleADPIEEditModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit ADPIE</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {isADPIEEditLoading ? (
+              <Text>Loading...</Text>
+            ) : (
+              <form onSubmit={handleEditADPIE}>
+                <Editor editorState={editorState} onChange={handleEditorChange} />
+                <Button type="submit" colorScheme="blue" mt={4}>Save Changes</Button>
+              </form>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
 
     </HStack>
   );

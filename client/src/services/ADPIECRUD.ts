@@ -32,9 +32,9 @@ const createADPIE = async (data: any) => {
   }
  };
 
-const updateADPIE = async (patientId: number, adpieId: number, data: any) => {
+const updateADPIE = async (adpieId: number, data: any) => {
     try {
-      const response = await axios.put(`${BASE_URL}/adpie/${patientId}/${adpieId}`, data);
+      const response = await axios.put(`${BASE_URL}/adpie/${adpieId}`, data);
       return response.data;
     } catch (error) {
       console.error('Failed to update ADPIE:', error);
@@ -42,9 +42,9 @@ const updateADPIE = async (patientId: number, adpieId: number, data: any) => {
     }
  };
 
-const deleteADPIE = async (patientId: number, adpieId: number) => {
+const deleteADPIE = async (adpieId: number) => {
   try {
-    await axios.delete(`${BASE_URL}/adpie/${patientId}/${adpieId}`);
+    await axios.delete(`${BASE_URL}/adpie/${adpieId}`);
   } catch (error) {
     console.error('Failed to delete ADPIE:', error);
     throw error;

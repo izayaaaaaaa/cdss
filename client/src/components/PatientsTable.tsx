@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  MRT_TableOptions,
   MantineReactTable,
   useMantineReactTable,
   type MRT_ColumnDef,
