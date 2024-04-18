@@ -7,7 +7,6 @@ import { NurseModule } from './nurse/nurse.module';
 import { PatientModule } from './patient/patient.module';
 import { VitalsignsModule } from './vitalsigns/vitalsigns.module';
 import { AdpieModule } from './adpie/adpie.module';
-import { AssessmentModule } from './assessment/assessment.module';
 
 @Module({
   imports: [
@@ -21,7 +20,6 @@ import { AssessmentModule } from './assessment/assessment.module';
     PatientModule,
     VitalsignsModule,
     AdpieModule,
-    AssessmentModule,
   ],
   controllers: [],
   providers: [],
