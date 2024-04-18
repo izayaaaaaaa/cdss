@@ -72,13 +72,13 @@ const VitalSignsTable: React.FC<VitalSignsTableProps> = ({ fetchData, defineColu
         <ActionIcon
           color="red"
           onClick={async () => {
-            // const rowId = data[row.index].id;
-            // try {
-            //   await VitalSignsCRUD.deleteVitalSigns(rowId); // Assuming you have a delete method
-            //   setRefreshTable(!refreshTable);
-            // } catch (error) {
-            //   console.error('Failed to delete Vital Signs:', error);
-            // }
+            const rowId = data[row.index].VitalSignID;
+            try {
+              await VitalSignsCRUD.deleteVitalSigns(rowId); // Assuming you have a delete method
+              setRefreshTable(!refreshTable);
+            } catch (error) {
+              console.error('Failed to delete Vital Signs:', error);
+            }
           }}
         >
           <IconTrash />
