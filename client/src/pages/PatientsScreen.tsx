@@ -22,8 +22,33 @@ import {
 import { PatientsTable, SimpleSidebar, VitalSignsTable, ADPIETable } from '../components';
 import { ADPIECRUD, PatientsCRUD, VitalSignsCRUD } from '../services';
 import { useEffect, useState } from 'react';
-import {Editor, EditorState, convertToRaw, convertFromRaw, ContentState} from 'draft-js';
+import {Editor, EditorState, convertToRaw, convertFromRaw, ContentState, RichUtils} from 'draft-js';
 import 'draft-js/dist/Draft.css';
+
+// const TextFormatControls = ({ editorState, onToggle }: { editorState: EditorState, onToggle: (style: string) => void }) => {
+//   const currentStyle = editorState.getCurrentInlineStyle();
+ 
+//   return (
+//      <div>
+//        {['BOLD', 'ITALIC', 'UNDERLINE'].map(style => (
+//          <button
+//            key={style}
+//            onMouseDown={event => {
+//              event.preventDefault();
+//              onToggle(style);
+//            }}
+//            style={{
+//              fontWeight: currentStyle.has(style) ? 'bold' : 'normal',
+//              fontStyle: style === 'ITALIC' && currentStyle.has(style) ? 'italic' : 'normal',
+//              textDecoration: style === 'UNDERLINE' && currentStyle.has(style) ? 'underline' : 'none',
+//            }}
+//          >
+//            {style}
+//          </button>
+//        ))}
+//      </div>
+//   );
+//  };
 
 interface Patient {
   ProfileID: number;
@@ -80,7 +105,7 @@ const vitalSignColumns = () => [
 const ADPIEColumns = () => [
   { accessorKey: 'PatientID', header: 'Patient ID', size: 100 },
   { accessorKey: 'DocumentType', header: 'Document Type', size: 100 },
-  { accessorKey: 'Content', header: 'Content', size: 100 },
+  // { accessorKey: 'Content', header: 'Content', size: 100 },
   { accessorKey: 'DateCreated', header: 'Date Created', size: 200 },
   { accessorKey: 'DateModified', header: 'Date Modified', size: 200 },
 ];
@@ -179,6 +204,19 @@ const formatDateForInput = (dateString: string): string => {
 };
 
 const Patients = () => {
+  // const toggleInlineStyle = (style: any) => {
+  //   setEditorState(RichUtils.toggleInlineStyle(editorState, style));
+  // };
+
+  // const handleKeyCommand = (command: any, editorState: any) => {
+  //   const newState = RichUtils.handleKeyCommand(editorState, command);
+  //   if (newState) {
+  //      setEditorState(newState);
+  //      return 'handled';
+  //   }
+  //   return 'not-handled';
+  //  };
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const handleCreateModalClose = () => setIsCreateModalOpen(false);
 
@@ -361,10 +399,13 @@ const Patients = () => {
     console.log('ContentState:', contentState);
     const rawContent = convertToRaw(contentState);
     console.log('Raw content:', rawContent);
+    // extract text from raw content
+    const text = rawContent.blocks.map(block => block.text).join('\n');
+    console.log('Text:', text);
     const updatedAdpieData = {
       PatientID: adpieDetails[0].PatientID, 
       DocumentType: adpieDetails[0].DocumentType, 
-      Content: JSON.stringify(rawContent),
+      Content: text,
       DateCreated: adpieDetails[0].DateCreated, 
       DateModified: new Date().toISOString(),
     };
@@ -619,7 +660,19 @@ const Patients = () => {
               <Text>Loading...</Text>
             ) : (
               <form onSubmit={handleEditADPIE}>
-                <Editor editorState={editorState} onChange={handleEditorChange} />
+                {/* <TextFormatControls
+                  editorState={editorState}
+                  onToggle={toggleInlineStyle}
+                /> */}
+                {/* <Editor editorState={editorState} onChange={handleEditorChange} /> */}
+                <div style={{ border: '1px solid gray', minHeight: '200px', padding: '10px' }}>
+                  <Editor
+                    editorState={editorState}
+                    // handleKeyCommand={handleKeyCommand}
+                    // onChange={setEditorState}
+                    onChange={handleEditorChange}
+                  />
+                </div>
                 <Button type="submit" colorScheme="blue" mt={4}>Save Changes</Button>
               </form>
             )}

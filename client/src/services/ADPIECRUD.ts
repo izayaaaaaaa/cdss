@@ -34,7 +34,7 @@ const createADPIE = async (data: any) => {
 
 const updateADPIE = async (adpieId: number, data: any) => {
     try {
-      const response = await axios.put(`${BASE_URL}/adpie/${adpieId}`, data);
+      const response = await axios.patch(`${BASE_URL}/adpie/${adpieId}`, data);
       return response.data;
     } catch (error) {
       console.error('Failed to update ADPIE:', error);
