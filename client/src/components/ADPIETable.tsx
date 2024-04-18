@@ -71,7 +71,8 @@ const ADPIETable: React.FC<ADPIETableProps> = ({ fetchData, defineColumns, setIs
         <ActionIcon
           color="red"
           onClick={async () => {
-            const rowId = data[row.index].id;
+            const rowId = data[row.index].AdpieID;
+            console.log('delete adpie rowId:', rowId);
             try {
               await ADPIECRUD.deleteADPIE(rowId); // Assuming you have a delete method
               setRefreshTable(!refreshTable);
