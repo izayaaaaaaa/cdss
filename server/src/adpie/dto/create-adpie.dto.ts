@@ -1,21 +1,14 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsEnum, IsString, IsNumber } from 'class-validator';
+import { DocumentType } from '@prisma/client';
 
 export class CreateAdpieDto {
   @IsNotEmpty()
-  @IsString()
-  Diagnosis: string;
+  @IsEnum(DocumentType)
+  DocumentType: DocumentType;
 
   @IsNotEmpty()
   @IsString()
-  Planning: string;
-
-  @IsNotEmpty()
-  @IsString()
-  InterventionImplementation: string;
-
-  @IsNotEmpty()
-  @IsString()
-  Evaluation: string;
+  Content: string;
 
   @IsNotEmpty()
   @IsNumber()

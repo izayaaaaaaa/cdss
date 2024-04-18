@@ -1,19 +1,16 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsEnum, IsString, IsNumber } from 'class-validator';
+import { DocumentType } from '@prisma/client';
 
 export class UpdateAdpieDto {
   @IsOptional()
-  @IsString()
-  Diagnosis: string;
+  @IsEnum(DocumentType)
+  DocumentType: DocumentType;
 
   @IsOptional()
   @IsString()
-  Planning: string;
+  Content: string;
 
   @IsOptional()
-  @IsString()
-  InterventionImplementation: string;
-
-  @IsOptional()
-  @IsString()
-  Evaluation: string;
+  @IsNumber()
+  PatientID: number;
 }
