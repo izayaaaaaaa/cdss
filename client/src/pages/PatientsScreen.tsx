@@ -22,8 +22,8 @@ import {
 import { PatientsTable, SimpleSidebar, VitalSignsTable, ADPIETable } from '../components';
 import { ADPIECRUD, PatientsCRUD, VitalSignsCRUD } from '../services';
 import { useEffect, useState } from 'react';
-import {Editor, EditorState, convertToRaw, convertFromRaw, ContentState, RichUtils} from 'draft-js';
-import 'draft-js/dist/Draft.css';
+// import {Editor, EditorState, convertToRaw, convertFromRaw, ContentState, RichUtils} from 'draft-js';
+// import 'draft-js/dist/Draft.css';
 
 // const TextFormatControls = ({ editorState, onToggle }: { editorState: EditorState, onToggle: (style: string) => void }) => {
 //   const currentStyle = editorState.getCurrentInlineStyle();
@@ -242,13 +242,13 @@ const Patients = () => {
   const [physicianName, setPhysicianName] = useState<NameObject | {}>({});
   const [nurseName, setNurseName] = useState<NameObject | {}>({});
 
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-   );
+  // const [editorState, setEditorState] = useState(() =>
+  //   EditorState.createEmpty()
+  //  );
    
-   const handleEditorChange = (state: any) => {
-    setEditorState(state);
-   };
+  //  const handleEditorChange = (state: any) => {
+  //   setEditorState(state);
+  //  };
 
   const handleCreatePatient = async (event: any) => {
     event.preventDefault();
@@ -359,8 +359,10 @@ const Patients = () => {
 
   const createAdpie = async (adpieData: any) => {
     try {
-      // convvert PatientID to number
-      adpieData.PatientID = parseInt(adpieData.PatientID);
+      // add adpieid to adpieData
+      adpieData.PatientID = patientId;
+      // console.log('createAdpie w/ patientId: ', patientId)
+      
       const createdAdpie = await ADPIECRUD.createADPIE(adpieData);
       console.log('createAdpie response: ', createdAdpie);
       return createdAdpie;
@@ -381,9 +383,9 @@ const Patients = () => {
     console.log('specific ADPIE data acquired to be shown on edit modal: ', adpie)
 
     // Convert the content to a format that Draft.js can understand
-    const contentState = ContentState.createFromText(adpie.Content);
-    const newEditorState = EditorState.createWithContent(contentState);
-    setEditorState(newEditorState);
+    // const contentState = ContentState.createFromText(adpie.Content);
+    // const newEditorState = EditorState.createWithContent(contentState);
+    // setEditorState(newEditorState);
     setAdpieDetails([adpie]);
 
     setIsADPIEEditLoading(false);
@@ -445,7 +447,7 @@ const Patients = () => {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <PatientsTable refreshTable={refreshPatientsTable} setRefreshTable={setRefreshPatientsTable} patientId={patientId} onEditClick={handleEditPatientClick} fetchData={fetchPatientsData} defineColumns={definePatientColumns} setIsEditModalOpen={setIsEditPatientModalOpen} setIsADPIEModalOpen={setIsADPIEModalOpen} setIsVitalSignsModalOpen={setIsVitalSignsModalOpen} />
+              <PatientsTable setPatientId={setPatientId}refreshTable={refreshPatientsTable} setRefreshTable={setRefreshPatientsTable} patientId={patientId} onEditClick={handleEditPatientClick} fetchData={fetchPatientsData} defineColumns={definePatientColumns} setIsEditModalOpen={setIsEditPatientModalOpen} setIsADPIEModalOpen={setIsADPIEModalOpen} setIsVitalSignsModalOpen={setIsVitalSignsModalOpen} />
             </TabPanel>
             <TabPanel>
               <VitalSignsTable fetchData={fetchVitalSignsData} defineColumns={vitalSignColumns} />
@@ -591,24 +593,12 @@ const Patients = () => {
           <ModalBody>
             <form onSubmit={handleADPIE}>
               <FormControl>
-                <FormLabel>Diagnosis</FormLabel>
-                <Input name="Diagnosis" placeholder="Diagnosis" required />
+                <FormLabel>Document Type</FormLabel>
+                <Input name="DocumentType" placeholder="Document Type" required />
               </FormControl>
               <FormControl>
-                <FormLabel>Planning</FormLabel>
-                <Input name="Planning" placeholder="Planning" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>InterventionImplementation</FormLabel>
-                <Input name="InterventionImplementation" placeholder="InterventionImplementation" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Evaluation</FormLabel>
-                <Input name="Evaluation" placeholder="Evaluation" required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Patient ID</FormLabel>
-                <Input name="PatientID" placeholder="Patient ID" required />
+                <FormLabel>Content Link</FormLabel>
+                <Input name="Content" placeholder="Content Link" required />
               </FormControl>
               <Button w="full" mt={5} type="submit" colorScheme="blue">Save ADPIE</Button>
             </form>

@@ -24,11 +24,12 @@ const getADPIE = async (patientId: number) => {
 
 const createADPIE = async (data: any) => {
   try {
-     const response = await axios.post(`${BASE_URL}/adpie`, { ...data });
-     return response.data;
+    console.log('data to be sent to create adpie api', data);
+    const response = await axios.post(`${BASE_URL}/adpie`, { ...data });
+    return response.data;
   } catch (error) {
-     console.error('Failed to create ADPIE:', error);
-     throw error;
+    console.error('Failed to create ADPIE:', error);
+    throw error;
   }
  };
 

@@ -18,6 +18,7 @@ interface TableFactoryProps {
   setIsVitalSignsModalOpen: (isOpen: boolean) => void;
   setIsEditModalOpen: (isOpen: boolean) => void;
   patientId: number;
+  setPatientId: (value: number) => void;
   onEditClick: (id: number) => void;
   refreshTable: boolean;
   setRefreshTable: (value: boolean) => void;
@@ -44,7 +45,7 @@ type Person = {
   flowChart: string | null;
 };
 
-const PatientsTable: React.FC<TableFactoryProps> = ({ refreshTable, setRefreshTable, fetchData, defineColumns, setIsADPIEModalOpen, setIsVitalSignsModalOpen, setIsEditModalOpen, patientId, onEditClick }) => {
+const PatientsTable: React.FC<TableFactoryProps> = ({ setPatientId, refreshTable, setRefreshTable, fetchData, defineColumns, setIsADPIEModalOpen, setIsVitalSignsModalOpen, setIsEditModalOpen, patientId, onEditClick }) => {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
@@ -124,7 +125,9 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ refreshTable, setRefreshTa
         </ActionIcon>
         <ActionIcon
           onClick={() => {
-            console.log('onclick vital signs running');
+            console.log('row index: ', row.index);
+            setPatientId(data[row.index].id);
+            console.log('create adpie with patientId: ', patientId);
             setIsADPIEModalOpen(true);
           }}
         >
@@ -132,7 +135,6 @@ const PatientsTable: React.FC<TableFactoryProps> = ({ refreshTable, setRefreshTa
         </ActionIcon>
         <ActionIcon
           onClick={() => {
-            console.log('onclick adpie running');
             setIsVitalSignsModalOpen(true);
           }}
         >
