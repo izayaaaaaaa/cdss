@@ -122,7 +122,7 @@ async function main() {
         data: {
           DocumentType: documentType,
           PatientID: patient.ProfileID,
-          Content: `Content for ${documentType}`, // Example content
+          Content: `https://www.google.com/`, // Example content
         },
       });
     }
