@@ -43,7 +43,6 @@ export class DoctorService {
         Gender: dto.gender,
         PhoneNumber: dto.phoneNumber,
         EmailAddress: dto.emailAddress,
-        Availability: dto.availability,
       },
     });
   }
